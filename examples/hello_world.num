@@ -1,0 +1,4 @@
+# hello_world.num - print "Hello, World!" using a string literal
+# String literals desugar to putchar() calls for each character code.
+# Escape sequences follow C conventions.
+"Hello, World!\n"

@@ -8,6 +8,21 @@ class LexError(Exception):
     pass
 
 
+# Maps single-character escape letters to their byte values (mirrors C).
+_SIMPLE_ESCAPES: dict[str, int] = {
+    'n':  10,   # newline
+    't':  9,    # horizontal tab
+    'r':  13,   # carriage return
+    '\\': 92,  # backslash
+    '"':  34,   # double quote
+    "'":  39,   # single quote
+    'a':  7,    # alert / bell
+    'b':  8,    # backspace
+    'f':  12,   # form feed
+    'v':  11,   # vertical tab
+}
+
+
 @dataclass(slots=True)
 class Token:
     kind: str
@@ -35,6 +50,39 @@ class Lexer:
                 continue
             if ch == "\n":
                 self._advance_line()
+                continue
+
+            # String literal "..."
+            if ch == '"':
+                self._advance()  # consume opening "
+                codes: List[int] = []
+                while not self._eof() and self._peek() != '"':
+                    c = self._peek()
+                    if c == "\n":
+                        raise LexError(
+                            f"Unterminated string literal at {start_line}:{start_col}"
+                        )
+                    if c == "\\":
+                        self._advance()  # consume backslash
+                        if self._eof():
+                            raise LexError(
+                                f"Unterminated escape sequence in string at "
+                                f"{start_line}:{start_col}"
+                            )
+                        esc = self._peek()
+                        self._advance()
+                        codes.append(
+                            self._escape_char(esc, start_line, start_col)
+                        )
+                    else:
+                        codes.append(ord(c))
+                        self._advance()
+                if self._eof():
+                    raise LexError(
+                        f"Unterminated string literal at {start_line}:{start_col}"
+                    )
+                self._advance()  # consume closing "
+                tokens.append(Token("STRING", codes, start_line, start_col))
                 continue
 
             # Skip line comments
@@ -67,8 +115,8 @@ class Lexer:
                 tokens.append(Token("NUM", int(text), start_line, start_col))
                 continue
 
-            # Single-character operators (including new % for modulo)
-            if ch in "^&*+-/.|;%":
+            # Single-character operators (including new % for modulo, ~ for putchar)
+            if ch in "^&*+-/.|;%~":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()
                 continue
@@ -97,3 +145,50 @@ class Lexer:
         self.i += 1
         self.line += 1
         self.col = 1
+
+    def _escape_char(self, esc: str, err_line: int, err_col: int) -> int:
+        """Resolve a single escape character (the char *after* the backslash).
+
+        Supports the full C escape syntax set:
+          Named:  \\n \\t \\r \\\\ \\" \\' \\a \\b \\f \\v
+          Hex:    \\xHH   (1–2 hex digits)
+          Octal:  \\NNN   (1–3 octal digits, first digit 0–7)
+        """
+        if esc in _SIMPLE_ESCAPES:
+            return _SIMPLE_ESCAPES[esc]
+
+        # Hex escape: \xHH
+        if esc == 'x':
+            h = ''
+            for _ in range(2):
+                if not self._eof() and self._peek() in '0123456789abcdefABCDEF':
+                    h += self._advance()
+                else:
+                    break
+            if not h:
+                raise LexError(
+                    f"Empty hex escape \\x at {err_line}:{err_col}"
+                )
+            value = int(h, 16)
+            if value > 255:
+                raise LexError(
+                    f"Hex escape \\x{h} out of byte range at {err_line}:{err_col}"
+                )
+            return value
+
+        # Octal escape: \0–\7 (up to 3 octal digits)
+        if esc in '01234567':
+            oct_str = esc
+            for _ in range(2):
+                if not self._eof() and self._peek() in '01234567':
+                    oct_str += self._advance()
+                else:
+                    break
+            value = int(oct_str, 8)
+            if value > 255:
+                raise LexError(
+                    f"Octal escape \\{oct_str} out of byte range at {err_line}:{err_col}"
+                )
+            return value
+
+        raise LexError(f"Unknown escape sequence \\{esc} at {err_line}:{err_col}")

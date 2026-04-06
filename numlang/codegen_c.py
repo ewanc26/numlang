@@ -149,6 +149,15 @@ class CCodeGenerator:
             elif kind == "GE":
                 lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a >= _b ? 1.0 : 0.0); }}")
 
+            elif kind == "STRING":
+                # Desugar to a putchar() per character code — mirrors how ~ works
+                # for single chars, but for the whole string at once.
+                for code in value:  # type: ignore[union-attr]
+                    lines.append(f"{pad}putchar({code});")
+
+            elif kind == "~":
+                lines.append(f"{pad}putchar((int)pop());")
+
             elif kind == "|":
                 lines.append(f"{pad}printf(\"%g\\n\", pop());")
 

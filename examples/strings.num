@@ -1,0 +1,25 @@
+# strings.num - demonstrate string literal syntax and escape sequences
+#
+# "..." is syntactic sugar for a sequence of putchar() calls (one per char).
+# It is the multi-character sibling of ~, and supports the full C escape set.
+#
+# Named escapes
+"Hello, World!\n"           # \n  → newline (10)
+"Tab:\there\n"              # \t  → horizontal tab (9)
+"Bell:\a\n"                 # \a  → alert / bell (7)
+"Backslash: \\\n"           # \\  → literal backslash
+"Quote: \"\n"               # \"  → literal double-quote
+"CR+LF:\r\n"                # \r  → carriage return, \n → newline
+
+# Hex escapes  \xHH
+"\x48\x65\x78\x20\x74\x65\x73\x74\x0a"   # "Hex test\n"
+
+# Octal escapes  \NNN
+"\110\145\154\154\157\n"                   # "Hello\n" in octal
+
+# Mixing string literals with numeric char output (~)
+"Score: "
+42 |        # print 42 as a number (with newline)
+
+# Null byte in a string (safe — putchar(0) is a no-op on most terminals)
+"null: [\0]\n"
