@@ -1,1 +1,5 @@
-3 5 10 |
+# compare.num - compare two numbers and print 1 (true) or 0 (false)
+3 5 10 |    # 3 < 5  → 1
+7 2 11 |    # 7 > 2  → 1
+4 4 12 |    # 4 == 4 → 1
+3 5 13 |    # 3 != 5 → 1

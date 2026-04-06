@@ -1,1 +1,2 @@
-^|0&|0.
+# input.num - read a number from stdin and print it doubled
+^ 16 + |    # read x, DUP it, add (x+x), print

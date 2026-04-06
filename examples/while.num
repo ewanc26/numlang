@@ -1,0 +1,14 @@
+# while.num - count down from 5 to 1, printing each value
+#
+# vars[0] = counter
+5 0 &
+
+# Push initial condition: vars[0] > 0
+|0 0 11
+
+# WHILE: pops condition each iteration; body must leave new condition on stack
+30
+    |0 |            # print vars[0]
+    |0 1 - 0 &      # vars[0] -= 1
+    |0 0 11         # push new condition: vars[0] > 0
+;
