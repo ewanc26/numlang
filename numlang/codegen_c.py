@@ -80,6 +80,18 @@ class CCodeGenerator:
             lines.append("    { double b = pop(); double a = pop(); push(a / b); }")
         elif kind == "^":
             lines.append("    { double x; if (scanf(\"%lf\", &x) != 1) exit(1); push(x); }")
+        elif kind == "LT":
+            lines.append("    { double b = pop(); double a = pop(); push(a < b ? 1.0 : 0.0); }")
+        elif kind == "GT":
+            lines.append("    { double b = pop(); double a = pop(); push(a > b ? 1.0 : 0.0); }")
+        elif kind == "EQ":
+            lines.append("    { double b = pop(); double a = pop(); push(a == b ? 1.0 : 0.0); }")
+        elif kind == "NE":
+            lines.append("    { double b = pop(); double a = pop(); push(a != b ? 1.0 : 0.0); }")
+        elif kind == "LE":
+            lines.append("    { double b = pop(); double a = pop(); push(a <= b ? 1.0 : 0.0); }")
+        elif kind == "GE":
+            lines.append("    { double b = pop(); double a = pop(); push(a >= b ? 1.0 : 0.0); }")
         elif kind == "|":
             lines.append("    printf(\"%g\\n\", pop());")
         elif kind == ".":

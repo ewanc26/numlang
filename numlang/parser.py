@@ -45,7 +45,12 @@ class Parser:
                     else:
                         raise ParseError("Expected NUM after .")
                 else:
-                    main_code.append((self._current().kind, self._current().value))
+                    kind = self._current().kind
+                    value = self._current().value
+                    if kind == "NUM" and value in [10,11,12,13,14,15]:
+                        kind = {10: "LT", 11: "GT", 12: "EQ", 13: "NE", 14: "LE", 15: "GE"}[value]
+                        value = None
+                    main_code.append((kind, value))
                     self._advance()
         return Program(functions, main_code)
 
@@ -60,7 +65,12 @@ class Parser:
                 else:
                     raise ParseError("Expected NUM after .")
             else:
-                code.append((self._current().kind, self._current().value))
+                kind = self._current().kind
+                value = self._current().value
+                if kind == "NUM" and value in [10,11,12,13,14,15]:
+                    kind = {10: "LT", 11: "GT", 12: "EQ", 13: "NE", 14: "LE", 15: "GE"}[value]
+                    value = None
+                code.append((kind, value))
                 self._advance()
         return code
 

@@ -13,6 +13,12 @@ Numlang is an esoteric stack-based language using only the characters `012345678
 - * : multiply
 - / : divide
 - ^ : read double from input
+- 10 : <
+- 11 : >
+- 12 : ==
+- 13 : !=
+- 14 : <=
+- 15 : >=
 - | : print top of stack
 - .n : call function n
 - /n code ; : define function n
