@@ -25,7 +25,7 @@ class Parser:
         operations = []
         while not self._at_end():
             token = self._advance()
-            operations.append(token.kind)
+            operations.append((token.kind, token.value))
         return Program(operations)
 
     def _at_end(self) -> bool:

@@ -6,6 +6,7 @@
 
 double stack[STACK_SIZE];
 int sp = 0;
+double vars[10] = {0};
 
 void push(double x) {
     if (sp >= STACK_SIZE) {
@@ -24,9 +25,10 @@ double pop() {
 }
 
 int main() {
-    push(2.0);
-    push(3.0);
-    { double b = pop(); double a = pop(); push(a + b); }
+    push(5.0);
+    push(vars[0]);
+    { int var = (int)pop(); double val = pop(); vars[var] = val; }
+    push(vars[0]);
     printf("%g\n", pop());
     return 0;
 }

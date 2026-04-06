@@ -5,21 +5,22 @@ Numlang is an esoteric stack-based language using only the characters `012345678
 ## Features
 
 - Stack-based operations
-- Numbers 0-9 push to stack
+- Numbers 0-9 push literals to stack
+- |n pushes the value of variable n (0-9)
+- & assigns: value |n & assigns the popped value to variable n
 - + : add
 - - : subtract
 - * : multiply
 - / : divide
 - ^ : power
-- & : bitwise and
-- | : bitwise or
+- | : bitwise or (when not followed by digit)
 - . : print top of stack
 - ; : ignored
 
 ## Example
 
 ```
-23+.
+5|0&|0.
 ```
 
-Pushes 2, pushes 3, adds (5), prints 5.
+Assigns 5 to var 0, pushes var 0, prints 5.

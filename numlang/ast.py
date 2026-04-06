@@ -6,4 +6,4 @@ from typing import List
 
 @dataclass
 class Program:
-    operations: List[str]
+    operations: List[tuple[str, Any]]

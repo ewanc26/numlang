@@ -37,6 +37,16 @@ class Lexer:
 
             start_line, start_col = self.line, self.col
 
+            if ch == "|":
+                if self._peek(1) in "0123456789":
+                    var = self._peek(1)
+                    tokens.append(Token("PUSH_VAR", int(var), start_line, start_col))
+                    self._advance()
+                    self._advance()
+                else:
+                    tokens.append(Token("|", "|", start_line, start_col))
+                    self._advance()
+                continue
             if ch in "0123456789^&*+-/.|;":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()

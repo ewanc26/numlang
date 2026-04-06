@@ -26,6 +26,7 @@ class CCodeGenerator:
         lines.append("")
         lines.append("double stack[STACK_SIZE];")
         lines.append("int sp = 0;")
+        lines.append("double vars[10] = {0};")
         lines.append("")
         lines.append("void push(double x) {")
         lines.append("    if (sp >= STACK_SIZE) {")
@@ -44,27 +45,28 @@ class CCodeGenerator:
         lines.append("}")
         lines.append("")
         lines.append("int main() {")
-        for op in self.program.operations:
-            if op in "0123456789":
-                lines.append(f"    push({op}.0);")
-            elif op == "+":
+        for kind, value in self.program.operations:
+            if kind == "PUSH_VAR":
+                lines.append(f"    push(vars[{value}]);")
+            elif kind == "&":
+                lines.append("    { int var = (int)pop(); double val = pop(); vars[var] = val; }")
+            elif kind in "0123456789":
+                lines.append(f"    push({kind}.0);")
+            elif kind == "+":
                 lines.append("    { double b = pop(); double a = pop(); push(a + b); }")
-            elif op == "-":
+            elif kind == "-":
                 lines.append("    { double b = pop(); double a = pop(); push(a - b); }")
-            elif op == "*":
+            elif kind == "*":
                 lines.append("    { double b = pop(); double a = pop(); push(a * b); }")
-            elif op == "/":
+            elif kind == "/":
                 lines.append("    { double b = pop(); double a = pop(); push(a / b); }")
-            elif op == "^":
+            elif kind == "^":
                 lines.append("    { double b = pop(); double a = pop(); push(pow(a, b)); }")
-            elif op == "&":
-                lines.append("    { double b = pop(); double a = pop(); push((int)a & (int)b); }")
-            elif op == "|":
+            elif kind == "|":
                 lines.append("    { double b = pop(); double a = pop(); push((int)a | (int)b); }")
-            elif op == ".":
+            elif kind == ".":
                 lines.append("    printf(\"%g\\n\", pop());")
-            elif op == ";":
-                # Maybe end or something, but ignore for now
+            elif kind == ";":
                 pass
         lines.append("    return 0;")
         lines.append("}")
