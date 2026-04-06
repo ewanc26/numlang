@@ -28,6 +28,8 @@ class Lexer:
         tokens: List[Token] = []
         while not self._eof():
             ch = self._peek()
+
+            # Skip whitespace
             if ch in " \t\r":
                 self._advance()
                 continue
@@ -35,8 +37,15 @@ class Lexer:
                 self._advance_line()
                 continue
 
+            # Skip line comments
+            if ch == "#":
+                while not self._eof() and self._peek() != "\n":
+                    self._advance()
+                continue
+
             start_line, start_col = self.line, self.col
 
+            # |n → push variable n, bare | → print
             if ch == "|":
                 if self._peek(1) in "0123456789":
                     var = self._peek(1)
@@ -47,6 +56,8 @@ class Lexer:
                     tokens.append(Token("|", "|", start_line, start_col))
                     self._advance()
                 continue
+
+            # Numbers
             if ch.isdigit():
                 buf = [ch]
                 self._advance()
@@ -55,7 +66,9 @@ class Lexer:
                 text = "".join(buf)
                 tokens.append(Token("NUM", int(text), start_line, start_col))
                 continue
-            if ch in "^&*+-/.|;":
+
+            # Single-character operators (including new % for modulo)
+            if ch in "^&*+-/.|;%":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()
                 continue

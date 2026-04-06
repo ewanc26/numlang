@@ -1,0 +1,41 @@
+# fizzbuzz.num - FizzBuzz from 1 to 15
+#
+# vars[0] = counter (1..15)
+# vars[1] = scratch / divisibility flag
+#
+# Strategy:
+#   For each n: if n%3==0 print 0, if n%5==0 print 0, else print n
+#   (Numlang has no strings, so 0 stands in for "Fizz"/"Buzz"/"FizzBuzz")
+#
+# Initialise counter
+1 0 &
+
+# Condition: vars[0] <= 15
+|0 15 14
+
+30
+    # Check divisible by 15 (FizzBuzz)
+    |0 15 % 0 12    # (vars[0] % 15) == 0
+    20 0 |          # IF: print 0
+
+    # Check divisible by 3 only
+    |0 3 %  0 12    # (vars[0] % 3) == 0
+    |0 15 % 0 13    # AND vars[0] % 15 != 0
+    * 20 0 |        # IF both: print 0
+
+    # Check divisible by 5 only
+    |0 5 %  0 12
+    |0 15 % 0 13
+    * 20 0 |
+
+    # Otherwise print the number itself
+    |0 3 %  0 13    # vars[0] % 3  != 0
+    |0 5 %  0 13    # vars[0] % 5  != 0
+    * 20 |0 |       # IF both true: print vars[0]
+
+    # Increment counter
+    |0 1 + 0 &
+
+    # Next condition
+    |0 15 14
+;

@@ -1,1 +1,8 @@
-/0 5|0&|0| ; .0
+# function.num - define and call a function that prints 5
+# Function 0: assign 5 to var 0, then print var 0
+/0
+    5 0 &
+    |0 |
+;
+
+.0

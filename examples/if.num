@@ -1,0 +1,8 @@
+# if.num - conditional execution
+# If 3 < 5 is true, print 99
+3 5 10      # push (3 < 5) = 1
+20 99 |     # IF: pop condition, if truthy execute next op (print 99)
+
+# If 5 < 3 is true, print 99 (won't execute)
+5 3 10      # push (5 < 3) = 0
+20 99 |     # IF: condition is 0, skipped

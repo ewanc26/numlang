@@ -1,0 +1,10 @@
+# stack.num - demonstrate DUP (16), SWAP (17), DROP (18)
+
+# DUP: duplicate top of stack
+7 16 + |        # 7 dup → [7,7], add → 14, print
+
+# SWAP: swap top two elements
+3 9 17 - |      # push 3, push 9, swap → [9,3], sub → 9-3=6, print
+
+# DROP: discard top of stack
+5 42 18 |       # push 5, push 42, drop → [5], print 5
