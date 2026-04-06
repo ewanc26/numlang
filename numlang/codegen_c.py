@@ -44,30 +44,48 @@ class CCodeGenerator:
         lines.append("    return stack[--sp];")
         lines.append("}")
         lines.append("")
+
+        # Generate function definitions
+        for func in self.program.functions:
+            lines.append(f"void func_{func.num}() {{")
+            for kind, value in func.code:
+                lines.extend(self._generate_op(kind, value))
+            lines.append("}")
+            lines.append("")
+
         lines.append("int main() {")
-        for kind, value in self.program.operations:
-            if kind == "PUSH_VAR":
-                lines.append(f"    push(vars[{value}]);")
-            elif kind == "&":
-                lines.append("    { int var = (int)pop(); double val = pop(); vars[var] = val; }")
-            elif kind in "0123456789":
-                lines.append(f"    push({kind}.0);")
-            elif kind == "+":
-                lines.append("    { double b = pop(); double a = pop(); push(a + b); }")
-            elif kind == "-":
-                lines.append("    { double b = pop(); double a = pop(); push(a - b); }")
-            elif kind == "*":
-                lines.append("    { double b = pop(); double a = pop(); push(a * b); }")
-            elif kind == "/":
-                lines.append("    { double b = pop(); double a = pop(); push(a / b); }")
-            elif kind == "^":
-                lines.append("    { double x; if (scanf(\"%lf\", &x) != 1) exit(1); push(x); }")
-            elif kind == "|":
-                lines.append("    { double b = pop(); double a = pop(); push((int)a | (int)b); }")
-            elif kind == ".":
-                lines.append("    printf(\"%g\\n\", pop());")
-            elif kind == ";":
-                pass
+        for kind, value in self.program.main_code:
+            lines.extend(self._generate_op(kind, value))
         lines.append("    return 0;")
         lines.append("}")
         return "\n".join(lines)
+
+    def _generate_op(self, kind, value):
+        lines = []
+        if kind == "PUSH_VAR":
+            lines.append(f"    push(vars[{value}]);")
+        elif kind == "&":
+            lines.append("    { int var = (int)pop(); double val = pop(); vars[var] = val; }")
+        elif kind in "0123456789":
+            lines.append(f"    push({kind}.0);")
+        elif kind == "NUM":
+            lines.append(f"    push({value}.0);")
+        elif kind == "+":
+            lines.append("    { double b = pop(); double a = pop(); push(a + b); }")
+        elif kind == "-":
+            lines.append("    { double b = pop(); double a = pop(); push(a - b); }")
+        elif kind == "*":
+            lines.append("    { double b = pop(); double a = pop(); push(a * b); }")
+        elif kind == "/":
+            lines.append("    { double b = pop(); double a = pop(); push(a / b); }")
+        elif kind == "^":
+            lines.append("    { double x; if (scanf(\"%lf\", &x) != 1) exit(1); push(x); }")
+        elif kind == "|":
+            lines.append("    printf(\"%g\\n\", pop());")
+        elif kind == ".":
+            lines.append(f"    func_{value}();")
+        elif kind == ";":
+            pass
+        elif kind == "CALL":  # Assuming ^ is CALL
+            lines.append(f"    func_{value}();")
+        return lines

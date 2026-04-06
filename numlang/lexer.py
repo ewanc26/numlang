@@ -47,7 +47,15 @@ class Lexer:
                     tokens.append(Token("|", "|", start_line, start_col))
                     self._advance()
                 continue
-            if ch in "0123456789^&*+-/.|;":
+            if ch.isdigit():
+                buf = [ch]
+                self._advance()
+                while not self._eof() and self._peek().isdigit():
+                    buf.append(self._advance())
+                text = "".join(buf)
+                tokens.append(Token("NUM", int(text), start_line, start_col))
+                continue
+            if ch in "^&*+-/.|;":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()
                 continue
