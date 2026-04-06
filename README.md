@@ -1,7 +1,7 @@
 # Numlang compiler
 
 Numlang is an esoteric stack-based language that compiles to C via a Python compiler.
-The character set is `0-9 ^ & * + - / . | ; % #`.
+The character set is `0-9 ^ & * + - / . | ; % # ~ "`.
 
 ---
 
@@ -101,8 +101,49 @@ Example — store 42 in var 3:
 
 | Symbol | Effect |
 |--------|--------|
-| `\|` | Pop and print top of stack (followed by newline) |
+| `\|` | Pop and print top of stack as a number (followed by newline) |
+| `~` | Pop and print top of stack as an ASCII character (no newline) |
 | `^` | Read a double from stdin and push it |
+| `"..."` | Print a string literal (see below) |
+
+### String literals
+
+`"..."` prints each character in the string immediately — the multi-character
+sibling of `~`.  It desugars to a `putchar()` call per character and leaves
+the stack unchanged.
+
+Escape sequences follow the full C syntax set:
+
+| Escape | Value | Meaning |
+|--------|-------|---------|
+| `\n`   | 10    | newline |
+| `\t`   | 9     | horizontal tab |
+| `\r`   | 13    | carriage return |
+| `\\`  | 92    | backslash |
+| `\"`   | 34    | double quote |
+| `\'`   | 39    | single quote |
+| `\a`   | 7     | alert / bell |
+| `\b`   | 8     | backspace |
+| `\f`   | 12    | form feed |
+| `\v`   | 11    | vertical tab |
+| `\xHH` | 0–255 | hex escape (1–2 hex digits) |
+| `\NNN` | 0–255 | octal escape (1–3 octal digits, first digit 0–7) |
+
+String literals solve the "special number" problem neatly: even though the
+integer `10` is the `LT` opcode, `"\n"` always produces a newline character
+because the escape is resolved in the lexer, never touching the numeric
+opcode table.
+
+```
+"Hello, World!\n"
+```
+
+```
+# Mix freely with ~ and numeric I/O
+"Score: "
+42 |       # prints 42 as a number
+"Bye!\n"
+```
 
 ### Functions
 
@@ -121,8 +162,10 @@ Functions may be defined in any order; forward calls are supported.
 ### Hello, World!
 
 ```
-42 |
+"Hello, World!\n"
 ```
+
+(The old way still works too — `~` per char with numeric codes — but string literals are cleaner.)
 
 ### Assign and print
 

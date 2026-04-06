@@ -90,6 +90,10 @@ class Parser:
             self._advance()
             return None
 
+        if tok.kind == "STRING":
+            self._advance()
+            return ("STRING", tok.value)
+
         if tok.kind == ".":
             # Function call: .N
             self._advance()
