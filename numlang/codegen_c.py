@@ -61,7 +61,7 @@ class CCodeGenerator:
             elif kind == "/":
                 lines.append("    { double b = pop(); double a = pop(); push(a / b); }")
             elif kind == "^":
-                lines.append("    { double b = pop(); double a = pop(); push(pow(a, b)); }")
+                lines.append("    { double x; if (scanf(\"%lf\", &x) != 1) exit(1); push(x); }")
             elif kind == "|":
                 lines.append("    { double b = pop(); double a = pop(); push((int)a | (int)b); }")
             elif kind == ".":

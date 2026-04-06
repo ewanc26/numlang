@@ -12,7 +12,7 @@ Numlang is an esoteric stack-based language using only the characters `012345678
 - - : subtract
 - * : multiply
 - / : divide
-- ^ : power
+- ^ : read double from input
 - | : bitwise or (when not followed by digit)
 - . : print top of stack
 - ; : ignored
