@@ -1,4 +1,5 @@
 # trig.num — trigonometry using opcodes 33 (SIN), 34 (COS), 35 (TAN)
+#            and inverse trig: 46 (ASIN), 47 (ACOS), 48 (ATAN), 49 (ATAN2)
 #
 # All angles are in radians.
 
@@ -13,3 +14,12 @@
 3.14159265 2 / 1 &
 "sin(π/2) ≈ " |1 33 |   # ≈ 1.0
 "cos(π/2) ≈ " |1 34 |   # ≈ 0.0 (floating-point close to 0)
+
+# Inverse trig — should all give back π/4 ≈ 0.7854
+"asin(sin(π/4)) ≈ " |0 33 46 |   # 46 = ASIN
+"acos(cos(π/4)) ≈ " |0 34 47 |   # 47 = ACOS
+"atan(tan(π/4)) ≈ " |0 35 48 |   # 48 = ATAN
+
+# ATAN2: atan2(y, x) — push x first, then y before opcode 49
+# atan2(1, 1) = π/4
+"atan2(1,1) ≈ " 1 1 49 |         # 49 = ATAN2

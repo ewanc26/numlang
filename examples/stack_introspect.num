@@ -1,0 +1,27 @@
+# stack_introspect.num — demonstrate DEPTH (63) and PICK (64)
+#
+# DEPTH pushes the current stack depth.
+# PICK pops n and copies the element n positions below the new top (0 = top).
+
+# --- DEPTH ---
+1 2 3           # stack: [1, 2, 3]  (depth 3)
+"depth should be 3: " 63 |   # DEPTH → push 3, print
+
+18 18 18        # DROP three times; stack empty
+
+# --- PICK ---
+10 20 30        # stack: [10, 20, 30]
+"pick(0) = 30: " 0 64 |   # PICK 0 → copy top → 30
+"pick(1) = 20: " 1 64 |   # PICK 1 → copy 2nd from top → 20
+"pick(2) = 10: " 2 64 |   # PICK 2 → copy 3rd from top → 10
+
+# Original stack untouched — print them
+18 18 18        # drop the PICK'd copies
+"30 " 30 12     # check top is 30
+20
+    "top is 30\n"
+28
+    "top is not 30\n"
+;
+18              # DROP 30
+
