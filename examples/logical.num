@@ -1,0 +1,25 @@
+# logical.num — logical operators: NOT (!), OR (19), AND (39)
+#
+# AND (opcode 39) and OR (opcode 19) operate on 0.0/1.0 boolean values.
+# NOT (!) flips a boolean.
+
+# Simple boolean literals
+1 0 &   # vars[0] = true
+0 1 &   # vars[1] = false
+
+"true AND true  = " |0 |0 39 |     # → 1
+"true AND false = " |0 |1 39 |     # → 0
+"false OR true  = " |1 |0 19 |     # → 1
+"false OR false = " |1 |1 19 |     # → 0
+"NOT true       = " |0 ! |         # → 0
+"NOT false      = " |1 ! |         # → 1
+
+# Short-circuit style: compound condition
+# "x > 3 AND x < 10" for x = 7
+7 0 &
+|0 3 11 |0 10 10 39     # (x>3) AND (x<10)
+20
+    "7 is between 3 and 10\n"
+28
+    "7 is out of range\n"
+;

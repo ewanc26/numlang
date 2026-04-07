@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 
 from .codegen_c import CCodeGenerator, CodegenContext
+from .lexer import Lexer, LexError
 from .parser import Parser, ParseError
 from .sema import SemanticAnalyzer, SemanticError
 
@@ -15,12 +16,13 @@ class CompileError(Exception):
     pass
 
 
-def compile_source(source: str) -> str:
+def compile_source(source: str, stack_size: int = 1000) -> str:
     parser = Parser.from_source(source)
     program = parser.parse()
     analyzer = SemanticAnalyzer()
     analyzer.analyze(program)
-    generator = CCodeGenerator(program, CodegenContext())
+    ctx = CodegenContext(stack_size=stack_size)
+    generator = CCodeGenerator(program, ctx)
     return generator.generate()
 
 
@@ -42,20 +44,73 @@ def main(argv: list[str] | None = None) -> int:
         metavar="CC",
         help="C compiler to use with --run (default: gcc)",
     )
+    ap.add_argument(
+        "--stack-size",
+        type=int,
+        default=1000,
+        metavar="N",
+        help="Runtime stack depth (default: 1000)",
+    )
+    ap.add_argument(
+        "--emit-tokens",
+        action="store_true",
+        help="Print the token stream and exit (debug)",
+    )
+    ap.add_argument(
+        "--emit-ast",
+        action="store_true",
+        help="Print the parsed AST and exit (debug)",
+    )
     args = ap.parse_args(argv)
 
-    if not args.run and args.output is None:
-        ap.error("Either -o/--output or --run must be specified")
+    if not args.run and args.output is None and not args.emit_tokens and not args.emit_ast:
+        ap.error("Either -o/--output, --run, --emit-tokens, or --emit-ast must be specified")
+
+    if args.stack_size < 1:
+        ap.error("--stack-size must be at least 1")
 
     input_path = Path(args.input)
 
     try:
         source = input_path.read_text(encoding="utf-8")
-        c_code = compile_source(source)
     except OSError as exc:
         print(f"numlangc: {exc}", file=sys.stderr)
         return 1
-    except (ParseError, SemanticError, CompileError) as exc:
+
+    # --emit-tokens: lex only, dump tokens
+    if args.emit_tokens:
+        try:
+            lexer = Lexer(source)
+            tokens = lexer.tokenize()
+        except LexError as exc:
+            print(f"numlangc: {exc}", file=sys.stderr)
+            return 1
+        for tok in tokens:
+            print(f"  {tok.line:4}:{tok.col:<4} {tok.kind:<12} {tok.value!r}")
+        return 0
+
+    # --emit-ast: parse only, dump AST
+    if args.emit_ast:
+        try:
+            parser = Parser.from_source(source)
+            program = parser.parse()
+        except (LexError, ParseError) as exc:
+            print(f"numlangc: {exc}", file=sys.stderr)
+            return 1
+        print(f"Functions ({len(program.functions)}):")
+        for func in program.functions:
+            print(f"  /{ func.num}")
+            for op in func.body:
+                print(f"    {op}")
+        print(f"\nMain ({len(program.main_code)} ops):")
+        for op in program.main_code:
+            print(f"  {op}")
+        return 0
+
+    # Normal compilation path
+    try:
+        c_code = compile_source(source, stack_size=args.stack_size)
+    except (LexError, ParseError, SemanticError, CompileError) as exc:
         print(f"numlangc: {exc}", file=sys.stderr)
         return 1
 

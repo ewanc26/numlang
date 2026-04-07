@@ -52,6 +52,9 @@ class Lexer:
                 self._advance_line()
                 continue
 
+            # Capture position now — used by all remaining branches.
+            start_line, start_col = self.line, self.col
+
             # String literal "..."
             if ch == '"':
                 self._advance()  # consume opening "
@@ -91,32 +94,53 @@ class Lexer:
                     self._advance()
                 continue
 
-            start_line, start_col = self.line, self.col
-
-            # |n → push variable n, bare | → print
+            # |nn → push variable nn (0–99); bare | → print
             if ch == "|":
                 if self._peek(1) in "0123456789":
-                    var = self._peek(1)
-                    tokens.append(Token("PUSH_VAR", int(var), start_line, start_col))
-                    self._advance()
-                    self._advance()
+                    self._advance()              # consume |
+                    d1 = self._advance()         # first digit (guaranteed)
+                    var_str = d1
+                    # Optionally consume a second digit for indices 10-99
+                    if not self._eof() and self._peek() in "0123456789":
+                        var_str += self._advance()
+                    var_idx = int(var_str)
+                    if var_idx > 99:
+                        raise LexError(
+                            f"Variable index {var_idx} out of range (0–99) "
+                            f"at {start_line}:{start_col}"
+                        )
+                    tokens.append(Token("PUSH_VAR", var_idx, start_line, start_col))
                 else:
                     tokens.append(Token("|", "|", start_line, start_col))
                     self._advance()
                 continue
 
-            # Numbers
+            # Numbers (integer or float)
             if ch.isdigit():
                 buf = [ch]
                 self._advance()
                 while not self._eof() and self._peek().isdigit():
                     buf.append(self._advance())
+
+                # Check for decimal point → float literal
+                is_float = False
+                if (not self._eof()
+                        and self._peek() == '.'
+                        and self._peek(1) in "0123456789"):
+                    is_float = True
+                    buf.append(self._advance())  # consume '.'
+                    while not self._eof() and self._peek().isdigit():
+                        buf.append(self._advance())
+
                 text = "".join(buf)
-                tokens.append(Token("NUM", int(text), start_line, start_col))
+                if is_float:
+                    tokens.append(Token("NUM", float(text), start_line, start_col))
+                else:
+                    tokens.append(Token("NUM", int(text), start_line, start_col))
                 continue
 
-            # Single-character operators (including new % for modulo, ~ for putchar)
-            if ch in "^&*+-/.|;%~":
+            # Single-character operators
+            if ch in "^&*+-/.|;%~!":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()
                 continue

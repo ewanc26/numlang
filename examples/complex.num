@@ -4,16 +4,7 @@
 #   count, sum, mean, min, max.
 # As a bonus, prints the Collatz sequence seeded by the count.
 #
-# This program demonstrates: string I/O, WHILE loops, function
-# definitions, user input, and branchless conditional selection.
-#
-# The core trick: IF only guards one operation, so we cannot
-# write multi-step branches. Instead we use the identity:
-#
-#   select(cond, x, y) = cond*x + (1-cond)*y
-#
-# where cond is 1.0 (true) or 0.0 (false). This lets us
-# conditionally update a variable without IF at all.
+# This version uses block-form IF/ELSE (20 … 28 … ;) for clarity.
 #
 # Variable layout:
 #   vars[0]  current input / Collatz working value
@@ -21,14 +12,13 @@
 #   vars[2]  sum
 #   vars[3]  min
 #   vars[4]  max
-#   vars[5]  scratch — holds a cond during branchless select
+#   vars[5]  scratch — holds a condition during branchless select
 #   vars[6]  mean (computed after input phase)
-#   vars[7]  Collatz even-flag scratch
 #
 # Function index:
 #   0  print separator line
-#   1  update min  (branchless, reads vars[0] and vars[3])
-#   2  update max  (branchless, reads vars[0] and vars[4])
+#   1  update min  (branchless select)
+#   2  update max  (branchless select)
 #   3  print final statistics report
 #   4  print Collatz sequence starting from vars[0]
 
@@ -40,11 +30,9 @@
 ;
 
 # ------------------------------------------------------------------ #
-# Function 1: update min (branchless)
+# Function 1: update min (branchless select)
 #
-# Computes: vars[3] = cond*vars[0] + (1-cond)*vars[3]
-# where cond = (vars[0] < vars[3])
-# i.e. vars[3] = vars[0] if vars[0] is smaller, else unchanged.
+#   new_min = cond*x + (1-cond)*old_min  where cond = (x < old_min)
 # ------------------------------------------------------------------ #
 /1
     |0 |3 10        # cond = (x < min)
@@ -56,10 +44,9 @@
 ;
 
 # ------------------------------------------------------------------ #
-# Function 2: update max (branchless)
+# Function 2: update max (branchless select)
 #
-# Computes: vars[4] = cond*vars[0] + (1-cond)*vars[4]
-# where cond = (vars[0] > vars[4])
+#   new_max = cond*x + (1-cond)*old_max  where cond = (x > old_max)
 # ------------------------------------------------------------------ #
 /2
     |0 |4 11        # cond = (x > max)
@@ -88,22 +75,22 @@
 # ------------------------------------------------------------------ #
 # Function 4: Collatz sequence from vars[0]
 #
-# Classic hailstone sequence: even -> x/2, odd -> 3x+1, until x=1.
-# Again uses branchless select:
-#   cond_even = (x % 2 == 0)
-#   next = cond_even*(x/2) + (1-cond_even)*(3x+1)
+# Uses block-form IF/ELSE to choose the next value cleanly:
+#   even → x / 2
+#   odd  → 3x + 1
 # ------------------------------------------------------------------ #
 /4
     "Collatz: "
     |0 |                    # print seed
+
     |0 1 13                 # initial condition: x != 1
     30
-        |0 2 % 0 12         # cond_even = (x % 2 == 0)
-        7 &                 # vars[7] = cond_even
-        |7 |0 2 / *         # cond_even * (x / 2)
-        1 |7 - |0 3 * 1 + * # (1 - cond_even) * (3x + 1)
-        +
-        0 &                 # vars[0] = next x
+        |0 2 38 0 12        # (x IMOD 2) == 0 ?
+        20
+            |0 2 / 0 &      # even: x = x / 2
+        28
+            |0 3 * 1 + 0 &  # odd:  x = 3x + 1
+        ;
         |0 |                # print next x
         |0 1 13             # next condition: x != 1
     ;
@@ -122,8 +109,7 @@
 0 1 &   # count = 0
 0 2 &   # sum   = 0
 
-# Read the first value and use it to seed min and max.
-# The loop below will count and sum it on its first pass.
+# Read the first value; seed min and max from it.
 "Number: "
 ^ 0 &           # vars[0] = first input
 |0 3 &          # min = first input
@@ -142,25 +128,23 @@
 ;
 
 # ---- Compute mean (safe: avoids div-by-zero when count = 0) ----
-# cond = (count != 0)
-# mean = (cond * sum) / (cond * count + (1 - cond))
-#      = sum / count   when count > 0
-#      = 0             when count = 0
-|1 0 13 5 &             # vars[5] = (count != 0)
-|5 |2 *                 # numerator:   cond * sum
-|5 |1 * 1 |5 - +        # denominator: cond * count + (1 - cond)
-/ 6 &                   # vars[6] = mean
+|1 0 13         # (count != 0)?
+20
+    |2 |1 / 6 &     # mean = sum / count
+28
+    0 6 &           # mean = 0
+;
 
 # Print the statistics
 .3
 
 # ---- Collatz bonus ----
-# Seed from count; guard against 0 using the same branchless trick:
-#   seed = cond*count + (1-cond)*1  where cond = (count != 0)
 .0
 "Collatz sequence seeded by count:\n"
-|1 0 13 5 &             # vars[5] = (count != 0)
-|5 |1 *                 # cond * count
-1 |5 - +                # + (1 - cond)  so result is 1 when count = 0
-0 &                     # vars[0] = seed
+|1 0 13         # (count != 0)?
+20
+    |1 0 &          # seed = count
+28
+    1 0 &           # seed = 1 when count is 0
+;
 .4

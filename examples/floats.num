@@ -1,0 +1,30 @@
+# floats.num — float literal support and math built-ins
+#
+# Float literals like 3.14 always push a value and never trigger opcodes.
+
+3.14159 0 &         # vars[0] = π (approx)
+2.71828 1 &         # vars[1] = e (approx)
+
+"pi  = " |0 |
+"e   = " |1 |
+
+# Compute 2^10 using POW (opcode 29)
+2 10 29 |           # → 1024
+
+# Natural log of e ≈ 1
+|1 31 |             # ln(e) ≈ 1
+
+# log10(1000) = 3
+1000 32 |
+
+# sqrt(2) ≈ 1.41421
+2.0 22 |
+
+# Absolute value
+25.0 25 21 |        # abs(-25) = 25  (25.0 NEG ABS)
+
+# Round / trunc / ceil / floor
+3.7 36 |            # round(3.7)  = 4
+3.7 37 |            # trunc(3.7)  = 3
+3.2 24 |            # ceil(3.2)   = 4
+3.9 23 |            # floor(3.9)  = 3
