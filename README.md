@@ -140,6 +140,10 @@ numlangc hello.num --emit-ast
 | `33` | SIN    | pop x (radians) → push sin(x) |
 | `34` | COS    | pop x (radians) → push cos(x) |
 | `35` | TAN    | pop x (radians) → push tan(x) |
+| `46` | ASIN   | pop x → push arcsin(x) in radians (domain error if x ∉ [−1, 1]) |
+| `47` | ACOS   | pop x → push arccos(x) in radians (domain error if x ∉ [−1, 1]) |
+| `48` | ATAN   | pop x → push arctan(x) in radians |
+| `49` | ATAN2  | pop x, pop y → push atan2(y, x) in radians |
 | `36` | ROUND  | pop x → push nearest integer (halfway rounds away from zero) |
 | `37` | TRUNC  | pop x → push integer part, truncated toward zero |
 
@@ -152,6 +156,8 @@ numlangc hello.num --emit-ast
 | `60` | RAND | push a random double in [0, 1) |
 | `61` | TIME | push current Unix timestamp as a double |
 | `62` | EXIT | pop exit code; terminate program immediately |
+| `63` | DEPTH | push the current stack depth as a double |
+| `64` | PICK  | pop n; push a copy of the element n positions below the (new) top (0 = top) |
 
 ---
 
@@ -306,6 +312,10 @@ Recursion is supported.
 | `33`     | SIN             | Math        |
 | `34`     | COS             | Math        |
 | `35`     | TAN             | Math        |
+| `46`     | ASIN            | Math        |
+| `47`     | ACOS            | Math        |
+| `48`     | ATAN            | Math        |
+| `49`     | ATAN2           | Math        |
 | `36`     | ROUND           | Math        |
 | `37`     | TRUNC           | Math        |
 | `38`     | IMOD            | Math        |
@@ -316,6 +326,8 @@ Recursion is supported.
 | `60`     | RAND            | Misc        |
 | `61`     | TIME            | Misc        |
 | `62`     | EXIT            | Misc        |
+| `63`     | DEPTH           | Misc        |
+| `64`     | PICK            | Misc        |
 
 ---
 
@@ -451,7 +463,8 @@ examples/
   fizzbuzz.num    — uses nested IF-ELSE
   factorial.num
   floats.num      — float literals and math built-ins
-  trig.num        — sin, cos, tan
+  trig.num        — sin, cos, tan, asin, acos, atan, atan2
+  stack_introspect.num — DEPTH and PICK
   bitwise.num     — BAND, BOR, BXOR, BNOT, BSHL, BSHR
   logical.num     — NOT, OR, AND
   math_ops.num

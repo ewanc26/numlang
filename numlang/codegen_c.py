@@ -262,6 +262,28 @@ class CCodeGenerator:
             elif kind == "TAN":
                 lines.append(f"{pad}push(tan(pop()));")
 
+            elif kind == "ASIN":
+                lines.append(
+                    f"{pad}{{ double _x = pop(); "
+                    f"if (_x < -1.0 || _x > 1.0) {{ fprintf(stderr, \"ASIN domain error\\n\"); exit(1); }} "
+                    f"push(asin(_x)); }}"
+                )
+
+            elif kind == "ACOS":
+                lines.append(
+                    f"{pad}{{ double _x = pop(); "
+                    f"if (_x < -1.0 || _x > 1.0) {{ fprintf(stderr, \"ACOS domain error\\n\"); exit(1); }} "
+                    f"push(acos(_x)); }}"
+                )
+
+            elif kind == "ATAN":
+                lines.append(f"{pad}push(atan(pop()));")
+
+            elif kind == "ATAN2":
+                lines.append(
+                    f"{pad}{{ double _x = pop(); double _y = pop(); push(atan2(_y, _x)); }}"
+                )
+
             elif kind == "IMOD":
                 lines.append(
                     f"{pad}{{ int _b = (int)pop(); int _a = (int)pop(); "
@@ -315,6 +337,16 @@ class CCodeGenerator:
                 lines.append(f"{pad}pop();")
 
             # ---- Misc ops ------------------------------------------
+
+            elif kind == "DEPTH":
+                lines.append(f"{pad}push((double)sp);")
+
+            elif kind == "PICK":
+                lines.append(
+                    f"{pad}{{ int _n = (int)pop(); "
+                    f"if (_n < 0 || _n >= sp) {{ fprintf(stderr, \"PICK index out of range\\n\"); exit(1); }} "
+                    f"push(stack[sp - 1 - _n]); }}"
+                )
 
             elif kind == "RAND":
                 lines.append(f"{pad}push((double)rand() / ((double)RAND_MAX + 1.0));")

@@ -53,6 +53,10 @@ _MATH_OPS: dict[int, str] = {
     36: "ROUND",  # round to nearest integer
     37: "TRUNC",  # truncate toward zero
     38: "IMOD",   # integer remainder (a % b, both cast to int)
+    46: "ASIN",   # arcsin(x) — result in radians
+    47: "ACOS",   # arccos(x) — result in radians
+    48: "ATAN",   # arctan(x) — result in radians
+    49: "ATAN2",  # atan2(y, x) — two-argument arctangent
 }
 
 # Bitwise operations — values are truncated to int before the operation
@@ -70,6 +74,8 @@ _MISC_OPS: dict[int, str] = {
     60: "RAND",   # push random double in [0, 1)
     61: "TIME",   # push current Unix timestamp as double
     62: "EXIT",   # pop exit code and terminate program
+    63: "DEPTH",  # push current stack depth as a double
+    64: "PICK",   # pop n; push copy of element n positions below the new top (0 = top)
 }
 
 # All opcodes that consume their numeric token and produce a non-NUM op
