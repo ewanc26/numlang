@@ -1,0 +1,43 @@
+# repeat.num — REPEAT loop (opcode 50)
+#
+# Syntax:  N 50 <body> ;
+#
+# Pops N, then executes body N times.
+# Each iteration, the 0-based iteration index is pushed BEFORE the body runs.
+# DROP (18) it if unused.
+
+# Print "hello" 3 times — drop the iteration index
+3 50
+    18          # DROP the iteration index we don't need
+    "hello\n"
+;
+
+# Print 0, 1, 2 using the iteration index
+"Counting:\n"
+3 50
+    |           # print the iteration index
+;
+
+# Build the sum 0+1+2+...+(N-1) for N=5 using REPEAT
+# vars[0] accumulates the sum
+0 0 &           # sum = 0
+5 50
+    # top of stack: iteration index i
+    |0 + 0 &    # sum += i
+;
+"Sum 0..4 = "
+|0 |            # → 10
+
+# Print a multiplication table (5×5) — nested REPEAT
+"Multiplication table (1–5):\n"
+5 50
+    # outer iteration index is on stack, save to vars[1]
+    1 + 1 &         # vars[1] = row (1-indexed)
+    5 50
+        1 +         # col = 0-based index + 1
+        2 &         # vars[2] = col
+        |1 |2 *     # row * col
+        |           # print result
+    ;
+    "---\n"
+;

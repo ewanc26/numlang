@@ -1,0 +1,15 @@
+# trig.num — trigonometry using opcodes 33 (SIN), 34 (COS), 35 (TAN)
+#
+# All angles are in radians.
+
+# π / 4 ≈ 0.785398 (45°)
+3.14159265 4 / 0 &
+
+"sin(π/4) ≈ " |0 33 |   # ≈ 0.707107
+"cos(π/4) ≈ " |0 34 |   # ≈ 0.707107
+"tan(π/4) ≈ " |0 35 |   # ≈ 1.0
+
+# π/2 ≈ 1.5708 (90°)
+3.14159265 2 / 1 &
+"sin(π/2) ≈ " |1 33 |   # ≈ 1.0
+"cos(π/2) ≈ " |1 34 |   # ≈ 0.0 (floating-point close to 0)

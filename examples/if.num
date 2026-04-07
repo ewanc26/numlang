@@ -1,8 +1,30 @@
-# if.num - conditional execution
-# If 3 < 5 is true, print 99
-3 5 10      # push (3 < 5) = 1
-20 99 |     # IF: pop condition, if truthy execute next op (print 99)
+# if.num — conditional execution with block-form IF and optional ELSE
+#
+# Syntax:  20 <then_body> [28 <else_body>] ;
+#
+# The integer 28 acts as the else-separator INSIDE an if block only.
+# Outside of an if block, 28 is a plain numeric push.
 
-# If 5 < 3 is true, print 99 (won't execute)
-5 3 10      # push (5 < 3) = 0
-20 99 |     # IF: condition is 0, skipped
+# ---- Simple IF (no else) ----
+3 5 10          # push (3 < 5) = 1.0
+20
+    "3 is less than 5\n"
+;
+
+# ---- IF-ELSE ----
+5 3 10          # push (5 < 3) = 0.0
+20
+    "5 is less than 3 (won't print)\n"
+28
+    "5 is NOT less than 3 (prints this)\n"
+;
+
+# ---- Nested IF ----
+7 7 12          # push (7 == 7) = 1.0
+20
+    "Values are equal!\n"
+    4 2 11      # push (4 > 2) = 1.0
+    20
+        "And 4 > 2 too.\n"
+    ;
+;

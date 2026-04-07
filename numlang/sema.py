@@ -31,23 +31,39 @@ class SemanticAnalyzer:
         errors: List[str],
         context: str,
     ) -> None:
-        for idx, (kind, value) in enumerate(ops):
+        for kind, value in ops:
             if kind == "CALL":
                 if value not in defined:
                     errors.append(
                         f"Semantic error in {context}: call to undefined function {value}"
                     )
-            elif kind == "IF":
-                # IF should not be the last instruction
-                if idx == len(ops) - 1:
-                    errors.append(
-                        f"Semantic error in {context}: IF has no following instruction"
-                    )
+
+            elif kind == "IF_BLOCK":
+                then_ops, else_ops = value
+                self._check_ops(then_ops, defined, errors, context=f"{context}/if_then")
+                if else_ops is not None:
+                    self._check_ops(else_ops, defined, errors, context=f"{context}/if_else")
+
             elif kind == "WHILE":
-                body: List[Op] = value  # type: ignore[assignment]
+                body: List[Op] = value
                 if not body:
                     errors.append(
-                        f"Semantic error in {context}: WHILE (30) has an empty body"
+                        f"Semantic error in {context}: WHILE has an empty body"
                     )
                 else:
                     self._check_ops(body, defined, errors, context=f"{context}/while")
+
+            elif kind == "REPEAT":
+                body = value
+                if not body:
+                    errors.append(
+                        f"Semantic error in {context}: REPEAT has an empty body"
+                    )
+                else:
+                    self._check_ops(body, defined, errors, context=f"{context}/repeat")
+
+            elif kind == "PUSH_VAR":
+                if not (0 <= value <= 99):
+                    errors.append(
+                        f"Semantic error in {context}: variable index {value} out of range (0–99)"
+                    )

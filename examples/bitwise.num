@@ -1,0 +1,26 @@
+# bitwise.num — bitwise operations (opcodes 40–45)
+#
+# BAND (40), BOR (41), BXOR (42), BNOT (43), BSHL (44), BSHR (45)
+# All operands are truncated to int before the operation.
+
+# 0b1010 (10) AND 0b1100 (12) = 0b1000 (8)
+10 12 40 |          # → 8
+
+# 0b1010 (10) OR 0b1100 (12) = 0b1110 (14)
+10 12 41 |          # → 14
+
+# 0b1010 (10) XOR 0b1100 (12) = 0b0110 (6)
+10 12 42 |          # → 6
+
+# NOT 0 = -1 (all bits set in two's complement)
+0 43 |              # → -1
+
+# 1 << 4 = 16
+1 4 44 |            # → 16
+
+# 256 >> 3 = 32
+256 3 45 |          # → 32
+
+# Combining: mask lower 4 bits of 0xABCD (43981)
+# 43981 AND 0x0F (15) = 0xD (13)
+43981 15 40 |       # → 13
