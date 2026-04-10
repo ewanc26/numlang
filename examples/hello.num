@@ -1,2 +1,3 @@
 # Hello, World! - print the number 42
-42 |
+# NOTE: 42 is BXOR opcode, use float to push value 42
+42.0 |

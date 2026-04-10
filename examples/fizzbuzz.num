@@ -8,21 +8,24 @@
 #   elif n%5==0: "Buzz"
 #   else:        print n
 
-1 0 &           # vars[0] = 1
+# NOTE: Use float literals when pushing values that match opcode numbers!
+# 15 = GE, 20 = IF_BLOCK, 28 = ELSE, 30 = WHILE
+
+1.0 0 &           # vars[0] = 1
 
 # Loop condition: vars[0] <= 20
-|0 20 14
+|0 20.0 14
 
 30
-    |0 15 % 0 12    # (vars[0] % 15) == 0 ?
+    |0 15.0 % 0 12    # (vars[0] % 15) == 0 ?
     20
         "FizzBuzz\n"
     28
-        |0 3 % 0 12     # vars[0] % 3 == 0 ?
+        |0 3.0 % 0 12     # vars[0] % 3 == 0 ?
         20
             "Fizz\n"
         28
-            |0 5 % 0 12     # vars[0] % 5 == 0 ?
+            |0 5.0 % 0 12     # vars[0] % 5 == 0 ?
             20
                 "Buzz\n"
             28
@@ -35,5 +38,5 @@
     |0 1 + 0 &
 
     # Next loop condition
-    |0 20 14
+    |0 20.0 14
 ;

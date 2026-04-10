@@ -2,25 +2,29 @@
 #
 # New in this version: float literals, POW (29), LOG (31), LOG10 (32),
 # ROUND (36), TRUNC (37), IMOD (38), AND (39)
+#
+# NOTE: Use float literals when pushing values that match opcode numbers!
+# 10 = LT, 22 = SQRT, 25 = NEG, 29 = POW, 31 = LOG, 32 = LOG10
 
 # ---- Classic ops ----
 "ABS(-7)    = " 7.0 25 21 |     # NEG then ABS → 7
-"SQRT(16)   = " 16 22 |         # 4
+"SQRT(16)   = " 16.0 22 |        # 4
 "FLOOR(3.7) = " 3.7 23 |        # 3
 "CEIL(3.2)  = " 3.2 24 |        # 4
-"NEG(42)    = " 42 25 |         # -42
+"NEG(42)    = " 42.0 25 |         # -42
 "MIN(8,3)   = " 8 3 26 |        # 3
 "MAX(8,3)   = " 8 3 27 |        # 8
 
 # ---- New ops ----
-"2^10       = " 2 10 29 |       # POW  → 1024
-"ln(e)      = " 2.71828 31 |    # LOG  ≈ 1
-"log10(100) = " 100 32 |        # LOG10 → 2
+"2^10       = " 2.0 10.0 29 |    # POW  -> 1024
+"ln(e)      = " 2.71828 31 |    # LOG  ~ 1
+"log10(100) = " 100.0 32 |       # LOG10 -> 2
 "ROUND(2.6) = " 2.6 36 |        # 3
 "TRUNC(2.9) = " 2.9 37 |        # 2
-"17 IMOD 5  = " 17 5 38 |       # integer remainder → 2
+"17 IMOD 5  = " 17.0 5.0 38 |    # integer remainder -> 2
 
 # ---- Logical ----
+# NOTE: 0, 1, 5 are NOT opcodes so can be used as-is
 "NOT(0)     = " 0 ! |           # 1
 "NOT(5)     = " 5 ! |           # 0
 "0 OR 1     = " 0 1 19 |        # 1
