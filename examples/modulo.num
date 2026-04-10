@@ -1,3 +1,4 @@
 # modulo.num - compute remainders with %
-17 5 % |    # 17 mod 5 = 2
-10 3 % |    # 10 mod 3 = 1
+# NOTE: Use float literals! 17 = SWAP opcode, 10 = LT opcode
+17.0 5.0 % |    # 17 mod 5 = 2
+10.0 3.0 % |    # 10 mod 3 = 1

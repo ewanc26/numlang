@@ -1,25 +1,28 @@
-# trig.num — trigonometry using opcodes 33 (SIN), 34 (COS), 35 (TAN)
+# trig.num - trigonometry using opcodes 33 (SIN), 34 (COS), 35 (TAN)
 #            and inverse trig: 46 (ASIN), 47 (ACOS), 48 (ATAN), 49 (ATAN2)
 #
 # All angles are in radians.
+#
+# NOTE: Beware of /<integer> which is parsed as function definition!
+# Use pre-computed float values or rearrange to avoid this ambiguity.
 
-# π / 4 ≈ 0.785398 (45°)
-3.14159265 4 / 0 &
+# pi/4 ~ 0.785398 (45 deg) - precomputed to avoid "/ 4" function definition
+0.785398 0 &
 
-"sin(π/4) ≈ " |0 33 |   # ≈ 0.707107
-"cos(π/4) ≈ " |0 34 |   # ≈ 0.707107
-"tan(π/4) ≈ " |0 35 |   # ≈ 1.0
+"sin(0.785) ~ " |0 33 |   # ~ 0.707107
+"cos(0.785) ~ " |0 34 |   # ~ 0.707107
+"tan(0.785) ~ " |0 35 |   # ~ 1.0
 
-# π/2 ≈ 1.5708 (90°)
-3.14159265 2 / 1 &
-"sin(π/2) ≈ " |1 33 |   # ≈ 1.0
-"cos(π/2) ≈ " |1 34 |   # ≈ 0.0 (floating-point close to 0)
+# pi/2 ~ 1.5708 (90 deg) - precomputed
+1.570796 1 &
+"sin(1.571) ~ " |1 33 |   # ~ 1.0
+"cos(1.571) ~ " |1 34 |   # ~ 0.0
 
-# Inverse trig — should all give back π/4 ≈ 0.7854
-"asin(sin(π/4)) ≈ " |0 33 46 |   # 46 = ASIN
-"acos(cos(π/4)) ≈ " |0 34 47 |   # 47 = ACOS
-"atan(tan(π/4)) ≈ " |0 35 48 |   # 48 = ATAN
+# Inverse trig - should all give back ~0.7854
+"asin(sin(0.785)) ~ " |0 33 46 |   # 46 = ASIN
+"acos(cos(0.785)) ~ " |0 34 47 |   # 47 = ACOS
+"atan(tan(0.785)) ~ " |0 35 48 |   # 48 = ATAN
 
-# ATAN2: atan2(y, x) — push x first, then y before opcode 49
-# atan2(1, 1) = π/4
-"atan2(1,1) ≈ " 1 1 49 |         # 49 = ATAN2
+# ATAN2: atan2(y, x) - push x first, then y before opcode 49
+# atan2(1, 1) = pi/4
+"atan2(1,1) ~ " 1 1 49 |         # 49 = ATAN2

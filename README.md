@@ -271,9 +271,21 @@ Escape sequences follow the full C syntax set:
 .N              # call function N
 ```
 
-Function numbers are plain integers (0, 1, 2, …).  
-Functions may be defined in any order; forward calls are supported.  
+Function numbers are plain integers (0, 1, 2, …).
+Functions may be defined in any order; forward calls are supported.
 Recursion is supported.
+
+> **Warning:** The `/` character is both the division operator **and** the function definition prefix. When `/` is followed by an integer literal, it is parsed as a function definition. For example, `4 / 0 &` will define function 0 instead of dividing 4 by 0. Use `4.0 / 0 &` or restructure your code to avoid this ambiguity.
+
+---
+
+## Gotchas and tips
+
+1. **Opcode collisions**: Integer literals that match opcode numbers are interpreted as opcodes, not values. Use float syntax (e.g., `10.0` instead of `10`) to push these numbers. Affected numbers: 10–15 (comparisons), 16–18 (stack), 19 (OR), 20 (IF), 21–27 (math), 28 (ELSE), 29 (POW), 30 (WHILE), 31–35 (trig), 36–39 (round/logical), 40–45 (bitwise), 46–49 (inverse trig), 50 (REPEAT), 60–64 (misc).
+
+2. **Division vs functions**: `/` followed by an integer defines a function. Use float divisors or pre-compute values to avoid this.
+
+3. **String literals**: All characters in strings are output as raw byte values via `putchar()`. Non-ASCII characters may cause encoding issues on some systems.
 
 ---
 

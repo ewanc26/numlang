@@ -240,7 +240,8 @@ class TestCodegen:
 
     def test_variables(self):
         _skip_no_gcc()
-        out = compile_and_run("42 0 & |0 |")
+        # NOTE: 42 is BXOR opcode, use float to push value
+        out = compile_and_run("42.0 0 & |0 |")
         assert out.strip() == "42"
 
     def test_if_true(self):
@@ -307,8 +308,9 @@ class TestCodegen:
 
     def test_pick(self):
         _skip_no_gcc()
-        # stack: [10, 20, 30]; pick(1) → 20
-        out = compile_and_run("10 20 30 1 64 |")
+        # stack: [10, 20, 30]; pick(1) -> 20
+        # NOTE: 10=LT, 20=IF_BLOCK, 30=WHILE - use floats!
+        out = compile_and_run("10.0 20.0 30.0 1 64 |")
         assert out.strip() == "20"
 
     def test_logical_not(self):
@@ -328,7 +330,8 @@ class TestCodegen:
 
     def test_bitwise_and(self):
         _skip_no_gcc()
-        out = compile_and_run("12 10 40 |")  # 12 & 10 = 8
+        # NOTE: 12=EQ, 10=LT opcodes - use floats!
+        out = compile_and_run("12.0 10.0 40 |")  # 12 & 10 = 8
         assert out.strip() == "8"
 
     def test_sqrt(self):
