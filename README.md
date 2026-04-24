@@ -1,7 +1,9 @@
 # Numlang compiler
 
 Numlang is an esoteric stack-based language that compiles to C via a Python compiler.
-The character set is `0-9 ^ & * + - / . | ; % # ~ " !`.
+The character set is `0-9 ^ & * + - / . | ; % # ~ \" !`.
+
+> 🧶 Also available on [Tangled](https://tangled.org/ewancroft.uk/numlang)
 
 ---
 
