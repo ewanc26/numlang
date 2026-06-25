@@ -1,3 +1,8 @@
+/*
+ * hello.c — hand-written test of the stack runtime for variables.
+ * Stores 5.0 in vars[0], then reads and prints it.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

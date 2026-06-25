@@ -3,6 +3,9 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
+  # Provides Python + setuptools for both local development and
+  # CI — no system-level Python install needed.
+
   outputs = { self, nixpkgs }:
     let
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];

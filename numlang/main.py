@@ -1,3 +1,9 @@
+"""CLI entry point for the Numlang compiler.
+
+Provides the ``numlangc`` command that compiles .num files to C,
+with optional direct execution via gcc and debug token/AST dumps.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -17,6 +23,10 @@ class CompileError(Exception):
 
 
 def compile_source(source: str, stack_size: int = 1000) -> str:
+    """Compile a Numlang source string into C source code.
+
+    Runs the full pipeline: lex, parse, semantic analysis, codegen.
+    """
     parser = Parser.from_source(source)
     program = parser.parse()
     analyzer = SemanticAnalyzer()
@@ -27,6 +37,7 @@ def compile_source(source: str, stack_size: int = 1000) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI entry point: parse args, compile, optionally execute."""
     ap = argparse.ArgumentParser(
         prog="numlangc",
         description="Compile Numlang source to C (optionally compile & run)",

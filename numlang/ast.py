@@ -1,6 +1,12 @@
+"""AST node types for the Numlang compiler.
+
+An Op is a (kind, value) pair representing a single instruction in the
+intermediate representation between parsing and code generation.
+"""
+
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Any, Tuple
 
 # An instruction is a (kind, value) tuple.

@@ -1,3 +1,8 @@
+/*
+ * compare.c — hand-written test of the stack runtime with comparisons.
+ * Pushes 3.0 and 5.0, compares (3 < 5), prints the result (1).
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

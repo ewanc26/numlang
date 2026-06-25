@@ -1,3 +1,10 @@
+"""C code generator for Numlang.
+
+Translates the analysed AST into a standalone C file with stack-based
+runtime, variable storage, and all opcode implementations inlined.
+The output compiles with any C99+ compiler and links against libm.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -8,10 +15,18 @@ from .ast import Program, Op
 
 @dataclass
 class CodegenContext:
+    """Configuration for the code generator — currently just stack depth."""
+
     stack_size: int = 1000
 
 
 class CCodeGenerator:
+    """Emits a complete C source file from a Numlang Program AST.
+
+    Produces push/pop/peek helpers, forward-declared functions, a main()
+    entry point, and all opcode expansions as inline C blocks.
+    """
+
     def __init__(self, program: Program, context: CodegenContext):
         self.program = program
         self.context = context

@@ -1,3 +1,9 @@
+"""Recursive-descent parser that converts a token stream into an AST.
+
+Dispatches integer tokens to opcode tables, floats always push, and
+control-flow constructs (IF_BLOCK, WHILE, REPEAT) are parsed recursively.
+"""
+
 from __future__ import annotations
 
 from typing import List, Any, Tuple, Optional
@@ -7,7 +13,7 @@ from .lexer import Lexer, Token, LexError
 
 
 class ParseError(Exception):
-    pass
+    """Raised on malformed syntax — unexpected tokens or structural errors."""
 
 
 # -----------------------------------------------------------------------
@@ -96,6 +102,13 @@ _SPECIAL_NUMS: dict[int, str] = {
 
 
 class Parser:
+    """Recursive-descent parser producing a Program AST.
+
+    Integer tokens are checked against the opcode dispatch tables first.
+    Floats, strings, and unrecognised integers become NUM pushes.
+    Control flow (20=IF, 30=WHILE, 50=REPEAT) captures bodies recursively.
+    """
+
     def __init__(self, tokens: List[Token]):
         self.tokens = tokens
         self.i = 0

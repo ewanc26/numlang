@@ -1,3 +1,10 @@
+"""Tokeniser for Numlang source files.
+
+Produces a flat stream of Token values consumed by the parser.
+Supports integers, floats (which bypass opcode dispatch), string literals
+with full C-style escapes, and the |n variable-shorthand syntax.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -5,7 +12,7 @@ from typing import Any, List
 
 
 class LexError(Exception):
-    pass
+    """Raised on invalid tokens, unterminated strings, or bad escape sequences."""
 
 
 # Maps single-character escape letters to their byte values (mirrors C).
@@ -25,6 +32,8 @@ _SIMPLE_ESCAPES: dict[str, int] = {
 
 @dataclass(slots=True)
 class Token:
+    """A single token from the source: kind, value, and source location."""
+
     kind: str
     value: Any
     line: int
@@ -32,6 +41,13 @@ class Token:
 
 
 class Lexer:
+    """Recursive-descent lexical analyser for Numlang.
+
+    The Numlang character set is: 0-9 ^ & * + - / . | ; % # ~ " !.
+    Tokens are context-free — the parser handles structural disambiguation
+    (e.g. integer 28 as an else-separator vs. a plain push).
+    """
+
     def __init__(self, source: str):
         self.source = source
         self.length = len(source)

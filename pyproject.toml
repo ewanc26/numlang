@@ -1,3 +1,5 @@
+# Pyproject configuration for the numlang compiler package.
+
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"

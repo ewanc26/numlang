@@ -1,4 +1,5 @@
-# Prints grid marking primes (#) vs non-primes (.)
+# prime_grid.num — ASCII prime sieve visualisation
+# Prints a grid marking primes (#) vs composites (.)
 # Input: width, height
 
 ^ 0 &

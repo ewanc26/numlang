@@ -24,7 +24,7 @@ from numlang.main import compile_source
 # ---------------------------------------------------------------------------
 
 def compile_and_run(source: str, stdin: str = "") -> str:
-    """Compile *source*, build with gcc, run, and return captured stdout."""
+    """Compile source, build with gcc, run, and return captured stdout."""
     c_code = compile_source(source)
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir)

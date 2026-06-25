@@ -1,3 +1,9 @@
+"""Semantic analysis pass for Numlang programs.
+
+Checks for undefined function calls, empty loop bodies, and out-of-range
+variable indices before code generation.
+"""
+
 from __future__ import annotations
 
 from typing import List, Set
@@ -6,10 +12,18 @@ from .ast import Program, Op
 
 
 class SemanticError(Exception):
-    pass
+    """Raised when a program violates Numlang's semantic rules."""
 
 
 class SemanticAnalyzer:
+    """Walks the AST to catch errors the parser can't detect.
+
+    Currently checks:
+      - All CALL targets reference a defined function.
+      - WHILE and REPEAT bodies contain at least one op.
+      - PUSH_VAR indices stay within 0-99.
+    """
+
     def analyze(self, program: Program) -> None:
         defined: Set[int] = {f.num for f in program.functions}
         errors: List[str] = []

@@ -1,3 +1,8 @@
+/*
+ * input.c — hand-written test of the stack runtime with stdin input.
+ * Reads a double, stores it in vars[0], then reads and prints it.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

@@ -1,3 +1,8 @@
+/*
+ * function.c — hand-written test of the stack runtime with a user function.
+ * Defines func_0 that stores to and reads from vars[0], then calls it.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
