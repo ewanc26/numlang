@@ -14,7 +14,7 @@ from pathlib import Path
 
 from .codegen_c import CCodeGenerator, CodegenContext
 from .lexer import Lexer, LexError
-from .parser import Parser, ParseError
+from .parser import ParseError, Parser
 from .sema import SemanticAnalyzer, SemanticError
 
 
@@ -38,6 +38,11 @@ def compile_source(source: str, stack_size: int = 1000) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point: parse args, compile, optionally execute."""
+    if "--support" in (argv if argv is not None else sys.argv[1:]):
+        print("Support Numlang development:")
+        print("  Ko-fi: https://ko-fi.com/ewancroft")
+        print("  GitHub Sponsors: https://github.com/sponsors/ewanc26")
+        return 0
     ap = argparse.ArgumentParser(
         prog="numlangc",
         description="Compile Numlang source to C (optionally compile & run)",
@@ -72,10 +77,22 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Print the parsed AST and exit (debug)",
     )
+    ap.add_argument(
+        "--support",
+        action="store_true",
+        help="Print sponsor links (Ko-fi: https://ko-fi.com/ewancroft · GitHub Sponsors: https://github.com/sponsors/ewanc26)",
+    )
     args = ap.parse_args(argv)
 
-    if not args.run and args.output is None and not args.emit_tokens and not args.emit_ast:
-        ap.error("Either -o/--output, --run, --emit-tokens, or --emit-ast must be specified")
+    if (
+        not args.run
+        and args.output is None
+        and not args.emit_tokens
+        and not args.emit_ast
+    ):
+        ap.error(
+            "Either -o/--output, --run, --emit-tokens, or --emit-ast must be specified"
+        )
 
     if args.stack_size < 1:
         ap.error("--stack-size must be at least 1")
@@ -144,7 +161,9 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 return 1
             if result.returncode != 0:
-                print(f"numlangc: C compilation failed:\n{result.stderr}", file=sys.stderr)
+                print(
+                    f"numlangc: C compilation failed:\n{result.stderr}", file=sys.stderr
+                )
                 return 1
             run_result = subprocess.run([str(exe_file)])
             return run_result.returncode
