@@ -48,7 +48,17 @@ class CCodeGenerator:
             "#include <math.h>",
             "#include <time.h>",
         ]
-        lines += sorted({f"#include <{decl.header}>" for decl in self.program.foreign})
+        lines += sorted(
+            {
+                f"#include <{decl.header}>"
+                for decl in self.program.foreign
+                if not decl.header.endswith(".c")
+            }
+        )
+        for decl in self.program.foreign:
+            if decl.header.endswith(".c"):
+                params = ", ".join(["double"] * decl.arity) or "void"
+                lines.append(f"double {decl.symbol}({params});")
         lines += [
             "",
             f"#define STACK_SIZE {self.context.stack_size}",

@@ -185,7 +185,7 @@ Out-of-range array access exits with status 1.
 3 4 $0 |                  # call: pops the arguments, pushes the result
 ```
 
-Declarations (`@`) appear at the top level. Calls (`$`) take the arguments from the stack in order. Foreign functions take and return C `double` values, and the header is included in the generated C. Link libraries such as libm are added automatically.
+Declarations (`@`) appear at the top level. Calls (`$`) take the arguments from the stack in order. Foreign functions take and return C `double` values, and the header is included in the generated C. Link libraries such as libm are added automatically. A header ending in `.c` is treated as a user C source: it is compiled and linked from the directory of the `.num` file, and the generated code declares it with `double` parameters.
 
 ### Control flow
 
