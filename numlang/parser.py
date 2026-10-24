@@ -6,10 +6,12 @@ control-flow constructs (IF_BLOCK, WHILE, REPEAT) are parsed recursively.
 
 from __future__ import annotations
 
-from typing import List, Any, Tuple, Optional
+from typing import Any, List, Optional, Tuple
 
-from .ast import Program, Function, Op
-from .lexer import Lexer, Token, LexError
+from .ast import Foreign, Function, Op, Program
+from .lexer import Lexer, LexError, Token
+
+MAX_FOREIGN_ARITY = 3
 
 
 class ParseError(Exception):
@@ -43,45 +45,57 @@ _LOGICAL_OPS: dict[int, str] = {
 
 # Math / numeric built-ins
 _MATH_OPS: dict[int, str] = {
-    21: "ABS",    # |x|
-    22: "SQRT",   # √x
+    21: "ABS",  # |x|
+    22: "SQRT",  # √x
     23: "FLOOR",  # ⌊x⌋
-    24: "CEIL",   # ⌈x⌉
-    25: "NEG",    # −x
-    26: "MIN2",   # min(a, b)
-    27: "MAX2",   # max(a, b)
-    29: "POW",    # a ^ b
-    31: "LOG",    # ln(x)
+    24: "CEIL",  # ⌈x⌉
+    25: "NEG",  # −x
+    26: "MIN2",  # min(a, b)
+    27: "MAX2",  # max(a, b)
+    29: "POW",  # a ^ b
+    31: "LOG",  # ln(x)
     32: "LOG10",  # log₁₀(x)
-    33: "SIN",    # sin(x) — radians
-    34: "COS",    # cos(x) — radians
-    35: "TAN",    # tan(x) — radians
+    33: "SIN",  # sin(x) — radians
+    34: "COS",  # cos(x) — radians
+    35: "TAN",  # tan(x) — radians
     36: "ROUND",  # round to nearest integer
     37: "TRUNC",  # truncate toward zero
-    38: "IMOD",   # integer remainder (a % b, both cast to int)
-    46: "ASIN",   # arcsin(x) — result in radians
-    47: "ACOS",   # arccos(x) — result in radians
-    48: "ATAN",   # arctan(x) — result in radians
+    38: "IMOD",  # integer remainder (a % b, both cast to int)
+    46: "ASIN",  # arcsin(x) — result in radians
+    47: "ACOS",  # arccos(x) — result in radians
+    48: "ATAN",  # arctan(x) — result in radians
     49: "ATAN2",  # atan2(y, x) — two-argument arctangent
 }
 
 # Bitwise operations — values are truncated to int before the operation
 _BITWISE_OPS: dict[int, str] = {
-    40: "BAND",   # a & b
-    41: "BOR",    # a | b
-    42: "BXOR",   # a ^ b
-    43: "BNOT",   # ~a  (unary)
-    44: "BSHL",   # a << b
-    45: "BSHR",   # a >> b (arithmetic)
+    40: "BAND",  # a & b
+    41: "BOR",  # a | b
+    42: "BXOR",  # a ^ b
+    43: "BNOT",  # ~a  (unary)
+    44: "BSHL",  # a << b
+    45: "BSHR",  # a >> b (arithmetic)
 }
 
 # Misc
 _MISC_OPS: dict[int, str] = {
-    60: "RAND",   # push random double in [0, 1)
-    61: "TIME",   # push current Unix timestamp as double
-    62: "EXIT",   # pop exit code and terminate program
+    60: "RAND",  # push random double in [0, 1)
+    61: "TIME",  # push current Unix timestamp as double
+    62: "EXIT",  # pop exit code and terminate program
     63: "DEPTH",  # push current stack depth as a double
-    64: "PICK",   # pop n; push copy of element n positions below the new top (0 = top)
+    64: "PICK",  # pop n; push copy of element n positions below the new top (0 = top)
+}
+
+# Integer operations and fixed-size arrays.
+# ARR_NEW: [id, size] -> allocate array id with size zeroed elements
+# ARR_SET: [id, index, value] -> store
+# ARR_GET: [id, index] -> push element
+# IDIV:    [a, b] -> a / b truncated toward zero, C int semantics
+_INTEGER_ARRAY_OPS: dict[int, str] = {
+    51: "ARR_NEW",
+    52: "ARR_SET",
+    53: "ARR_GET",
+    55: "IDIV",
 }
 
 # All opcodes that consume their numeric token and produce a non-NUM op
@@ -92,10 +106,11 @@ _SPECIAL_NUMS: dict[int, str] = {
     **_MATH_OPS,
     **_BITWISE_OPS,
     **_MISC_OPS,
+    **_INTEGER_ARRAY_OPS,
     # Control flow — handled specially in _parse_single_op
-    20: "IF_BLOCK",    # 20 <then_body> [28 <else_body>] ;
-    30: "WHILE",       # 30 <body> ;
-    50: "REPEAT",      # 50 <body> ;
+    20: "IF_BLOCK",  # 20 <then_body> [28 <else_body>] ;
+    30: "WHILE",  # 30 <body> ;
+    50: "REPEAT",  # 50 <body> ;
     # 28 is NOT in this table: inside an IF_BLOCK body it is the else-separator;
     # outside of that context it is treated as a plain numeric push.
 }
@@ -126,11 +141,15 @@ class Parser:
     def parse(self) -> Program:
         functions: List[Function] = []
         main_code: List[Op] = []
+        foreign: List[Foreign] = []
 
         while not self._at_end():
             tok = self._current()
 
-            if tok.kind == "/" and self._peek_next_kind() == "NUM":
+            if tok.kind == "@":
+                foreign.append(self._parse_foreign())
+
+            elif tok.kind == "/" and self._peek_next_kind() == "NUM":
                 # Function definition:  /N <body> ;
                 self._advance()
                 num = self._current().value
@@ -140,7 +159,7 @@ class Parser:
                         f"at {self._current().line}:{self._current().col}"
                     )
                 self._advance()
-                body = self._parse_block()   # consumes up to and including ";"
+                body = self._parse_block()  # consumes up to and including ";"
                 functions.append(Function(num, body))
 
             else:
@@ -148,11 +167,44 @@ class Parser:
                 if op is not None:
                     main_code.append(op)
 
-        return Program(functions, main_code)
+        return Program(functions, main_code, foreign)
 
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
+
+    def _parse_foreign(self) -> Foreign:
+        """Parse a foreign declaration:  @N "header.h" "symbol" arity ;"""
+        at = self._advance()
+        num = self._expect_int("Foreign function number", at)
+        header = self._expect_string("Header name", at)
+        symbol = self._expect_string("C symbol name", at)
+        arity = self._expect_int("Foreign function arity", at)
+        if not 0 <= arity <= MAX_FOREIGN_ARITY:
+            raise ParseError(
+                f"Foreign arity must be 0-{MAX_FOREIGN_ARITY}, got {arity} "
+                f"at {at.line}:{at.col}"
+            )
+        if self._current().kind != ";":
+            raise ParseError(
+                f"Expected ';' after foreign declaration at {at.line}:{at.col}"
+            )
+        self._advance()
+        return Foreign(num, header, symbol, arity)
+
+    def _expect_int(self, what: str, at: Token) -> int:
+        tok = self._current()
+        if tok.kind != "NUM" or not isinstance(tok.value, int):
+            raise ParseError(f"{what} must be an integer at {at.line}:{at.col}")
+        self._advance()
+        return tok.value
+
+    def _expect_string(self, what: str, at: Token) -> str:
+        tok = self._current()
+        if tok.kind != "STRING":
+            raise ParseError(f"{what} must be a string at {at.line}:{at.col}")
+        self._advance()
+        return "".join(chr(code) for code in tok.value)
 
     def _parse_block(self) -> List[Op]:
         """Parse a sequence of ops until ';' (consumed) or EOF.
@@ -187,9 +239,7 @@ class Parser:
         while not self._at_end() and self._current().kind != ";":
             tok = self._current()
             # Integer 28 (not float 28.0) is the else-separator
-            if (tok.kind == "NUM"
-                    and isinstance(tok.value, int)
-                    and tok.value == 28):
+            if tok.kind == "NUM" and isinstance(tok.value, int) and tok.value == 28:
                 self._advance()  # consume 28
                 # Parse else body until ";"
                 else_ops = []
@@ -240,6 +290,12 @@ class Parser:
             self._advance()
             return ("NOT", None)
 
+        if tok.kind == "$":
+            # Foreign call: $N, where N was declared with @N
+            self._advance()
+            num = self._expect_int("Foreign function number", tok)
+            return ("FFI_CALL", num)
+
         if tok.kind == "NUM":
             value = tok.value
             self._advance()
@@ -261,6 +317,8 @@ class Parser:
                 return (_BITWISE_OPS[value], None)
             if value in _MISC_OPS:
                 return (_MISC_OPS[value], None)
+            if value in _INTEGER_ARRAY_OPS:
+                return (_INTEGER_ARRAY_OPS[value], None)
 
             if value == 20:
                 # IF_BLOCK: 20 <then_body> [28 <else_body>] ;

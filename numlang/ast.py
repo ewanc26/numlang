@@ -6,8 +6,8 @@ intermediate representation between parsing and code generation.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import List, Any, Tuple
+from dataclasses import dataclass, field
+from typing import Any, List, Tuple
 
 # An instruction is a (kind, value) tuple.
 # value may be:
@@ -24,6 +24,15 @@ class Function:
 
 
 @dataclass
+class Foreign:
+    num: int
+    header: str
+    symbol: str
+    arity: int
+
+
+@dataclass
 class Program:
     functions: List[Function]
     main_code: List[Op]
+    foreign: List[Foreign] = field(default_factory=list)

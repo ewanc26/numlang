@@ -17,16 +17,16 @@ class LexError(Exception):
 
 # Maps single-character escape letters to their byte values (mirrors C).
 _SIMPLE_ESCAPES: dict[str, int] = {
-    'n':  10,   # newline
-    't':  9,    # horizontal tab
-    'r':  13,   # carriage return
-    '\\': 92,  # backslash
-    '"':  34,   # double quote
-    "'":  39,   # single quote
-    'a':  7,    # alert / bell
-    'b':  8,    # backspace
-    'f':  12,   # form feed
-    'v':  11,   # vertical tab
+    "n": 10,  # newline
+    "t": 9,  # horizontal tab
+    "r": 13,  # carriage return
+    "\\": 92,  # backslash
+    '"': 34,  # double quote
+    "'": 39,  # single quote
+    "a": 7,  # alert / bell
+    "b": 8,  # backspace
+    "f": 12,  # form feed
+    "v": 11,  # vertical tab
 }
 
 
@@ -43,7 +43,7 @@ class Token:
 class Lexer:
     """Recursive-descent lexical analyser for Numlang.
 
-    The Numlang character set is: 0-9 ^ & * + - / . | ; % # ~ " !.
+    The Numlang character set is: 0-9 ^ & * + - / . | ; % # ~ " ! @ $.
     Tokens are context-free — the parser handles structural disambiguation
     (e.g. integer 28 as an else-separator vs. a plain push).
     """
@@ -90,9 +90,7 @@ class Lexer:
                             )
                         esc = self._peek()
                         self._advance()
-                        codes.append(
-                            self._escape_char(esc, start_line, start_col)
-                        )
+                        codes.append(self._escape_char(esc, start_line, start_col))
                     else:
                         codes.append(ord(c))
                         self._advance()
@@ -113,8 +111,8 @@ class Lexer:
             # |nn → push variable nn (0–99); bare | → print
             if ch == "|":
                 if self._peek(1) in "0123456789":
-                    self._advance()              # consume |
-                    d1 = self._advance()         # first digit (guaranteed)
+                    self._advance()  # consume |
+                    d1 = self._advance()  # first digit (guaranteed)
                     var_str = d1
                     # Optionally consume a second digit for indices 10-99
                     if not self._eof() and self._peek() in "0123456789":
@@ -140,9 +138,11 @@ class Lexer:
 
                 # Check for decimal point → float literal
                 is_float = False
-                if (not self._eof()
-                        and self._peek() == '.'
-                        and self._peek(1) in "0123456789"):
+                if (
+                    not self._eof()
+                    and self._peek() == "."
+                    and self._peek(1) in "0123456789"
+                ):
                     is_float = True
                     buf.append(self._advance())  # consume '.'
                     while not self._eof() and self._peek().isdigit():
@@ -156,7 +156,7 @@ class Lexer:
                 continue
 
             # Single-character operators
-            if ch in "^&*+-/.|;%~!":
+            if ch in "^&*+-/.|;%~!@$":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()
                 continue
@@ -198,17 +198,15 @@ class Lexer:
             return _SIMPLE_ESCAPES[esc]
 
         # Hex escape: \xHH
-        if esc == 'x':
-            h = ''
+        if esc == "x":
+            h = ""
             for _ in range(2):
-                if not self._eof() and self._peek() in '0123456789abcdefABCDEF':
+                if not self._eof() and self._peek() in "0123456789abcdefABCDEF":
                     h += self._advance()
                 else:
                     break
             if not h:
-                raise LexError(
-                    f"Empty hex escape \\x at {err_line}:{err_col}"
-                )
+                raise LexError(f"Empty hex escape \\x at {err_line}:{err_col}")
             value = int(h, 16)
             if value > 255:
                 raise LexError(
@@ -217,10 +215,10 @@ class Lexer:
             return value
 
         # Octal escape: \0–\7 (up to 3 octal digits)
-        if esc in '01234567':
+        if esc in "01234567":
             oct_str = esc
             for _ in range(2):
-                if not self._eof() and self._peek() in '01234567':
+                if not self._eof() and self._peek() in "01234567":
                     oct_str += self._advance()
                 else:
                     break

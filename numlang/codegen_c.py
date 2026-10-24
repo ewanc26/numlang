@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Optional
 
-from .ast import Program, Op
+from .ast import Op, Program
 
 
 @dataclass
@@ -31,6 +31,7 @@ class CCodeGenerator:
         self.program = program
         self.context = context
         self._label_counter = 0  # unique labels for while / repeat / if blocks
+        self._foreign = {decl.num: decl for decl in program.foreign}
 
     def _new_label(self) -> int:
         label = self._label_counter
@@ -46,6 +47,9 @@ class CCodeGenerator:
             "#include <stdlib.h>",
             "#include <math.h>",
             "#include <time.h>",
+        ]
+        lines += sorted({f"#include <{decl.header}>" for decl in self.program.foreign})
+        lines += [
             "",
             f"#define STACK_SIZE {self.context.stack_size}",
             "",
@@ -53,22 +57,41 @@ class CCodeGenerator:
             "static int    sp = 0;",
             "static double vars[100];   /* vars[0]–vars[99] */",
             "",
+            "#define ARR_COUNT 16",
+            "static double *arrays[ARR_COUNT];",
+            "static int arr_len[ARR_COUNT];",
+            "",
+            "static void arr_new(int id, int n) {",
+            '    if (id < 0 || id >= ARR_COUNT || n < 0) { fprintf(stderr, "Array size or id out of range\\n"); exit(1); }',
+            "    free(arrays[id]);",
+            "    arrays[id] = calloc(n > 0 ? (size_t)n : 1, sizeof(double));",
+            '    if (arrays[id] == NULL) { fprintf(stderr, "Out of memory\\n"); exit(1); }',
+            "    arr_len[id] = n;",
+            "}",
+            "",
+            "static double *arr_slot(int id, int index) {",
+            "    if (id < 0 || id >= ARR_COUNT || index < 0 || index >= arr_len[id]) {",
+            '        fprintf(stderr, "Array index out of range\\n"); exit(1);',
+            "    }",
+            "    return &arrays[id][index];",
+            "}",
+            "",
         ]
 
         # push / pop / peek helpers
         lines += [
             "static void push(double x) {",
-            "    if (sp >= STACK_SIZE) { fprintf(stderr, \"Stack overflow\\n\"); exit(1); }",
+            '    if (sp >= STACK_SIZE) { fprintf(stderr, "Stack overflow\\n"); exit(1); }',
             "    stack[sp++] = x;",
             "}",
             "",
             "static double pop(void) {",
-            "    if (sp <= 0) { fprintf(stderr, \"Stack underflow\\n\"); exit(1); }",
+            '    if (sp <= 0) { fprintf(stderr, "Stack underflow\\n"); exit(1); }',
             "    return stack[--sp];",
             "}",
             "",
             "static double peek(void) {",
-            "    if (sp <= 0) { fprintf(stderr, \"Stack underflow\\n\"); exit(1); }",
+            '    if (sp <= 0) { fprintf(stderr, "Stack underflow\\n"); exit(1); }',
             "    return stack[sp - 1];",
             "}",
             "",
@@ -139,8 +162,12 @@ class CCodeGenerator:
                 lines.append(f"{pad}/* repeat_{lbl} */")
                 lines.append(f"{pad}{{")
                 lines.append(f"{pad}    int _rcount_{lbl} = (int)pop();")
-                lines.append(f"{pad}    for (int _ri_{lbl} = 0; _ri_{lbl} < _rcount_{lbl}; _ri_{lbl}++) {{")
-                lines.append(f"{pad}        push((double)_ri_{lbl});  /* iteration index */")
+                lines.append(
+                    f"{pad}    for (int _ri_{lbl} = 0; _ri_{lbl} < _rcount_{lbl}; _ri_{lbl}++) {{"
+                )
+                lines.append(
+                    f"{pad}        push((double)_ri_{lbl});  /* iteration index */"
+                )
                 lines.extend(self._emit_ops(body, indent + 2))
                 lines.append(f"{pad}    }}")
                 lines.append(f"{pad}}}")
@@ -153,7 +180,7 @@ class CCodeGenerator:
             elif kind == "&":
                 lines.append(
                     f"{pad}{{ int _idx = (int)pop(); double _val = pop(); "
-                    f"if (_idx < 0 || _idx > 99) {{ fprintf(stderr, \"Variable index out of range\\n\"); exit(1); }} "
+                    f'if (_idx < 0 || _idx > 99) {{ fprintf(stderr, "Variable index out of range\\n"); exit(1); }} '
                     f"vars[_idx] = _val; }}"
                 )
 
@@ -166,43 +193,67 @@ class CCodeGenerator:
             # ---- Arithmetic -----------------------------------------
 
             elif kind == "+":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a + _b); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a + _b); }}"
+                )
 
             elif kind == "-":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a - _b); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a - _b); }}"
+                )
 
             elif kind == "*":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a * _b); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a * _b); }}"
+                )
 
             elif kind == "/":
                 lines.append(f"{pad}{{ double _b = pop(); double _a = pop();")
-                lines.append(f"{pad}  if (_b == 0.0) {{ fprintf(stderr, \"Division by zero\\n\"); exit(1); }}")
+                lines.append(
+                    f'{pad}  if (_b == 0.0) {{ fprintf(stderr, "Division by zero\\n"); exit(1); }}'
+                )
                 lines.append(f"{pad}  push(_a / _b); }}")
 
             elif kind == "%":
                 lines.append(f"{pad}{{ double _b = pop(); double _a = pop();")
-                lines.append(f"{pad}  if (_b == 0.0) {{ fprintf(stderr, \"Modulo by zero\\n\"); exit(1); }}")
+                lines.append(
+                    f'{pad}  if (_b == 0.0) {{ fprintf(stderr, "Modulo by zero\\n"); exit(1); }}'
+                )
                 lines.append(f"{pad}  push(fmod(_a, _b)); }}")
 
             # ---- Comparisons ----------------------------------------
 
             elif kind == "LT":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a < _b ? 1.0 : 0.0); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a < _b ? 1.0 : 0.0); }}"
+                )
             elif kind == "GT":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a > _b ? 1.0 : 0.0); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a > _b ? 1.0 : 0.0); }}"
+                )
             elif kind == "EQ":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a == _b ? 1.0 : 0.0); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a == _b ? 1.0 : 0.0); }}"
+                )
             elif kind == "NE":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a != _b ? 1.0 : 0.0); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a != _b ? 1.0 : 0.0); }}"
+                )
             elif kind == "LE":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a <= _b ? 1.0 : 0.0); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a <= _b ? 1.0 : 0.0); }}"
+                )
             elif kind == "GE":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a >= _b ? 1.0 : 0.0); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a >= _b ? 1.0 : 0.0); }}"
+                )
 
             # ---- Logical --------------------------------------------
 
             elif kind == "NOT":
-                lines.append(f"{pad}{{ double _a = pop(); push(_a == 0.0 ? 1.0 : 0.0); }}")
+                lines.append(
+                    f"{pad}{{ double _a = pop(); push(_a == 0.0 ? 1.0 : 0.0); }}"
+                )
 
             elif kind == "LOGICAL_OR":
                 lines.append(
@@ -224,7 +275,7 @@ class CCodeGenerator:
             elif kind == "SQRT":
                 lines.append(
                     f"{pad}{{ double _x = pop(); "
-                    f"if (_x < 0.0) {{ fprintf(stderr, \"SQRT of negative\\n\"); exit(1); }} "
+                    f'if (_x < 0.0) {{ fprintf(stderr, "SQRT of negative\\n"); exit(1); }} '
                     f"push(sqrt(_x)); }}"
                 )
 
@@ -244,10 +295,14 @@ class CCodeGenerator:
                 lines.append(f"{pad}push(-pop());")
 
             elif kind == "MIN2":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a < _b ? _a : _b); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a < _b ? _a : _b); }}"
+                )
 
             elif kind == "MAX2":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_a > _b ? _a : _b); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_a > _b ? _a : _b); }}"
+                )
 
             elif kind == "POW":
                 lines.append(
@@ -257,14 +312,14 @@ class CCodeGenerator:
             elif kind == "LOG":
                 lines.append(
                     f"{pad}{{ double _x = pop(); "
-                    f"if (_x <= 0.0) {{ fprintf(stderr, \"LOG of non-positive\\n\"); exit(1); }} "
+                    f'if (_x <= 0.0) {{ fprintf(stderr, "LOG of non-positive\\n"); exit(1); }} '
                     f"push(log(_x)); }}"
                 )
 
             elif kind == "LOG10":
                 lines.append(
                     f"{pad}{{ double _x = pop(); "
-                    f"if (_x <= 0.0) {{ fprintf(stderr, \"LOG10 of non-positive\\n\"); exit(1); }} "
+                    f'if (_x <= 0.0) {{ fprintf(stderr, "LOG10 of non-positive\\n"); exit(1); }} '
                     f"push(log10(_x)); }}"
                 )
 
@@ -280,14 +335,14 @@ class CCodeGenerator:
             elif kind == "ASIN":
                 lines.append(
                     f"{pad}{{ double _x = pop(); "
-                    f"if (_x < -1.0 || _x > 1.0) {{ fprintf(stderr, \"ASIN domain error\\n\"); exit(1); }} "
+                    f'if (_x < -1.0 || _x > 1.0) {{ fprintf(stderr, "ASIN domain error\\n"); exit(1); }} '
                     f"push(asin(_x)); }}"
                 )
 
             elif kind == "ACOS":
                 lines.append(
                     f"{pad}{{ double _x = pop(); "
-                    f"if (_x < -1.0 || _x > 1.0) {{ fprintf(stderr, \"ACOS domain error\\n\"); exit(1); }} "
+                    f'if (_x < -1.0 || _x > 1.0) {{ fprintf(stderr, "ACOS domain error\\n"); exit(1); }} '
                     f"push(acos(_x)); }}"
                 )
 
@@ -302,7 +357,7 @@ class CCodeGenerator:
             elif kind == "IMOD":
                 lines.append(
                     f"{pad}{{ int _b = (int)pop(); int _a = (int)pop(); "
-                    f"if (_b == 0) {{ fprintf(stderr, \"IMOD by zero\\n\"); exit(1); }} "
+                    f'if (_b == 0) {{ fprintf(stderr, "IMOD by zero\\n"); exit(1); }} '
                     f"push((double)(_a % _b)); }}"
                 )
 
@@ -329,16 +384,53 @@ class CCodeGenerator:
             elif kind == "BSHL":
                 lines.append(
                     f"{pad}{{ int _b = (int)pop(); int _a = (int)pop(); "
-                    f"if (_b < 0 || _b >= 64) {{ fprintf(stderr, \"BSHL shift out of range\\n\"); exit(1); }} "
+                    f'if (_b < 0 || _b >= 64) {{ fprintf(stderr, "BSHL shift out of range\\n"); exit(1); }} '
                     f"push((double)(_a << _b)); }}"
                 )
 
             elif kind == "BSHR":
                 lines.append(
                     f"{pad}{{ int _b = (int)pop(); int _a = (int)pop(); "
-                    f"if (_b < 0 || _b >= 64) {{ fprintf(stderr, \"BSHR shift out of range\\n\"); exit(1); }} "
+                    f'if (_b < 0 || _b >= 64) {{ fprintf(stderr, "BSHR shift out of range\\n"); exit(1); }} '
                     f"push((double)(_a >> _b)); }}"
                 )
+
+            # ---- Integer division and fixed-size arrays -------------
+
+            elif kind == "IDIV":
+                lines.append(
+                    f"{pad}{{ int _b = (int)pop(); int _a = (int)pop(); "
+                    f'if (_b == 0) {{ fprintf(stderr, "IDIV by zero\\n"); exit(1); }} '
+                    f"push((double)(_a / _b)); }}"
+                )
+
+            elif kind == "ARR_NEW":
+                lines.append(
+                    f"{pad}{{ int _n = (int)pop(); int _id = (int)pop(); arr_new(_id, _n); }}"
+                )
+
+            elif kind == "ARR_SET":
+                lines.append(
+                    f"{pad}{{ double _v = pop(); int _i = (int)pop(); int _id = (int)pop(); "
+                    f"*arr_slot(_id, _i) = _v; }}"
+                )
+
+            elif kind == "ARR_GET":
+                lines.append(
+                    f"{pad}{{ int _i = (int)pop(); int _id = (int)pop(); "
+                    f"push(*arr_slot(_id, _i)); }}"
+                )
+
+            # ---- Foreign C calls ------------------------------------
+
+            elif kind == "FFI_CALL":
+                decl = self._foreign[value]
+                # Arguments sit on the stack in order, so pop them last-first.
+                pops = " ".join(
+                    f"double _f{k} = pop();" for k in reversed(range(decl.arity))
+                )
+                args = ", ".join(f"_f{k}" for k in range(decl.arity))
+                lines.append(f"{pad}{{ {pops} push({decl.symbol}({args})); }}")
 
             # ---- Stack manipulation ---------------------------------
 
@@ -346,7 +438,9 @@ class CCodeGenerator:
                 lines.append(f"{pad}push(peek());")
 
             elif kind == "SWAP":
-                lines.append(f"{pad}{{ double _b = pop(); double _a = pop(); push(_b); push(_a); }}")
+                lines.append(
+                    f"{pad}{{ double _b = pop(); double _a = pop(); push(_b); push(_a); }}"
+                )
 
             elif kind == "DROP":
                 lines.append(f"{pad}pop();")
@@ -359,7 +453,7 @@ class CCodeGenerator:
             elif kind == "PICK":
                 lines.append(
                     f"{pad}{{ int _n = (int)pop(); "
-                    f"if (_n < 0 || _n >= sp) {{ fprintf(stderr, \"PICK index out of range\\n\"); exit(1); }} "
+                    f'if (_n < 0 || _n >= sp) {{ fprintf(stderr, "PICK index out of range\\n"); exit(1); }} '
                     f"push(stack[sp - 1 - _n]); }}"
                 )
 
@@ -376,11 +470,11 @@ class CCodeGenerator:
 
             elif kind == "^":
                 lines.append(
-                    f"{pad}{{ double _x; if (scanf(\"%lf\", &_x) != 1) exit(1); push(_x); }}"
+                    f'{pad}{{ double _x; if (scanf("%lf", &_x) != 1) exit(1); push(_x); }}'
                 )
 
             elif kind == "|":
-                lines.append(f"{pad}printf(\"%g\\n\", pop());")
+                lines.append(f'{pad}printf("%g\\n", pop());')
 
             elif kind == "~":
                 lines.append(f"{pad}putchar((int)pop());")

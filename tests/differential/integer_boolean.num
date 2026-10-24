@@ -1,0 +1,5 @@
+# Integer division and remainder use C int semantics; comparisons yield booleans.
+0 7 - 2 55 |
+0 7 - 2 38 |
+3 3 12 |
+3 4 12 |

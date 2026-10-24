@@ -113,7 +113,7 @@ class TestLexer:
 
     def test_unknown_char_raises(self):
         with pytest.raises(LexError):
-            Lexer("@").tokenize()
+            Lexer("?").tokenize()
 
 
 # ---------------------------------------------------------------------------
@@ -353,3 +353,26 @@ class TestCodegen:
         _skip_no_gcc()
         out = compile_and_run('"\\x41\\n"')  # \x41 = 'A'
         assert out == "A\n"
+
+
+class TestForeignAndArrays:
+    def test_foreign_arity_limit(self):
+        with pytest.raises(ParseError):
+            Parser.from_source('@0 "math.h" "f" 4 ;').parse()
+
+    def test_undeclared_foreign_call_is_semantic_error(self):
+        program = Parser.from_source("1 $5 |").parse()
+        with pytest.raises(SemanticError):
+            SemanticAnalyzer().analyze(program)
+
+    def test_duplicate_foreign_declaration_is_semantic_error(self):
+        program = Parser.from_source(
+            '@0 "math.h" "cos" 1 ;\n@0 "math.h" "sin" 1 ;'
+        ).parse()
+        with pytest.raises(SemanticError):
+            SemanticAnalyzer().analyze(program)
+
+    def test_foreign_header_is_included(self):
+        c_src = compile_source('@0 "math.h" "cos" 1 ;\n1 $0 |')
+        assert "#include <math.h>" in c_src
+        assert "cos(_f0)" in c_src

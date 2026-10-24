@@ -163,6 +163,30 @@ numlangc hello.num --emit-ast
 
 ---
 
+### Integer division and fixed-size arrays
+
+Operands of `IDIV` and array indices are truncated to C `int`, so these ops follow C integer semantics.
+
+| Code | Name | Effect |
+|------|------|--------|
+| `51` | ARR_NEW | pop size n, pop id; allocate array `id` with n zeroed elements (ids 0–15) |
+| `52` | ARR_SET | pop value, pop index, pop id; store value at `arr[id][index]` |
+| `53` | ARR_GET | pop index, pop id; push `arr[id][index]` |
+| `55` | IDIV | pop b, pop a; push `a / b` truncated toward zero (exit 1 on division by zero) |
+
+Out-of-range array access exits with status 1.
+
+---
+
+### Foreign C functions
+
+```
+@0 "math.h" "hypot" 2 ;   # declare: number, header, C symbol, arity (0-3)
+3 4 $0 |                  # call: pops the arguments, pushes the result
+```
+
+Declarations (`@`) appear at the top level. Calls (`$`) take the arguments from the stack in order. Foreign functions take and return C `double` values, and the header is included in the generated C. Link libraries such as libm are added automatically.
+
 ### Control flow
 
 #### IF / IF-ELSE  (block form)
@@ -283,7 +307,7 @@ Recursion is supported.
 
 ## Gotchas and tips
 
-1. **Opcode collisions**: Integer literals that match opcode numbers are interpreted as opcodes, not values. Use float syntax (e.g., `10.0` instead of `10`) to push these numbers. Affected numbers: 10–15 (comparisons), 16–18 (stack), 19 (OR), 20 (IF), 21–27 (math), 28 (ELSE), 29 (POW), 30 (WHILE), 31–35 (trig), 36–39 (round/logical), 40–45 (bitwise), 46–49 (inverse trig), 50 (REPEAT), 60–64 (misc).
+1. **Opcode collisions**: Integer literals that match opcode numbers are interpreted as opcodes, not values. Use float syntax (e.g., `10.0` instead of `10`) to push these numbers. Affected numbers: 10–15 (comparisons), 16–18 (stack), 19 (OR), 20 (IF), 21–27 (math), 28 (ELSE), 29 (POW), 30 (WHILE), 31–35 (trig), 36–39 (round/logical), 40–45 (bitwise), 46–49 (inverse trig), 50 (REPEAT), 51–53 and 55 (arrays and IDIV), 60–64 (misc).
 
 2. **Division vs functions**: `/` followed by an integer defines a function. Use float divisors or pre-compute values to avoid this.
 
@@ -342,6 +366,10 @@ Recursion is supported.
 | `62`     | EXIT            | Misc        |
 | `63`     | DEPTH           | Misc        |
 | `64`     | PICK            | Misc        |
+| `51`     | ARR_NEW         | Arrays      |
+| `52`     | ARR_SET         | Arrays      |
+| `53`     | ARR_GET         | Arrays      |
+| `55`     | IDIV            | Integer     |
 
 ---
 
