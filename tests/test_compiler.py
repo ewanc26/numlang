@@ -3,6 +3,7 @@
 Run with:
     pytest tests/
 """
+
 from __future__ import annotations
 
 import subprocess
@@ -12,16 +13,16 @@ from pathlib import Path
 
 import pytest
 
-from numlang.lexer import Lexer, LexError
-from numlang.parser import Parser, ParseError
-from numlang.sema import SemanticAnalyzer, SemanticError
 from numlang.codegen_c import CCodeGenerator, CodegenContext
+from numlang.lexer import Lexer, LexError
 from numlang.main import compile_source
-
+from numlang.parser import ParseError, Parser
+from numlang.sema import SemanticAnalyzer, SemanticError
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def compile_and_run(source: str, stdin: str = "") -> str:
     """Compile source, build with gcc, run, and return captured stdout."""
@@ -50,6 +51,7 @@ def compile_and_run(source: str, stdin: str = "") -> str:
 def _skip_no_gcc() -> None:
     """Skip the calling test if gcc is not available."""
     import shutil
+
     if shutil.which("gcc") is None:
         pytest.skip("gcc not found on PATH")
 
@@ -57,6 +59,7 @@ def _skip_no_gcc() -> None:
 # ---------------------------------------------------------------------------
 # Lexer tests
 # ---------------------------------------------------------------------------
+
 
 class TestLexer:
     def test_integer(self):
@@ -117,6 +120,7 @@ class TestLexer:
 # Parser tests
 # ---------------------------------------------------------------------------
 
+
 class TestParser:
     def _parse(self, src):
         return Parser.from_source(src).parse()
@@ -139,10 +143,10 @@ class TestParser:
         assert prog.main_code[0] == ("NUM", 28.0)
 
     def test_function_def(self):
-        prog = self._parse("/1 42 ;")
+        prog = self._parse("/1 42.0 ;")
         assert len(prog.functions) == 1
         assert prog.functions[0].num == 1
-        assert prog.functions[0].body == [("NUM", 42)]
+        assert prog.functions[0].body == [("NUM", 42.0)]
 
     def test_function_call(self):
         prog = self._parse(".3")
@@ -192,6 +196,7 @@ class TestParser:
 # Semantic analysis tests
 # ---------------------------------------------------------------------------
 
+
 class TestSema:
     def _check(self, src):
         prog = Parser.from_source(src).parse()
@@ -216,6 +221,7 @@ class TestSema:
 # ---------------------------------------------------------------------------
 # Code-generation / end-to-end tests (require gcc)
 # ---------------------------------------------------------------------------
+
 
 class TestCodegen:
     def test_hello_world(self):
@@ -280,24 +286,28 @@ class TestCodegen:
     def test_asin(self):
         _skip_no_gcc()
         import math
+
         out = compile_and_run("1.0 46 |")  # asin(1) = π/2
         assert float(out.strip()) == pytest.approx(math.pi / 2, abs=1e-4)
 
     def test_acos(self):
         _skip_no_gcc()
         import math
+
         out = compile_and_run("1.0 47 |")  # acos(1) = 0
         assert float(out.strip()) == pytest.approx(0.0, abs=1e-4)
 
     def test_atan(self):
         _skip_no_gcc()
         import math
+
         out = compile_and_run("1.0 48 |")  # atan(1) = π/4
         assert float(out.strip()) == pytest.approx(math.pi / 4, abs=1e-4)
 
     def test_atan2(self):
         _skip_no_gcc()
         import math
+
         out = compile_and_run("1 1 49 |")  # atan2(1,1) = π/4
         assert float(out.strip()) == pytest.approx(math.pi / 4, abs=1e-4)
 
