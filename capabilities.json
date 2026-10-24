@@ -32,8 +32,11 @@
           ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "all values are doubles; no boolean type"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/integer_division.si",
+            "tests/differential/logical.si"
+          ]
         }
       }
     },
@@ -42,8 +45,10 @@
       "description": "Arithmetic, bitwise, shift, comparison and logical operators.",
       "cells": {
         "plainspeak": {
-          "status": "partial",
-          "note": "operator differential cases exist only in the pending set"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/operators_integer.eng"
+          ]
         },
         "numlang": {
           "status": "implemented",
@@ -62,8 +67,13 @@
           ]
         },
         "sigi": {
-          "status": "missing",
-          "note": "no bitwise, shift, or && / || operators"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/arithmetic.si",
+            "tests/differential/bitwise.si",
+            "tests/differential/logical.si",
+            "tests/differential/comparison.si"
+          ]
         }
       }
     },
@@ -90,8 +100,10 @@
           ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "numbered and named variables; no differential test"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/variables.si"
+          ]
         }
       }
     },
@@ -118,8 +130,10 @@
           ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "{then ; else}; no differential test"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/if_else.si"
+          ]
         }
       }
     },
@@ -149,8 +163,11 @@
           ]
         },
         "sigi": {
-          "status": "missing",
-          "note": "WHILE only; no for loop"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/while_loop.si",
+            "tests/differential/for_loop.si"
+          ]
         }
       }
     },
@@ -177,8 +194,10 @@
           ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "numbered and named functions via the stack; no differential test"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/functions.si"
+          ]
         }
       }
     },
@@ -187,8 +206,10 @@
       "description": "Fixed-size arrays with element read and write.",
       "cells": {
         "plainspeak": {
-          "status": "partial",
-          "note": "native fixed arrays exist; differential case not yet in tree"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/fixed_arrays.eng"
+          ]
         },
         "numlang": {
           "status": "implemented",
@@ -197,12 +218,17 @@
           ]
         },
         "selenium": {
-          "status": "missing",
-          "note": "no array type"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/arrays.sel"
+          ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "AINIT/ALOAD/ASTORE; no differential test"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/arrays.si",
+            "tests/differential/array_bounds.si"
+          ]
         }
       }
     },
@@ -211,8 +237,10 @@
       "description": "String literals and printing them.",
       "cells": {
         "plainspeak": {
-          "status": "partial",
-          "note": "no differential test"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/strings.eng"
+          ]
         },
         "numlang": {
           "status": "implemented",
@@ -227,8 +255,10 @@
           ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "string literals print; no differential test"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/strings.si"
+          ]
         }
       }
     },
@@ -255,8 +285,10 @@
           ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "PRINT and PRINTC; no differential test"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/console_output.si"
+          ]
         }
       }
     },
@@ -265,8 +297,10 @@
       "description": "Calling external C functions declared by a prototype and linked from a plain C source file.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "no C interop"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/ffi_call.eng"
+          ]
         },
         "numlang": {
           "status": "implemented",
@@ -275,12 +309,16 @@
           ]
         },
         "selenium": {
-          "status": "missing",
-          "note": "no C interop"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/ffi_call.sel"
+          ]
         },
         "sigi": {
-          "status": "missing",
-          "note": "no C interop"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/ffi_call.si"
+          ]
         }
       }
     },
