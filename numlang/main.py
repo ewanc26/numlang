@@ -148,9 +148,14 @@ def main(argv: list[str] | None = None) -> int:
             c_file = tmp / "out.c"
             exe_file = tmp / "out"
             c_file.write_text(c_code, encoding="utf-8")
+            user_sources = [
+                str(input_path.parent / decl.header)
+                for decl in Parser.from_source(source).parse().foreign
+                if decl.header.endswith(".c")
+            ]
             try:
                 result = subprocess.run(
-                    [args.cc, str(c_file), "-o", str(exe_file), "-lm"],
+                    [args.cc, str(c_file), *user_sources, "-o", str(exe_file), "-lm"],
                     capture_output=True,
                     text=True,
                 )
