@@ -13,3 +13,6 @@ authors = [{name = "ewanc26"}]
 
 [project.scripts]
 numlangc = "numlang.main:main"
+
+[tool.setuptools]
+packages = ["numlang"]
