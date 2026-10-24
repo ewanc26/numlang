@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import List, Set
 
-from .ast import Program, Op
+from .ast import Op, Program
 
 
 class SemanticError(Exception):
@@ -27,6 +27,14 @@ class SemanticAnalyzer:
     def analyze(self, program: Program) -> None:
         defined: Set[int] = {f.num for f in program.functions}
         errors: List[str] = []
+
+        self._foreign: Set[int] = set()
+        for decl in program.foreign:
+            if decl.num in self._foreign:
+                errors.append(
+                    f"Semantic error: foreign function {decl.num} declared twice"
+                )
+            self._foreign.add(decl.num)
 
         for func in program.functions:
             self._check_ops(func.body, defined, errors, context=f"function {func.num}")
@@ -52,11 +60,19 @@ class SemanticAnalyzer:
                         f"Semantic error in {context}: call to undefined function {value}"
                     )
 
+            elif kind == "FFI_CALL":
+                if value not in self._foreign:
+                    errors.append(
+                        f"Semantic error in {context}: call to undeclared foreign function {value}"
+                    )
+
             elif kind == "IF_BLOCK":
                 then_ops, else_ops = value
                 self._check_ops(then_ops, defined, errors, context=f"{context}/if_then")
                 if else_ops is not None:
-                    self._check_ops(else_ops, defined, errors, context=f"{context}/if_else")
+                    self._check_ops(
+                        else_ops, defined, errors, context=f"{context}/if_else"
+                    )
 
             elif kind == "WHILE":
                 body: List[Op] = value

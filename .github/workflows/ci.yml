@@ -24,4 +24,4 @@ jobs:
       - name: Differential tests
         run: python tests/differential/run_differential.py --numlangc numlangc --cc clang
       - name: Capability matrix structure
-        run: python scripts/check_capabilities.py
+        run: python scripts/check_capabilities.py --language numlang --require-complete

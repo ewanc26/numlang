@@ -19,8 +19,10 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "note": "all values are doubles; comparisons and logic yield 1.0/0.0, no integer type"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/integer_boolean.num"
+          ]
         },
         "selenium": {
           "status": "implemented",
@@ -189,8 +191,10 @@
           "note": "native fixed arrays exist; differential case not yet in tree"
         },
         "numlang": {
-          "status": "missing",
-          "note": "no array type"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/arrays.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -265,8 +269,10 @@
           "note": "no C interop"
         },
         "numlang": {
-          "status": "missing",
-          "note": "no C interop"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/ffi_call.num"
+          ]
         },
         "selenium": {
           "status": "missing",

@@ -1,0 +1,6 @@
+# Fixed-size array 0 holds five elements; ARR_SET is [id index value], ARR_GET is [id index].
+0 5 51
+0 2 7 52
+0 2 53 |
+5 50 0 17 16 16 * 52 ;
+5 50 0 17 53 | ;
