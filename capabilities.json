@@ -8,6 +8,556 @@
   ],
   "rows": [
     {
+      "id": "types.char-literals",
+      "description": "Character type and character literals with C escape sequences.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.sized-integers",
+      "description": "signed/unsigned char, short, int, long, long long with C wrap-around and conversion rules.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.floating",
+      "description": "float and double with C arithmetic and printing.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.enums",
+      "description": "enum declarations with C-compatible integer values.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.typedef",
+      "description": "typedef aliases for existing types.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.pointers",
+      "description": "Pointers, address-of, dereference, and pointer arithmetic over arrays.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.structs",
+      "description": "struct declarations, member access, and struct values.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.unions",
+      "description": "union declarations with shared storage.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.sizeof",
+      "description": "sizeof for types and expressions.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.initializers",
+      "description": "Brace and designated initializers for arrays and structs.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.multidim-arrays",
+      "description": "Multi-dimensional fixed-size arrays.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.storage-qualifiers",
+      "description": "const, static, and register-free storage semantics for locals and globals.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.ternary",
+      "description": "Conditional operator ?:.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.compound-assign",
+      "description": "Compound assignment operators (+=, -=, <<=, and so on).",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.incdec",
+      "description": "Pre and post increment and decrement.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.casts",
+      "description": "Explicit C-style casts between numeric types.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.comma",
+      "description": "Comma operator.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "control.switch",
+      "description": "switch, case, default with fall-through.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "control.do-while",
+      "description": "do/while loops.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "control.break-continue",
+      "description": "break and continue in loops and switch.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "control.goto",
+      "description": "goto and labels.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "func.pointers",
+      "description": "Function pointers and calls through them.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "func.recursion",
+      "description": "Recursive calls with C stack discipline.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "literals.numeric",
+      "description": "Hex, octal, binary, and suffixed numeric literals.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "literals.escapes",
+      "description": "String escape sequences matching C.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
       "id": "types.integer-boolean",
       "description": "Integer-valued and boolean values, with C-compatible results for integer arithmetic and boolean conversion.",
       "cells": {
