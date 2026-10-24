@@ -63,7 +63,7 @@ def main() -> None:
             if cell["status"] not in {"implemented", "non_applicable"}:
                 incomplete.append(f"{row['id']}={cell['status']}")
             for test in cell.get("tests", []):
-                if args.language == "plainspeak" and not (ROOT / test).exists():
+                if not (ROOT / test).exists():
                     fail(f"{row['id']}: test {test} does not exist")
         if incomplete:
             fail(f"{args.language} is not complete: " + ", ".join(incomplete))
