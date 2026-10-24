@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "languages": ["plainspeak", "numlang", "selenium", "sigi"],
+  "rows": [
+    {
+      "id": "types.integer-boolean",
+      "description": "Integer-valued and boolean values, with C-compatible results for integer arithmetic and boolean conversion.",
+      "cells": {
+        "plainspeak": {"status": "implemented", "tests": ["tests/differential/types_boolean.eng", "tests/differential/control_while.eng"]},
+        "numlang": {"status": "partial", "note": "all values are doubles; comparisons and logic yield 1.0/0.0, no integer type"},
+        "selenium": {"status": "partial", "note": "int and bool exist; no differential test"},
+        "sigi": {"status": "partial", "note": "all values are doubles; no boolean type"}
+      }
+    },
+    {
+      "id": "expr.operators",
+      "description": "Arithmetic, bitwise, shift, comparison and logical operators.",
+      "cells": {
+        "plainspeak": {"status": "partial", "note": "operator differential cases exist only in the pending set"},
+        "numlang": {"status": "partial", "note": "full operator set; no differential test"},
+        "selenium": {"status": "partial", "note": "full operator set; no differential test"},
+        "sigi": {"status": "missing", "note": "no bitwise, shift, or && / || operators"}
+      }
+    },
+    {
+      "id": "vars.assignment",
+      "description": "Variables with assignment and reads.",
+      "cells": {
+        "plainspeak": {"status": "implemented", "tests": ["tests/differential/control_while.eng"]},
+        "numlang": {"status": "partial", "note": "100 numbered slots; no differential test"},
+        "selenium": {"status": "partial", "note": "wax/seal variables; no differential test"},
+        "sigi": {"status": "partial", "note": "numbered and named variables; no differential test"}
+      }
+    },
+    {
+      "id": "control.if-else",
+      "description": "Conditional branching with an else branch.",
+      "cells": {
+        "plainspeak": {"status": "implemented", "tests": ["tests/differential/control_if_else.eng"]},
+        "numlang": {"status": "partial", "note": "IF/ELSE; no differential test"},
+        "selenium": {"status": "partial", "note": "eclipse/shadow; no differential test"},
+        "sigi": {"status": "partial", "note": "{then ; else}; no differential test"}
+      }
+    },
+    {
+      "id": "control.while-for",
+      "description": "while and for loops.",
+      "cells": {
+        "plainspeak": {"status": "implemented", "tests": ["tests/differential/control_while.eng", "tests/differential/control_for.eng"]},
+        "numlang": {"status": "partial", "note": "WHILE and REPEAT; no differential test"},
+        "selenium": {"status": "partial", "note": "tide and orbit; no differential test"},
+        "sigi": {"status": "missing", "note": "WHILE only; no for loop"}
+      }
+    },
+    {
+      "id": "func.params-returns",
+      "description": "Functions with parameters and return values.",
+      "cells": {
+        "plainspeak": {"status": "implemented", "tests": ["tests/differential/return_paths.eng"]},
+        "numlang": {"status": "partial", "note": "stack-based calling convention; no differential test"},
+        "selenium": {"status": "partial", "note": "typed parameters and return; no differential test"},
+        "sigi": {"status": "partial", "note": "numbered and named functions via the stack; no differential test"}
+      }
+    },
+    {
+      "id": "types.fixed-arrays",
+      "description": "Fixed-size arrays with element read and write.",
+      "cells": {
+        "plainspeak": {"status": "partial", "note": "native fixed arrays exist; differential case not yet in tree"},
+        "numlang": {"status": "missing", "note": "no array type"},
+        "selenium": {"status": "missing", "note": "no array type"},
+        "sigi": {"status": "partial", "note": "AINIT/ALOAD/ASTORE; no differential test"}
+      }
+    },
+    {
+      "id": "types.strings",
+      "description": "String literals and printing them.",
+      "cells": {
+        "plainspeak": {"status": "partial", "note": "no differential test"},
+        "numlang": {"status": "partial", "note": "string literals print via putchar; no differential test"},
+        "selenium": {"status": "partial", "note": "string literals print; no differential test"},
+        "sigi": {"status": "partial", "note": "string literals print; no differential test"}
+      }
+    },
+    {
+      "id": "io.console-output",
+      "description": "Printing numbers and text to standard output.",
+      "cells": {
+        "plainspeak": {"status": "implemented", "tests": ["tests/differential/control_while.eng"]},
+        "numlang": {"status": "partial", "note": "print and character output; no differential test"},
+        "selenium": {"status": "partial", "note": "whisper; no differential test"},
+        "sigi": {"status": "partial", "note": "PRINT and PRINTC; no differential test"}
+      }
+    },
+    {
+      "id": "scope.preprocessor",
+      "description": "C preprocessor directives and macros.",
+      "cells": {
+        "plainspeak": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "numlang": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "selenium": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "sigi": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"}
+      }
+    },
+    {
+      "id": "scope.concurrency",
+      "description": "Threads, atomics and synchronization.",
+      "cells": {
+        "plainspeak": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "numlang": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "selenium": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "sigi": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"}
+      }
+    },
+    {
+      "id": "scope.c-library",
+      "description": "The wider C standard library beyond console output.",
+      "cells": {
+        "plainspeak": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "numlang": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "selenium": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"},
+        "sigi": {"status": "non_applicable", "rationale": "out of scope for the capability matrix"}
+      }
+    }
+  ]
+}
