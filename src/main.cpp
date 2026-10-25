@@ -144,6 +144,7 @@ private:
             dv=static_cast<double>(iv);
         } else if(hex) {
             char *parsed=nullptr;
+            errno=0;
             iv=std::strtoll(s.c_str(),&parsed,0);
             if(parsed==s.c_str()+2) throw std::runtime_error("invalid hexadecimal literal at line "+std::to_string(line));
             suffix=s.substr(static_cast<size_t>(parsed-s.c_str()));
