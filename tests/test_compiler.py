@@ -121,6 +121,53 @@ class TestLexer:
 # ---------------------------------------------------------------------------
 
 
+class TestLiteralLexing:
+    def _kinds(self, src):
+        return [(t.kind, t.value) for t in Lexer(src).tokenize()[:-1]]
+
+    def test_hex_octal_binary_are_literal_tokens(self):
+        assert self._kinds("0x1F 017 0b101") == [
+            ("LIT", 31),
+            ("LIT", 15),
+            ("LIT", 5),
+        ]
+
+    def test_plain_decimal_stays_opcode_token(self):
+        assert self._kinds("10") == [("NUM", 10)]
+
+    def test_suffixed_integers_are_literals(self):
+        assert self._kinds("10u 0XffUL 7llu") == [
+            ("LIT", 10),
+            ("LIT", 255),
+            ("LIT", 7),
+        ]
+
+    def test_char_constants(self):
+        assert self._kinds("'A' '\\n' '\\x41' '\\101' '\\xff'") == [
+            ("LIT", 65),
+            ("LIT", 10),
+            ("LIT", 65),
+            ("LIT", 65),
+            ("LIT", -1),
+        ]
+
+    def test_universal_names_encode_utf8(self):
+        tokens = Lexer('"\\u00e9"').tokenize()
+        assert tokens[0].value == [0xC3, 0xA9]
+
+    def test_invalid_octal_digit_rejected(self):
+        with pytest.raises(LexError):
+            Lexer("09").tokenize()
+
+    def test_invalid_suffix_rejected(self):
+        with pytest.raises(LexError):
+            Lexer("1lul").tokenize()
+
+    def test_empty_hex_rejected(self):
+        with pytest.raises(LexError):
+            Lexer("0x").tokenize()
+
+
 class TestParser:
     def _parse(self, src):
         return Parser.from_source(src).parse()

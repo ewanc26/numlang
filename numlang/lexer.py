@@ -7,12 +7,17 @@ with full C-style escapes, and the |n variable-shorthand syntax.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any, List
 
 
 class LexError(Exception):
     """Raised on invalid tokens, unterminated strings, or bad escape sequences."""
+
+
+# Integer suffixes accepted by C: u/U, l/L/ll/LL, and the combinations of the two.
+_INT_SUFFIX_RE = re.compile(r"(?:[uU]|[uU](?:l|L|ll|LL)|(?:l|L|ll|LL)[uU]?)?")
 
 
 # Maps single-character escape letters to their byte values (mirrors C).
@@ -27,6 +32,7 @@ _SIMPLE_ESCAPES: dict[str, int] = {
     "b": 8,  # backspace
     "f": 12,  # form feed
     "v": 11,  # vertical tab
+    "?": 63,  # question mark (trigraph-free spelling)
 }
 
 
@@ -90,7 +96,12 @@ class Lexer:
                             )
                         esc = self._peek()
                         self._advance()
-                        codes.append(self._escape_char(esc, start_line, start_col))
+                        if esc in "uU":
+                            codes.extend(
+                                self._universal_name_bytes(esc, start_line, start_col)
+                            )
+                        else:
+                            codes.append(self._escape_char(esc, start_line, start_col))
                     else:
                         codes.append(ord(c))
                         self._advance()
@@ -129,33 +140,42 @@ class Lexer:
                     self._advance()
                 continue
 
-            # Numbers (integer or float)
-            if ch.isdigit():
-                buf = [ch]
+            # Character constant 'c' (C int value of one character or escape)
+            if ch == "'":
+                self._advance()  # consume opening '
+                if self._eof() or self._peek() in "'\n":
+                    raise LexError(
+                        f"Empty or unterminated character constant at {start_line}:{start_col}"
+                    )
+                c = self._peek()
                 self._advance()
-                while not self._eof() and self._peek().isdigit():
-                    buf.append(self._advance())
-
-                # Check for decimal point → float literal
-                is_float = False
-                if (
-                    not self._eof()
-                    and self._peek() == "."
-                    and self._peek(1) in "0123456789"
-                ):
-                    is_float = True
-                    buf.append(self._advance())  # consume '.'
-                    while not self._eof() and self._peek().isdigit():
-                        buf.append(self._advance())
-
-                text = "".join(buf)
-                if is_float:
-                    tokens.append(Token("NUM", float(text), start_line, start_col))
+                if c == "\\":
+                    if self._eof():
+                        raise LexError(
+                            f"Unterminated character constant at {start_line}:{start_col}"
+                        )
+                    esc = self._peek()
+                    self._advance()
+                    code = self._escape_char(esc, start_line, start_col)
                 else:
-                    tokens.append(Token("NUM", int(text), start_line, start_col))
+                    code = ord(c)
+                if self._peek() != "'":
+                    raise LexError(
+                        f"Character constant must hold one character at {start_line}:{start_col}"
+                    )
+                self._advance()  # consume closing '
+                # Plain char is signed on the reference platform (gcc/clang)
+                if code > 127:
+                    code -= 256
+                tokens.append(Token("LIT", code, start_line, start_col))
                 continue
 
-            # Single-character operators
+            # Numbers: decimal, octal (leading 0), hex (0x), binary (0b), suffixed
+            if ch.isdigit():
+                tokens.append(self._lex_number(start_line, start_col))
+                continue
+
+            # Single-character operators and structural markers
             if ch in "^&*+-/.|;%~!@$":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()
@@ -165,6 +185,70 @@ class Lexer:
 
         tokens.append(Token("EOF", None, self.line, self.col))
         return tokens
+
+    def _lex_number(self, start_line: int, start_col: int) -> Token:
+        """Lex a numeric constant starting at a digit.
+
+        Plain decimal integers stay NUM tokens (dispatched as opcodes by the
+        parser). Floats, hex (0x), binary (0b), octal (leading 0) and any
+        suffixed integer are LIT tokens, which always push their value.
+        """
+        if self._peek() == "0" and self._peek(1) in "xX":
+            self._advance()
+            self._advance()
+            digits = self._take_while("0123456789abcdefABCDEF")
+            if not digits:
+                raise LexError(
+                    f"Hex constant has no digits at {start_line}:{start_col}"
+                )
+            value: Any = int(digits, 16)
+            return self._finish_int(value, start_line, start_col, lit=True)
+
+        if self._peek() == "0" and self._peek(1) in "bB":
+            self._advance()
+            self._advance()
+            digits = self._take_while("01")
+            if not digits:
+                raise LexError(
+                    f"Binary constant has no digits at {start_line}:{start_col}"
+                )
+            return self._finish_int(int(digits, 2), start_line, start_col, lit=True)
+
+        digits = self._take_while("0123456789")
+        if self._peek() == "." and self._peek(1) in "0123456789":
+            self._advance()  # consume '.'
+            fraction = self._take_while("0123456789")
+            return Token("NUM", float(f"{digits}.{fraction}"), start_line, start_col)
+
+        if len(digits) > 1 and digits[0] == "0":
+            if any(d in "89" for d in digits):
+                raise LexError(
+                    f"Invalid digit in octal constant {digits} at {start_line}:{start_col}"
+                )
+            return self._finish_int(int(digits, 8), start_line, start_col, lit=True)
+
+        return self._finish_int(int(digits), start_line, start_col, lit=False)
+
+    def _finish_int(
+        self, value: int, start_line: int, start_col: int, lit: bool
+    ) -> Token:
+        """Consume an optional integer suffix and build the integer token."""
+        suffix = self._take_while("uUlL")
+        if not _INT_SUFFIX_RE.fullmatch(suffix):
+            raise LexError(
+                f"Invalid integer suffix {suffix!r} at {start_line}:{start_col}"
+            )
+        if suffix:
+            lit = True  # a suffixed constant is a literal, never an opcode
+        if self._peek().isalnum() or self._peek() == "_":
+            raise LexError(f"Invalid numeric constant at {start_line}:{start_col}")
+        return Token("LIT" if lit else "NUM", value, start_line, start_col)
+
+    def _take_while(self, allowed: str) -> str:
+        buf = []
+        while not self._eof() and self._peek() in allowed:
+            buf.append(self._advance())
+        return "".join(buf)
 
     def _eof(self) -> bool:
         return self.i >= self.length
@@ -186,6 +270,22 @@ class Lexer:
         self.line += 1
         self.col = 1
 
+    def _universal_name_bytes(self, esc: str, err_line: int, err_col: int) -> List[int]:
+        """Resolve \\uXXXX or \\UXXXXXXXX into the UTF-8 bytes C stores for it."""
+        width = 4 if esc == "u" else 8
+        digits = self._take_while("0123456789abcdefABCDEF")
+        if len(digits) != width:
+            raise LexError(
+                f"Universal character name needs {width} hex digits at {err_line}:{err_col}"
+            )
+        cp = int(digits, 16)
+        basic = cp in (0x24, 0x40, 0x60)  # $ @ ` may be spelled as UCNs
+        if (cp < 0xA0 and not basic) or 0xD800 <= cp <= 0xDFFF or cp > 0x10FFFF:
+            raise LexError(
+                f"Invalid universal character \\{esc}{digits} at {err_line}:{err_col}"
+            )
+        return list(chr(cp).encode("utf-8"))
+
     def _escape_char(self, esc: str, err_line: int, err_col: int) -> int:
         """Resolve a single escape character (the char *after* the backslash).
 
@@ -197,14 +297,9 @@ class Lexer:
         if esc in _SIMPLE_ESCAPES:
             return _SIMPLE_ESCAPES[esc]
 
-        # Hex escape: \xHH
+        # Hex escape: \xH... (any number of hex digits, as in C)
         if esc == "x":
-            h = ""
-            for _ in range(2):
-                if not self._eof() and self._peek() in "0123456789abcdefABCDEF":
-                    h += self._advance()
-                else:
-                    break
+            h = self._take_while("0123456789abcdefABCDEF")
             if not h:
                 raise LexError(f"Empty hex escape \\x at {err_line}:{err_col}")
             value = int(h, 16)

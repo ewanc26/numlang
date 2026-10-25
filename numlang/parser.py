@@ -194,7 +194,7 @@ class Parser:
 
     def _expect_int(self, what: str, at: Token) -> int:
         tok = self._current()
-        if tok.kind != "NUM" or not isinstance(tok.value, int):
+        if tok.kind not in ("NUM", "LIT") or not isinstance(tok.value, int):
             raise ParseError(f"{what} must be an integer at {at.line}:{at.col}")
         self._advance()
         return tok.value
@@ -295,6 +295,11 @@ class Parser:
             self._advance()
             num = self._expect_int("Foreign function number", tok)
             return ("FFI_CALL", num)
+
+        if tok.kind == "LIT":
+            # Literal constants (hex, octal, binary, char, suffixed) always push.
+            self._advance()
+            return ("NUM", tok.value)
 
         if tok.kind == "NUM":
             value = tok.value

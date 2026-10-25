@@ -1,0 +1,11 @@
+# Character constants have the int value of their character or escape.
+'A' |
+'\n' |
+'\\' |
+'\'' |
+'\x41' |
+'\101' |
+'\0' |
+'\?' |
+'\xff' |
+'a' 1.0 + |

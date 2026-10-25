@@ -18,8 +18,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_char.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -570,8 +572,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_numeric.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -595,8 +599,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_escapes.num"
+          ]
         },
         "selenium": {
           "status": "missing",
