@@ -1,4 +1,6 @@
 #include <cctype>
+#include <cerrno>
+#include <climits>
 #include <chrono>
 #include <cmath>
 #include <cstdlib>
@@ -118,7 +120,7 @@ private:
         auto valid_suffix = [](const std::string &x) {
             return x.empty() || x=="u" || x=="U" || x=="l" || x=="L" ||
                 x=="ll" || x=="LL" || x=="ul" || x=="uL" || x=="ull" || x=="uLL" ||
-                x=="UL" || x=="Ul" || x=="ULL" || x=="ULl" ||
+                x=="UL" || x=="Ul" || x=="Ull" || x=="ULL" ||
                 x=="lu" || x=="lU" || x=="Lu" || x=="LU" ||
                 x=="llu" || x=="llU" || x=="LLu" || x=="LLU";
         };
