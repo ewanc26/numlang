@@ -755,7 +755,8 @@ class Parser:
         """Parse a declarator and return (name, type).
 
         Supported forms: pointers (``*`` with qualifiers), a name, array
-        dimensions, and the function-pointer form ``(*name)()``.
+        dimensions, the function-pointer form ``(*name)()``, and arrays of
+        function pointers ``(*name[N])()``.
         """
         t = base
         while self._current().kind == "*":
@@ -771,12 +772,13 @@ class Parser:
             self._advance()  # (
             self._advance()  # *
             name = self._expect_name("function pointer name")
+            dims = self._parse_dims()
             self._expect(")")
             self._expect("(")
             if self._current().kind == "ID" and self._current().value == "void":
                 self._advance()
             self._expect(")")
-            return name, pointer_to(function_type())
+            return name, _apply_dims(pointer_to(function_type()), dims)
 
         name: Optional[str] = None
         if self._current().kind == "ID" and self._current().value not in _KEYWORDS:
@@ -785,6 +787,10 @@ class Parser:
             tok = self._current()
             raise ParseError(f"Expected a declarator name at {tok.line}:{tok.col}")
 
+        return name, _apply_dims(t, self._parse_dims())
+
+    def _parse_dims(self) -> list[Optional[int]]:
+        """Parse zero or more ``[N]`` suffixes; an omitted size gives None."""
         dims: list[Optional[int]] = []
         while self._current().kind == "[":
             self._advance()
@@ -798,9 +804,7 @@ class Parser:
                 raise ParseError("Only the outermost array dimension may be omitted")
             if dim is not None and dim < 0:
                 raise ParseError("Array size must not be negative")
-        for dim in reversed(dims):
-            t = array_of(t, dim)
-        return name, t
+        return dims
 
     def _parse_struct(self) -> CType:
         kw = self._advance().value  # struct | union
@@ -946,6 +950,13 @@ class Parser:
         if not self._at_end():
             self.i += 1
         return self.tokens[self.i - 1]
+
+
+def _apply_dims(t: CType, dims: list[Optional[int]]) -> CType:
+    """Wrap t in array types, the first dimension outermost as in C."""
+    for dim in reversed(dims):
+        t = array_of(t, dim)
+    return t
 
 
 def _init_list_count(init: InitList) -> int:

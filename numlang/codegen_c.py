@@ -255,6 +255,19 @@ class CCodeGenerator:
                 "pointer assigned to an arithmetic object without a cast"
             )
 
+    def _decays_to_static_address(self, lval: LVal) -> bool:
+        """True when lval names an array inside static storage, reached by
+        subscripts and member steps only, so its decay is a constant address."""
+        sym = self._require(lval.root)
+        if not sym.static:
+            return False
+        ct = sym.ctype
+        for kind, arg in lval.path:
+            if kind == "arrow" or (kind == "index" and ct.kind != "array"):
+                return False
+            ct = self._step_type(ct, kind, arg)
+        return ct.kind == "array"
+
     def _check_pure(self, ops: List[Op]) -> None:
         for kind, value in ops:
             if kind in _PURE_KINDS or kind == "SIZEOF_EXPR":
@@ -266,6 +279,11 @@ class CCodeGenerator:
                         "initialiser of a static or file-scope object takes the "
                         "address of an automatic object"
                     )
+                for sub in child_op_lists((kind, value)):
+                    self._check_pure(sub)
+                continue
+            if kind == "LOAD" and self._decays_to_static_address(value):
+                # Array-to-pointer decay of a static array is an address constant.
                 for sub in child_op_lists((kind, value)):
                     self._check_pure(sub)
                 continue

@@ -328,6 +328,8 @@ int *px = \x;      # pointer declaration
 px[0] = 7.0;       # p[0] is the dereference; * is the multiply opcode, so there is no prefix *
 \.0                # function reference: a pointer to function 0
 int (*fp)();       # function pointer; fp(); calls the function it holds
+int (*tab[2])() = {\.0, \.1};  # array of function pointers; tab[i]() calls one
+int *p2 = arr;     # an array name decays to the address of its first element
 ```
 
 Switch and goto:
@@ -353,9 +355,10 @@ Limits:
 
 - No type punning through unions. Reading a member other than the one last written gives the stored double, not reinterpreted bits.
 - Pointer arithmetic is not supported; use `p[i]` to index.
+- Pointers to arrays (`int (*p)[3]`) are not supported; a multi-dimensional array name does not decay to an `int *`.
 - String literals cannot initialise arrays.
 - Structs are copied only by whole-struct assignment, and a struct cannot be pushed as a value.
-- File-scope and `static` initialisers must be constant: literals, arithmetic, casts, sizeof, function references and addresses of statics. They may not read memory or call functions.
+- File-scope and `static` initialisers must be constant: literals, arithmetic, casts, sizeof, function references, addresses of statics, and the decayed address of a static array. They may not read memory or call functions.
 - Labels are scoped to their function.
 
 ---
