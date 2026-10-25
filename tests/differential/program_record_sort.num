@@ -1,0 +1,31 @@
+# Record table: an array of structs is insertion-sorted by key; equal keys keep their input order.
+struct Rec { int key; int val; };
+struct Rec tbl[6] = {{42.0, 1.0}, {7.0, 2.0}, {19.0, 3.0}, {88.0, 4.0}, {3.0, 5.0}, {19.0, 6.0}};
+struct Rec tmp;
+int i = 1.0;
+int j = 0.0;
+int k = 0.0;
+
+i 6.0 10
+30
+    tmp = tbl[i];
+    j = i;
+    j 0.0 11 20 tbl[j 1 -].key tmp.key 11 28 0.0 ;
+    30
+        tbl[j] = tbl[j 1 -];
+        j = j 1.0 - ;
+        j 0.0 11 20 tbl[j 1 -].key tmp.key 11 28 0.0 ;
+    ;
+    tbl[j] = tmp;
+    i = i 1.0 + ;
+    i 6.0 10
+;
+
+k = 0.0;
+k 6.0 10
+30
+    tbl[k].key |
+    tbl[k].val |
+    k = k 1.0 + ;
+    k 6.0 10
+;

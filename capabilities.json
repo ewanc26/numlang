@@ -974,6 +974,78 @@
       }
     },
     {
+      "id": "programs.record-table-sort",
+      "description": "Struct array records insertion-sorted by a key field with whole-struct copies, stable for equal keys.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/program_record_sort.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "programs.recursive-permutations",
+      "description": "Recursive swap-based permutation generation over global arrays, with per-depth loop indices.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/program_permutations.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "programs.function-pointer-calculator",
+      "description": "RPN calculator dispatching through a reassigned function pointer inside a switch, with an EXIT error status.",
+      "cells": {
+        "plainspeak": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/program_calculator.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
       "id": "scope.preprocessor",
       "description": "C preprocessor directives and macros.",
       "cells": {
