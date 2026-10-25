@@ -226,8 +226,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "numlang has no sizeof operator and no C type names to measure"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_sizeof.num"
+          ]
         },
         "selenium": {
           "status": "missing",
