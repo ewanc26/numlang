@@ -212,3 +212,6 @@ compare
 function
 hello
 input
+
+# CMake build outputs
+/build/
