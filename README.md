@@ -392,8 +392,8 @@ Use the float form (`1.0`) for constants that collide with opcode numbers, as el
 ### String literals
 
 `"..."` prints each character in the string immediately — the multi-character
-sibling of `~`. It desugars to a `putchar()` call per character and leaves
-the stack unchanged.
+sibling of `~`. It leaves the stack unchanged. The C++ compiler emits a length-aware
+byte write, so embedded NUL bytes are preserved rather than truncating the string.
 
 Escape sequences follow the full C syntax set:
 
