@@ -705,18 +705,12 @@
           "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/logical.sel",
-            "tests/differential/arithmetic.sel"
-          ]
+          "status": "partial",
+          "note": "The C++ port uses numeric doubles for logical results; full C integer/boolean semantics are not implemented."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/integer_division.si",
-            "tests/differential/logical.si"
-          ]
+          "status": "partial",
+          "note": "The C++ port uses numeric doubles for logical results; full C integer/boolean semantics are not implemented."
         }
       }
     },
@@ -740,21 +734,12 @@
           "note": "C++ supports arithmetic, comparisons, logical operations, and selected math/bitwise opcodes; full operator/runtime parity is deferred."
         },
         "selenium": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/arithmetic.sel",
-            "tests/differential/bitwise.sel",
-            "tests/differential/logical.sel"
-          ]
+          "status": "partial",
+          "note": "The C++ port supports arithmetic, comparisons, logical NOT/AND/OR, and selected math/bitwise opcodes; full operator parity is not implemented."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/arithmetic.si",
-            "tests/differential/bitwise.si",
-            "tests/differential/logical.si",
-            "tests/differential/comparison.si"
-          ]
+          "status": "partial",
+          "note": "The C++ port supports arithmetic, comparisons, logical NOT/AND/OR, and selected math/bitwise opcodes; full operator parity is not implemented."
         }
       }
     },
@@ -776,16 +761,12 @@
           "note": "C++ supports numbered variable loads/stores only; declarations, named variables, arrays, and pointer-based storage are deferred."
         },
         "selenium": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/variables.sel"
-          ]
+          "status": "partial",
+          "note": "The C++ port supports numbered stack-language variables only; declarations, named variables, arrays, and pointer-based storage are deferred."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/variables.si"
-          ]
+          "status": "partial",
+          "note": "The C++ port supports numbered stack-language variables only; declarations, named variables, arrays, and pointer-based storage are deferred."
         }
       }
     },
@@ -807,16 +788,12 @@
           "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/if_else.sel"
-          ]
+          "status": "partial",
+          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/if_else.si"
-          ]
+          "status": "partial",
+          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
         }
       }
     },
@@ -840,18 +817,12 @@
           "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/while_loop.sel",
-            "tests/differential/for_loop.sel"
-          ]
+          "status": "partial",
+          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/while_loop.si",
-            "tests/differential/for_loop.si"
-          ]
+          "status": "partial",
+          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
         }
       }
     },
@@ -873,16 +844,12 @@
           "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/functions.sel"
-          ]
+          "status": "partial",
+          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/functions.si"
-          ]
+          "status": "partial",
+          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
         }
       }
     },
@@ -904,17 +871,12 @@
           "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/arrays.sel"
-          ]
+          "status": "partial",
+          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/arrays.si",
-            "tests/differential/array_bounds.si"
-          ]
+          "status": "partial",
+          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
         }
       }
     },
@@ -938,14 +900,16 @@
         "selenium": {
           "status": "implemented",
           "tests": [
-            "tests/differential/strings.sel"
-          ]
+            "tests/smoke.py"
+          ],
+          "note": "Verified by the C++ CLI smoke suite; this does not imply full language parity."
         },
         "sigi": {
           "status": "implemented",
           "tests": [
-            "tests/differential/strings.si"
-          ]
+            "tests/smoke.py"
+          ],
+          "note": "Verified by the C++ CLI smoke suite; this does not imply full language parity."
         }
       }
     },
@@ -969,14 +933,16 @@
         "selenium": {
           "status": "implemented",
           "tests": [
-            "tests/differential/console.sel"
-          ]
+            "tests/smoke.py"
+          ],
+          "note": "Verified by the C++ CLI smoke suite; this does not imply full language parity."
         },
         "sigi": {
           "status": "implemented",
           "tests": [
-            "tests/differential/console_output.si"
-          ]
+            "tests/smoke.py"
+          ],
+          "note": "Verified by the C++ CLI smoke suite; this does not imply full language parity."
         }
       }
     },
@@ -998,16 +964,12 @@
           "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/ffi_call.sel"
-          ]
+          "status": "partial",
+          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/ffi_call.si"
-          ]
+          "status": "partial",
+          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
         }
       }
     },
