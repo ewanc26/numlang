@@ -27,6 +27,25 @@ def main():
         p = tmp / "hex.num"; p.write_text("0xA |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         assert r.stdout == "10\n", repr(r.stdout)
+
+        p = tmp / "hex-alpha.num"; p.write_text("0xDE |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "222\n", repr(r.stdout)
+        p = tmp / "binary.num"; p.write_text("0b101 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "5\n", repr(r.stdout)
+        p = tmp / "suffixed-integer.num"; p.write_text("42u |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "42\n", repr(r.stdout)
+        for name, source, diagnostic in [
+            ("bad-binary.num", "0b102", "invalid binary literal"),
+            ("bad-suffix.num", "42foo", "invalid integer suffix"),
+            ("bad-octal.num", "08", "invalid integer"),
+        ]:
+            p = tmp / name
+            p.write_text(source, encoding="utf-8")
+            r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
+            assert diagnostic in r.stderr, (name, r.stderr)
         p = tmp / "unsupported-control-flow.num"; p.write_text("30", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
         assert "opcode 30 is not yet implemented" in r.stderr, repr(r.stderr)
