@@ -12,8 +12,10 @@
       "description": "Character type and character literals with C escape sequences.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_char.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -34,8 +36,10 @@
       "description": "signed/unsigned char, short, int, long, long long with C wrap-around and conversion rules.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_sized_integers.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -56,8 +60,10 @@
       "description": "float and double with C arithmetic and printing.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_floating.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -78,8 +84,10 @@
       "description": "enum declarations with C-compatible integer values.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_enumerations.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -124,8 +132,10 @@
       "description": "Pointers, address-of, dereference, and pointer arithmetic over arrays.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_pointers.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -146,8 +156,10 @@
       "description": "struct declarations, member access, and struct values.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_structures.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -168,8 +180,10 @@
       "description": "union declarations with shared storage.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_unions.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -190,8 +204,10 @@
       "description": "sizeof for types and expressions.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_sizeof.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -212,8 +228,10 @@
       "description": "Brace and designated initializers for arrays and structs.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/decl_initializers.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -234,8 +252,10 @@
       "description": "Multi-dimensional fixed-size arrays.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_multidim_arrays.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -256,8 +276,10 @@
       "description": "const, static, and register-free storage semantics for locals and globals.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_qualifiers.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -278,8 +300,10 @@
       "description": "Conditional operator ?:.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_conditional.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -300,8 +324,10 @@
       "description": "Compound assignment operators (+=, -=, <<=, and so on).",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_compound_assign.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -322,8 +348,10 @@
       "description": "Pre and post increment and decrement.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_increment_decrement.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -344,8 +372,10 @@
       "description": "Explicit C-style casts between numeric types.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_casts.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -366,8 +396,10 @@
       "description": "Comma operator.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_comma.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -484,8 +516,10 @@
       "description": "Function pointers and calls through them.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_function_pointers.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -506,8 +540,10 @@
       "description": "Recursive calls with C stack discipline.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/func_recursion.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -528,8 +564,10 @@
       "description": "Hex, octal, binary, and suffixed numeric literals.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_numeric.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
@@ -550,8 +588,11 @@
       "description": "String escape sequences matching C.",
       "cells": {
         "plainspeak": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/strings.eng",
+            "tests/differential/literals_char.eng"
+          ]
         },
         "numlang": {
           "status": "missing",
