@@ -1,0 +1,3 @@
+# Comma operator: (X, Y) evaluates X, discards its value, then yields Y.
+1.0 0 &
+|0 16 1.0 + 0 & 18 |0 10.0 + |

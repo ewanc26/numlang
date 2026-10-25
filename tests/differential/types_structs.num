@@ -1,0 +1,13 @@
+# Structs occupy consecutive cells; members are read and written with . and ->.
+struct Point { int x; int y; };
+struct Point p;
+p.x = 3.0;
+p.y = 4.0;
+struct Point *q = \p;
+q->x = q->x 10.0 + ;
+p.x |
+p.y |
+struct Point r;
+r = p;
+r.y |
+sizeof(struct Point) |

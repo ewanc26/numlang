@@ -1,0 +1,3 @@
+# String escapes: hex, octal, question mark, universal names and NUL.
+"\x41\101\?\u00e9\U0001F600\n"
+"a\0b\n"

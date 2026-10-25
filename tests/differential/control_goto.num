@@ -1,0 +1,10 @@
+# goto jumps forward to a named label, skipping the statements in between.
+1.0 |
+goto skip;
+99.0 |
+label skip;
+2.0 |
+goto end;
+88.0 |
+label end;
+3.0 |

@@ -61,8 +61,27 @@ numlangc hello.num --emit-ast
 | `N` (integer literal) | Push the integer N, **unless** N is a special opcode (see tables below) |
 | `N.M` (float literal) | Push the floating-point value N.M — **never** treated as an opcode |
 | `\|n` or `\|nn` | Push the value of variable n (0–99) |
+| `'c'` (char constant) | Push the C int value of the character or escape, e.g. `'A'` is 65, `'\n'` is 10 |
+| `0x1F`, `0b101`, `017` | Push hexadecimal, binary and octal integers (a leading `0` means octal) |
+| `10u`, `0xFFULL` | Suffixed integers push their value (`u`, `l`, `ll` and combinations are accepted) |
 
-> **Tip:** If you need to push the raw number 10 (which is also the `LT` opcode), use the float form `10.0`.
+> **Tip:** If you need to push the raw number 10 (which is also the `LT` opcode), use the float form `10.0`, or the hex form `0xA`.
+
+### Explicit conversions
+
+`:N` converts the top of the stack to a C type and pushes the result. Integer results wrap modulo the width of the type, as C does for unsigned and out-of-range conversions, and truncate toward zero.
+
+| N | C type | N | C type |
+|---|--------|---|--------|
+| 0 | `signed char` | 7 | `unsigned long` |
+| 1 | `unsigned char` | 8 | `long long` |
+| 2 | `short` | 9 | `unsigned long long` |
+| 3 | `unsigned short` | 10 | `float` (rounds to single precision) |
+| 4 | `int` | 11 | `double` |
+| 5 | `unsigned int` | 12 | `_Bool` (0 or 1) |
+| 6 | `long` | | |
+
+Values are still held as doubles, so integer results are exact only up to 2^53. Arithmetic is not implicitly converted: write `:N` after an operation to get the narrow-type result C would give.
 
 ---
 
@@ -230,6 +249,28 @@ The body is responsible for leaving the next condition on the stack.
 Pops `count`, then executes `body` exactly `count` times.  
 Before each iteration, the **0-based iteration index** is pushed onto the stack for the body to use. Use `18` (DROP) to discard it if you don't need it.
 
+#### DO-WHILE
+
+```
+(
+    <body>
+    <flag>
+)
+```
+
+Runs `body` once, then pops the flag it left and repeats while the flag is non-zero.  
+Unlike WHILE, the first iteration always runs and the body itself produces the flag. The parentheses delimit the body.
+
+#### BREAK and CONTINUE
+
+```
+<        # break: leave the innermost WHILE, REPEAT or DO-WHILE
+>        # continue: jump to the next iteration of the innermost loop
+```
+
+`BREAK` is rejected outside a loop; `CONTINUE` is rejected outside a loop.  
+`CONTINUE` jumps to the loop's test, so in a WHILE or DO-WHILE the next condition must already be on the stack. Values left on the stack by the body are not cleaned up, as in any other early exit from a block.
+
 ---
 
 ### Variables
@@ -253,6 +294,86 @@ Example — store π in var 10 and retrieve it:
 ```
 
 ---
+
+### Memory model
+
+Numlang has named objects with C declarations. Storage is one array of cells (one double each). Cell 0 is the null pointer; the legacy `|n` variables occupy cells 1–100. A scalar or pointer takes one cell, and arrays and structs take consecutive cells. Automatic objects live in a frame created on function entry.
+
+```
+int x = 2.0;                       # declaration with initialiser (use float literals)
+int a[3] = {1.0, 2.0};             # braced initialiser, missing elements are zero
+int m[2][2] = {{1.0, 2.0}, {3.0, 4.0}};
+struct P { int x; int y; };        # struct and union tags; members use . and ->
+struct P p = {.y = 5.0};           # designated initialiser
+union U { int i; double d; };
+enum E { A, B = 5 };               # enumeration constants are ints
+typedef double Real;
+static int calls = 0.0;           # static storage, initialised once at startup
+```
+
+Assignment and lvalues:
+
+```
+x = x 1.0 + ;      # name = postfix expression ;
+a[1] = 4.0;        # index
+p.x = 3.0;         # member
+q->x = 4.0;        # member through pointer (-> is a token)
+```
+
+Pointers hold the cell address of their target:
+
+```
+\x                 # address of x (push)
+int *px = \x;      # pointer declaration
+px[0] = 7.0;       # p[0] is the dereference; * is the multiply opcode, so there is no prefix *
+\.0                # function reference: a pointer to function 0
+int (*fp)();       # function pointer; fp(); calls the function it holds
+```
+
+Switch and goto:
+
+```
+switch 2.0 { case 1: 10.0 | < case 2: 20.0 | < default: 30.0 | }
+goto skip;         # forward or backward jump to a label in the same function
+label skip;
+```
+
+`<` leaves a switch (or loop) and `>` continues a loop. Without `<`, control falls through to the next case group.
+
+`sizeof(type)` and `sizeof(name)` give byte sizes using the LP64 layout (natural alignment, struct padding). Those values are used only by `sizeof`; addresses still count cells.
+
+Qualifiers:
+
+- Assigning to a `const` object is a compile error.
+- Initialising or assigning a pointer that discards `const` is a compile error when the right-hand side is one address, load or function reference.
+- `volatile` is parsed and checked, but generates no special code.
+- `restrict` is accepted only on pointer declarators; it has no effect on generated code.
+
+Limits:
+
+- No type punning through unions. Reading a member other than the one last written gives the stored double, not reinterpreted bits.
+- Pointer arithmetic is not supported; use `p[i]` to index.
+- String literals cannot initialise arrays.
+- Structs are copied only by whole-struct assignment, and a struct cannot be pushed as a value.
+- File-scope and `static` initialisers must be constant: literals, arithmetic, casts, sizeof, function references and addresses of statics. They may not read memory or call functions.
+- Labels are scoped to their function.
+
+---
+
+### Expression idioms
+
+Numlang has no infix assignment or operator-with-side-effect syntax, so these C expressions are spelled as stack sequences:
+
+| C expression | Numlang | Result left on stack |
+|---|---|---|
+| `c ? a : b` | `<c> 20 <a> 28 <b> ;` | one value, from the taken branch only |
+| `x += n` / `x -= n` | `\|x <n> + x &` / `\|x <n> - x &` | nothing |
+| `++x` | `\|x 1.0 + 16 x &` | the new value |
+| `x++` | `\|x 16 1.0 + x &` | the old value |
+| `--x` / `x--` | same as `++` / `++` with `-` | new / old value |
+| `(X, Y)` | `<X> 18 <Y>` | the value of `Y` (the value of `X` is dropped) |
+
+Use the float form (`1.0`) for constants that collide with opcode numbers, as elsewhere. `&` pops the index and then the value, so `<value> <index> &` stores into a variable.
 
 ### I/O
 
@@ -312,6 +433,10 @@ Recursion is supported.
 2. **Division vs functions**: `/` followed by an integer defines a function. Use float divisors or pre-compute values to avoid this.
 
 3. **String literals**: All characters in strings are output as raw byte values via `putchar()`. Non-ASCII characters may cause encoding issues on some systems.
+
+4. **Dereference and multiply**: `*` is the multiply opcode. Dereference a pointer with `p[0]`.
+
+5. **Minus and arrow**: `->` is lexed as one token, so `-` followed by `>` with no space is a member access, not subtraction followed by `>`.
 
 ---
 
@@ -491,6 +616,7 @@ numlang/
   lexer.py      — tokeniser (float literals, |nn variables)
   parser.py     — recursive-descent parser → AST
   ast.py        — AST node types
+  ctypes_model.py — C type model: cell and LP64 byte layouts
   sema.py       — semantic analysis
   codegen_c.py  — C code generator
   main.py       — CLI entry point

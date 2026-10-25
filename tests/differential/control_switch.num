@@ -1,0 +1,4 @@
+# switch selects a case group; without a break control falls through to the next group; default catches the rest.
+switch 2.0 { case 1: 10.0 | < case 2: 20.0 | < default: 30.0 | }
+switch 9.0 { case 1: 1.0 | default: 99.0 | }
+switch 1.0 { case 1: 11.0 | case 2: 22.0 | < }

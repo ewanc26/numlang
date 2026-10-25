@@ -1,0 +1,10 @@
+# Explicit conversions wrap values to the width of each C integer type.
+300 :1 |
+200 :0 |
+0 1 - :5 |
+0 1 - :3 |
+70000 :2 |
+200 100 + :1 |
+0 1 - :9 |
+2147483648 :4 |
+129 1 - 0 - :0 |

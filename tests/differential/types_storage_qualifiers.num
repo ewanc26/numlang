@@ -1,0 +1,15 @@
+# const objects are read-only (checked at compile time); volatile is accepted; restrict qualifies pointers; static keeps its value.
+const int limit = 10.0;
+limit |
+volatile int flag = 1.0;
+flag |
+int v = 3.0;
+int *restrict rp = \v;
+rp[0] = rp[0] 2.0 + ;
+v |
+const int *cp = \v;
+cp[0] |
+int *const fixed = \v;
+fixed[0] |
+static int calls = 0.0;
+calls |

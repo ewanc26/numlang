@@ -121,6 +121,53 @@ class TestLexer:
 # ---------------------------------------------------------------------------
 
 
+class TestLiteralLexing:
+    def _kinds(self, src):
+        return [(t.kind, t.value) for t in Lexer(src).tokenize()[:-1]]
+
+    def test_hex_octal_binary_are_literal_tokens(self):
+        assert self._kinds("0x1F 017 0b101") == [
+            ("LIT", 31),
+            ("LIT", 15),
+            ("LIT", 5),
+        ]
+
+    def test_plain_decimal_stays_opcode_token(self):
+        assert self._kinds("10") == [("NUM", 10)]
+
+    def test_suffixed_integers_are_literals(self):
+        assert self._kinds("10u 0XffUL 7llu") == [
+            ("LIT", 10),
+            ("LIT", 255),
+            ("LIT", 7),
+        ]
+
+    def test_char_constants(self):
+        assert self._kinds("'A' '\\n' '\\x41' '\\101' '\\xff'") == [
+            ("LIT", 65),
+            ("LIT", 10),
+            ("LIT", 65),
+            ("LIT", 65),
+            ("LIT", -1),
+        ]
+
+    def test_universal_names_encode_utf8(self):
+        tokens = Lexer('"\\u00e9"').tokenize()
+        assert tokens[0].value == [0xC3, 0xA9]
+
+    def test_invalid_octal_digit_rejected(self):
+        with pytest.raises(LexError):
+            Lexer("09").tokenize()
+
+    def test_invalid_suffix_rejected(self):
+        with pytest.raises(LexError):
+            Lexer("1lul").tokenize()
+
+    def test_empty_hex_rejected(self):
+        with pytest.raises(LexError):
+            Lexer("0x").tokenize()
+
+
 class TestParser:
     def _parse(self, src):
         return Parser.from_source(src).parse()
@@ -216,6 +263,29 @@ class TestSema:
     def test_empty_repeat_raises(self):
         with pytest.raises(SemanticError):
             self._check("3 50 ;")
+
+    def test_empty_do_while_raises(self):
+        with pytest.raises(SemanticError):
+            self._check("( )")
+
+    def test_break_outside_loop_raises(self):
+        with pytest.raises(SemanticError):
+            self._check("<")
+
+    def test_continue_outside_loop_raises(self):
+        with pytest.raises(SemanticError):
+            self._check(">")
+
+    def test_break_inside_loop_ok(self):
+        self._check("1 30 1 < ;")
+
+    def test_unterminated_do_while_raises(self):
+        with pytest.raises(ParseError):
+            Parser.from_source("( 1").parse()
+
+    def test_stray_close_paren_raises(self):
+        with pytest.raises(ParseError):
+            Parser.from_source(") 1").parse()
 
 
 # ---------------------------------------------------------------------------
@@ -376,3 +446,51 @@ class TestForeignAndArrays:
         c_src = compile_source('@0 "math.h" "cos" 1 ;\n1 $0 |')
         assert "#include <math.h>" in c_src
         assert "cos(_f0)" in c_src
+
+
+# ---------------------------------------------------------------------------
+# Memory model: qualifiers, declarations and unsupported forms
+# ---------------------------------------------------------------------------
+
+
+class TestMemoryModelErrors:
+    """Programs that C rejects (or that Numlang does not support) must fail to compile."""
+
+    @pytest.mark.parametrize(
+        "source",
+        [
+            "const int c = 1.0; c = 2.0;",  # assignment to const object
+            "const int c = 1.0; int *p = \\c;",  # pointer discards const
+            "int v = 1.0; const int *cp = \\v; int *p; p = cp;",  # pointer discards const via copy
+            "int v = 1.0; int *const fixed = \\v; fixed = \\v;",  # const pointer reassigned
+            "struct S { const int k; }; struct S s; struct S t; s = t;",  # struct with const member
+            "const int a[2] = {1.0, 2.0}; a[0] = 3.0;",  # element of const array
+            "int a = 1.0; int b = a;",  # file-scope initialiser reads memory
+            "switch 1.0 { case 1: 1.0 | case 1: 2.0 | }",  # duplicate case label
+            "switch 1.0 { default: 1.0 | default: 2.0 | }",  # two default labels
+            "goto nowhere;",  # undefined label
+            "label a; label a;",  # duplicate label
+            "int a[3]; a = 1.0;",  # array assigned as scalar
+            "int x = 1.0; x(); ",  # call through a non-function
+        ],
+    )
+    def test_rejected_by_semantics(self, source):
+        with pytest.raises((SemanticError, ParseError)):
+            compile_source(source)
+
+    @pytest.mark.parametrize(
+        "source",
+        [
+            "int restrict x = 1.0;",  # restrict on a non-pointer
+            "int a[];",  # array of unknown size used as an object
+            "struct Missing m;",  # use of incomplete type
+            "union U { int i; }; union U u; u.nope = 1.0;",  # no such member
+        ],
+    )
+    def test_rejected_by_parser_or_layout(self, source):
+        with pytest.raises((ParseError, ValueError)):
+            compile_source(source)
+
+    def test_const_object_can_be_read(self):
+        c_code = compile_source("const int c = 4.0; c |")
+        assert "mem[" in c_code

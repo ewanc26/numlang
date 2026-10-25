@@ -8,6 +8,657 @@
   ],
   "rows": [
     {
+      "id": "types.char-literals",
+      "description": "Character type and character literals with C escape sequences.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_char.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_char.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.sized-integers",
+      "description": "signed/unsigned char, short, int, long, long long with C wrap-around and conversion rules.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_sized_integers.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_sized_integers.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.floating",
+      "description": "float and double with C arithmetic and printing.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_floating.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_floating.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.enums",
+      "description": "enum declarations with C-compatible integer values.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_enumerations.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_enums.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.typedef",
+      "description": "typedef aliases for existing types.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_aliases.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_typedef.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.pointers",
+      "description": "Pointers, address-of, dereference, and pointer arithmetic over arrays.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_pointers.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_pointers.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.structs",
+      "description": "struct declarations, member access, and struct values.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_structures.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_structs.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.unions",
+      "description": "union declarations with shared storage.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_unions.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_unions.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.sizeof",
+      "description": "sizeof for types and expressions.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_sizeof.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_sizeof.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.initializers",
+      "description": "Brace and designated initializers for arrays and structs.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/decl_initializers.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_initializers.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.multidim-arrays",
+      "description": "Multi-dimensional fixed-size arrays.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_multidim_arrays.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_multidim_arrays.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "types.storage-qualifiers",
+      "description": "const, static, and register-free storage semantics for locals and globals.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_qualifiers.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_storage_qualifiers.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.ternary",
+      "description": "Conditional operator ?:.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_conditional.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_conditional.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.compound-assign",
+      "description": "Compound assignment operators (+=, -=, <<=, and so on).",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_compound_assign.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_compound_assign.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.incdec",
+      "description": "Pre and post increment and decrement.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_increment_decrement.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_increment_decrement.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.casts",
+      "description": "Explicit C-style casts between numeric types.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_casts.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_casts.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "expr.comma",
+      "description": "Comma operator.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_comma.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_comma.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "control.switch",
+      "description": "switch, case, default with fall-through.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_switch.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_switch.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "control.do-while",
+      "description": "do/while loops.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_do_while.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_do_while.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "control.break-continue",
+      "description": "break and continue in loops and switch.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_break_continue.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_break_continue.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "control.goto",
+      "description": "goto and labels.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_goto.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_goto.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "func.pointers",
+      "description": "Function pointers and calls through them.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_function_pointers.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/func_pointers.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "func.recursion",
+      "description": "Recursive calls with C stack discipline.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/func_recursion.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/func_recursion.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "literals.numeric",
+      "description": "Hex, octal, binary, and suffixed numeric literals.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_numeric.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_numeric.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
+      "id": "literals.escapes",
+      "description": "String escape sequences matching C.",
+      "cells": {
+        "plainspeak": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/strings.eng",
+            "tests/differential/literals_char.eng"
+          ]
+        },
+        "numlang": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_escapes.num"
+          ]
+        },
+        "selenium": {
+          "status": "missing",
+          "note": "not started"
+        },
+        "sigi": {
+          "status": "missing",
+          "note": "not started"
+        }
+      }
+    },
+    {
       "id": "types.integer-boolean",
       "description": "Integer-valued and boolean values, with C-compatible results for integer arithmetic and boolean conversion.",
       "cells": {

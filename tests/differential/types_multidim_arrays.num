@@ -1,0 +1,14 @@
+# Multidimensional arrays are contiguous rows of cells; a row decays to a pointer to its first element.
+int grid[2][3];
+grid[1][2] = 6.0;
+grid[0][0] = 1.0;
+grid[1][2] |
+grid[0][0] |
+sizeof(grid) |
+int *row;
+row = grid[1];
+row[2] |
+int cube[2][2][2] = {{{1.0}, {2.0, 3.0}}, {{4.0}}};
+cube[0][1][0] |
+cube[1][0][0] |
+cube[1][1][1] |

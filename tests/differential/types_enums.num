@@ -1,0 +1,7 @@
+# Enumeration constants are ints: RED = 0, GREEN = 5, BLUE = 6.
+enum Color { RED, GREEN = 5, BLUE };
+enum Color c = GREEN;
+c |
+BLUE |
+RED |
+sizeof(enum Color) |

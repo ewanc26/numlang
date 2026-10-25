@@ -1,0 +1,8 @@
+# sizeof on type names and objects, following LP64 layout (natural alignment and struct padding).
+sizeof(char) |
+sizeof(int) |
+sizeof(double) |
+struct Mixed { char c; double d; };
+sizeof(struct Mixed) |
+int arr[5];
+sizeof(arr) |

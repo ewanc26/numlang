@@ -1,0 +1,5 @@
+# float results are rounded to single precision after each operation.
+16777217.0 :10 16777216.0 - |
+0.1 :10 0.1 - |
+0.1 :10 :11 |
+1.0 3.0 / :10 3.0 * |

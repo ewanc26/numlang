@@ -1,0 +1,7 @@
+# Prefix and postfix ++ and -- on a variable, as stack idioms.
+# Prefix leaves the new value; postfix leaves the old value (DUP keeps a copy).
+5.0 1 &
+|1 1.0 + 16 1 & |
+|1 16 1.0 + 1 & |
+|1 16 1.0 - 1 & |
+|1 1.0 - 16 1 & |
