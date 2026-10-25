@@ -1,0 +1,18 @@
+# REPEAT: continue skips index 2 and break leaves the loop at index 6.
+# Each iteration drops the index it was given after printing it.
+10.0 50
+    16 2.0 12 20 18 > ;
+    16 6.0 12 20 18 < ;
+    16 |
+    18
+;
+# WHILE: continue re-pushes the loop condition before jumping back to the test.
+0.0 0 &
+|0 100.0 10
+30
+    |0 1.0 + 0 &
+    |0 2.0 12 20 |0 100.0 10 > ;
+    |0 5.0 12 20 < ;
+    |0 |
+    |0 100.0 10
+;

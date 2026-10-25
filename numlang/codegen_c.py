@@ -203,6 +203,20 @@ class CCodeGenerator:
                 lines.append(f"{pad}    }}")
                 lines.append(f"{pad}}}")
 
+            elif kind == "DO_WHILE":
+                body = value
+                lbl = self._new_label()
+                lines.append(f"{pad}/* do_{lbl} */")
+                lines.append(f"{pad}do {{")
+                lines.extend(self._emit_ops(body, indent + 1))
+                lines.append(f"{pad}}} while (pop() != 0.0);")
+
+            elif kind == "BREAK":
+                lines.append(f"{pad}break;")
+
+            elif kind == "CONTINUE":
+                lines.append(f"{pad}continue;")
+
             # ---- Variables -------------------------------------------
 
             elif kind == "PUSH_VAR":

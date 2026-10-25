@@ -249,6 +249,28 @@ The body is responsible for leaving the next condition on the stack.
 Pops `count`, then executes `body` exactly `count` times.  
 Before each iteration, the **0-based iteration index** is pushed onto the stack for the body to use. Use `18` (DROP) to discard it if you don't need it.
 
+#### DO-WHILE
+
+```
+(
+    <body>
+    <flag>
+)
+```
+
+Runs `body` once, then pops the flag it left and repeats while the flag is non-zero.  
+Unlike WHILE, the first iteration always runs and the body itself produces the flag. The parentheses delimit the body.
+
+#### BREAK and CONTINUE
+
+```
+<        # break: leave the innermost WHILE, REPEAT or DO-WHILE
+>        # continue: jump to the next iteration of the innermost loop
+```
+
+`BREAK` is rejected outside a loop; `CONTINUE` is rejected outside a loop.  
+`CONTINUE` jumps to the loop's test, so in a WHILE or DO-WHILE the next condition must already be on the stack. Values left on the stack by the body are not cleaned up, as in any other early exit from a block.
+
 ---
 
 ### Variables

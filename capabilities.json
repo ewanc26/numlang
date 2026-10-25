@@ -466,8 +466,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_do_while.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -490,8 +492,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_break_continue.num"
+          ]
         },
         "selenium": {
           "status": "missing",

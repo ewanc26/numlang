@@ -23,8 +23,9 @@ class SemanticAnalyzer:
 
     Currently checks:
       - All CALL targets reference a defined function.
-      - WHILE and REPEAT bodies contain at least one op.
+      - WHILE, REPEAT and DO-WHILE bodies contain at least one op.
       - PUSH_VAR indices stay within 0-99.
+      - BREAK appears inside a loop or switch; CONTINUE inside a loop.
     """
 
     def analyze(self, program: Program) -> None:
@@ -55,9 +56,23 @@ class SemanticAnalyzer:
         defined: Set[int],
         errors: List[str],
         context: str,
+        in_loop: bool = False,
+        in_switch: bool = False,
     ) -> None:
         for kind, value in ops:
-            if kind == "CALL":
+            if kind == "BREAK":
+                if not (in_loop or in_switch):
+                    errors.append(
+                        f"Semantic error in {context}: break outside a loop or switch"
+                    )
+
+            elif kind == "CONTINUE":
+                if not in_loop:
+                    errors.append(
+                        f"Semantic error in {context}: continue outside a loop"
+                    )
+
+            elif kind == "CALL":
                 if value not in defined:
                     errors.append(
                         f"Semantic error in {context}: call to undefined function {value}"
@@ -71,10 +86,22 @@ class SemanticAnalyzer:
 
             elif kind == "IF_BLOCK":
                 then_ops, else_ops = value
-                self._check_ops(then_ops, defined, errors, context=f"{context}/if_then")
+                self._check_ops(
+                    then_ops,
+                    defined,
+                    errors,
+                    context=f"{context}/if_then",
+                    in_loop=in_loop,
+                    in_switch=in_switch,
+                )
                 if else_ops is not None:
                     self._check_ops(
-                        else_ops, defined, errors, context=f"{context}/if_else"
+                        else_ops,
+                        defined,
+                        errors,
+                        context=f"{context}/if_else",
+                        in_loop=in_loop,
+                        in_switch=in_switch,
                     )
 
             elif kind == "WHILE":
@@ -84,7 +111,20 @@ class SemanticAnalyzer:
                         f"Semantic error in {context}: WHILE has an empty body"
                     )
                 else:
-                    self._check_ops(body, defined, errors, context=f"{context}/while")
+                    self._check_ops(
+                        body, defined, errors, context=f"{context}/while", in_loop=True
+                    )
+
+            elif kind == "DO_WHILE":
+                body = value
+                if not body:
+                    errors.append(
+                        f"Semantic error in {context}: DO-WHILE has an empty body"
+                    )
+                else:
+                    self._check_ops(
+                        body, defined, errors, context=f"{context}/do", in_loop=True
+                    )
 
             elif kind == "REPEAT":
                 body = value
@@ -93,7 +133,9 @@ class SemanticAnalyzer:
                         f"Semantic error in {context}: REPEAT has an empty body"
                     )
                 else:
-                    self._check_ops(body, defined, errors, context=f"{context}/repeat")
+                    self._check_ops(
+                        body, defined, errors, context=f"{context}/repeat", in_loop=True
+                    )
 
             elif kind == "CAST":
                 if not (0 <= value <= MAX_CAST_CODE):

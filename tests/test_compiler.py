@@ -264,6 +264,29 @@ class TestSema:
         with pytest.raises(SemanticError):
             self._check("3 50 ;")
 
+    def test_empty_do_while_raises(self):
+        with pytest.raises(SemanticError):
+            self._check("( )")
+
+    def test_break_outside_loop_raises(self):
+        with pytest.raises(SemanticError):
+            self._check("<")
+
+    def test_continue_outside_loop_raises(self):
+        with pytest.raises(SemanticError):
+            self._check(">")
+
+    def test_break_inside_loop_ok(self):
+        self._check("1 30 1 < ;")
+
+    def test_unterminated_do_while_raises(self):
+        with pytest.raises(ParseError):
+            Parser.from_source("( 1").parse()
+
+    def test_stray_close_paren_raises(self):
+        with pytest.raises(ParseError):
+            Parser.from_source(") 1").parse()
+
 
 # ---------------------------------------------------------------------------
 # Code-generation / end-to-end tests (require gcc)

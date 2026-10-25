@@ -176,7 +176,7 @@ class Lexer:
                 continue
 
             # Single-character operators and structural markers
-            if ch in "^&*+-/.|;%~!@$:":
+            if ch in "^&*+-/.|;%~!@$:<>()":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()
                 continue

@@ -223,6 +223,18 @@ class Parser:
             self._advance()
         return ops
 
+    def _parse_until(self, closer: str, what: str, at: Token) -> List[Op]:
+        """Parse ops up to a closing token (consumed); EOF before it is an error."""
+        ops: List[Op] = []
+        while not self._at_end() and self._current().kind != closer:
+            op = self._parse_single_op()
+            if op is not None:
+                ops.append(op)
+        if self._at_end():
+            raise ParseError(f"Unterminated {what} starting at {at.line}:{at.col}")
+        self._advance()
+        return ops
+
     def _parse_if_body(self) -> tuple[List[Op], Optional[List[Op]]]:
         """Parse the body of an IF_BLOCK construct.
 
@@ -301,6 +313,25 @@ class Parser:
             self._advance()
             code = self._expect_int("Cast type code", tok)
             return ("CAST", code)
+
+        if tok.kind == "<":
+            # BREAK: leave the innermost loop or switch
+            self._advance()
+            return ("BREAK", None)
+
+        if tok.kind == ">":
+            # CONTINUE: jump to the next iteration of the innermost loop
+            self._advance()
+            return ("CONTINUE", None)
+
+        if tok.kind == "(":
+            # DO-WHILE: ( <body> )  runs the body, then pops the flag it left
+            self._advance()
+            body = self._parse_until(")", "do-while body", tok)
+            return ("DO_WHILE", body)
+
+        if tok.kind == ")":
+            raise ParseError(f"Unexpected ')' at {tok.line}:{tok.col}")
 
         if tok.kind == "LIT":
             # Literal constants (hex, octal, binary, char, suffixed) always push.
