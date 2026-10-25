@@ -37,6 +37,9 @@ def main():
         p = tmp / "suffixed-integer.num"; p.write_text("42u |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         assert r.stdout == "42\n", repr(r.stdout)
+        p = tmp / "large-float.num"; p.write_text("1e100 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "1e+100\n", repr(r.stdout)
         for name, source, diagnostic in [
             ("bad-binary.num", "0b102", "invalid binary literal"),
             ("bad-suffix.num", "42foo", "invalid integer suffix"),
