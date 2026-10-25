@@ -1,0 +1,12 @@
+# Pointers hold cell addresses: \x takes an address, p[0] reads or writes the target.
+int a = 3.0;
+int *p = \a;
+p[0] = p[0] 4.0 + ;
+a |
+int **pp = \p;
+pp[0][0] = 9.0;
+a |
+int arr[3] = {1.0, 2.0, 3.0};
+int *e = \arr[1];
+e[0] |
+e[1] |

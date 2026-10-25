@@ -148,8 +148,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "numlang has no addresses or indirection; storage is only the fixed vars and arrays slots"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_pointers.num"
+          ]
         },
         "selenium": {
           "status": "missing",
