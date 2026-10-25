@@ -1,0 +1,7 @@
+# Conditional expression: <cond> 20 <then> 28 <else> ; leaves exactly one value.
+# Only the taken branch runs, so its variable update is the only side effect.
+4.0 0 &
+|0 3.0 11 20 |0 10.0 * 28 |0 10.0 - ; |
+0.0 0 &
+|0 0.0 13 20 |1 1.0 + 1 & |1 28 |2 2.0 + 2 & |2 ; |
+|1 |2

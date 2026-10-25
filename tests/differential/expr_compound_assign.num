@@ -1,0 +1,6 @@
+# Compound assignment as a stack idiom: |n <rhs> <op> n & stores the result.
+5.0 0 &
+|0 3.0 + 0 &
+|0 |
+|0 2.0 - 0 &
+|0 |

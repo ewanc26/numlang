@@ -273,6 +273,21 @@ Example — store π in var 10 and retrieve it:
 
 ---
 
+### Expression idioms
+
+Numlang has no infix assignment or operator-with-side-effect syntax, so these C expressions are spelled as stack sequences:
+
+| C expression | Numlang | Result left on stack |
+|---|---|---|
+| `c ? a : b` | `<c> 20 <a> 28 <b> ;` | one value, from the taken branch only |
+| `x += n` / `x -= n` | `\|x <n> + x &` / `\|x <n> - x &` | nothing |
+| `++x` | `\|x 1.0 + 16 x &` | the new value |
+| `x++` | `\|x 16 1.0 + x &` | the old value |
+| `--x` / `x--` | same as `++` / `++` with `-` | new / old value |
+| `(X, Y)` | `<X> 18 <Y>` | the value of `Y` (the value of `X` is dropped) |
+
+Use the float form (`1.0`) for constants that collide with opcode numbers, as elsewhere. `&` pops the index and then the value, so `<value> <index> &` stores into a variable.
+
 ### I/O
 
 | Symbol | Effect |

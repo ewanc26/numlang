@@ -312,8 +312,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_conditional.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -336,8 +338,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_compound_assign.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -360,8 +364,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_increment_decrement.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -410,8 +416,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_comma.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -554,8 +562,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/func_recursion.num"
+          ]
         },
         "selenium": {
           "status": "missing",
