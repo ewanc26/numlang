@@ -200,8 +200,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "numlang has no aggregate types or overlapping storage"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_unions.num"
+          ]
         },
         "selenium": {
           "status": "missing",

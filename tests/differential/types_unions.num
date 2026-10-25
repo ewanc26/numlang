@@ -1,0 +1,9 @@
+# Union members all start at the same cell. Each union is read back through the member it was written with.
+union Num { int i; double d; };
+union Num u;
+u.d = 2.5;
+u.d |
+union Num v;
+v.i = 7.0;
+v.i |
+sizeof(union Num) |
