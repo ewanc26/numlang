@@ -1,0 +1,50 @@
+# RPN calculator: token codes 1-4 select an operation through a function pointer; 100+v pushes v.
+# Each expression is zero-terminated in tok[]; a division by zero prints a message and exits with 3.
+int (*op)();
+int tok[18] = {106.0, 102.0, 1.0, 103.0, 3.0, 108.0, 104.0, 4.0, 2.0, 0.0,
+               105.0, 101.0, 2.0, 0.0,
+               107.0, 100.0, 4.0, 0.0};
+int pc = 0.0;
+int ops = 0.0;
+
+/1
+    +
+;
+/2
+    -
+;
+/3
+    *
+;
+/4
+    16 0 12
+    20
+        18 18 "division by zero\n" 3 62
+    28
+        /
+    ;
+;
+
+/0
+    tok[pc] 0 13
+    30
+        switch tok[pc] {
+            case 1: op = \.1; op(); ops = ops 1.0 + ; <
+            case 2: op = \.2; op(); ops = ops 1.0 + ; <
+            case 3: op = \.3; op(); ops = ops 1.0 + ; <
+            case 4: op = \.4; op(); ops = ops 1.0 + ; <
+            default: tok[pc] 100 - <
+        }
+        pc = pc 1.0 + ;
+        tok[pc] 0 13
+    ;
+;
+
+pc = 0.0;
+.0 |
+pc = 10.0;
+.0 |
+ops |
+pc = 14.0;
+.0 |
+"not reached\n"

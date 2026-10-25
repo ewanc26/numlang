@@ -274,7 +274,8 @@
         "plainspeak": {
           "status": "implemented",
           "tests": [
-            "tests/differential/types_multidim_arrays.eng"
+            "tests/differential/types_multidim_arrays.eng",
+            "tests/differential/types_multidim_initializers.eng"
           ]
         },
         "numlang": {

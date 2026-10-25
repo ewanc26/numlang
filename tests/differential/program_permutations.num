@@ -1,0 +1,46 @@
+# Recursive permutation generator: swap-based backtracking over the global array perm.
+# Function 0 is permute() for the current depth d; each leaf prints its permutation as a number.
+int n = 4.0;
+int d = 0.0;
+int perm[4] = {1.0, 2.0, 3.0, 4.0};
+int lvl[4] = {0.0, 0.0, 0.0, 0.0};
+int count = 0.0;
+int tmp = 0.0;
+int p = 0.0;
+int key = 0.0;
+
+/0
+    d n 12
+    20
+        count = count 1.0 + ;
+        key = 0.0;
+        p = 0.0;
+        p n 10
+        30
+            key = key 10.0 * perm[p] + ;
+            p = p 1.0 + ;
+            p n 10
+        ;
+        key |
+    28
+        lvl[d] = d;
+        lvl[d] n 10
+        30
+            tmp = perm[d];
+            perm[d] = perm[lvl[d]];
+            perm[lvl[d]] = tmp;
+            d = d 1.0 + ;
+            .0
+            d = d 1.0 - ;
+            tmp = perm[d];
+            perm[d] = perm[lvl[d]];
+            perm[lvl[d]] = tmp;
+            lvl[d] = lvl[d] 1.0 + ;
+            lvl[d] n 10
+        ;
+    ;
+;
+
+d = 0.0;
+.0
+count |
