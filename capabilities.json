@@ -538,8 +538,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not yet implemented; planned as label and goto punctuation tokens"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_goto.num"
+          ]
         },
         "selenium": {
           "status": "missing",
