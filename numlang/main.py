@@ -122,7 +122,7 @@ def main(argv: list[str] | None = None) -> int:
         try:
             parser = Parser.from_source(source)
             program = parser.parse()
-        except (LexError, ParseError) as exc:
+        except (LexError, ParseError, ValueError) as exc:
             print(f"numlangc: {exc}", file=sys.stderr)
             return 1
         print(f"Functions ({len(program.functions)}):")
@@ -138,7 +138,7 @@ def main(argv: list[str] | None = None) -> int:
     # Normal compilation path
     try:
         c_code = compile_source(source, stack_size=args.stack_size)
-    except (LexError, ParseError, SemanticError, CompileError) as exc:
+    except (LexError, ParseError, SemanticError, CompileError, ValueError) as exc:
         print(f"numlangc: {exc}", file=sys.stderr)
         return 1
 

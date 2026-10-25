@@ -295,6 +295,71 @@ Example — store π in var 10 and retrieve it:
 
 ---
 
+### Memory model
+
+Numlang has named objects with C declarations. Storage is one array of cells (one double each). Cell 0 is the null pointer; the legacy `|n` variables occupy cells 1–100. A scalar or pointer takes one cell, and arrays and structs take consecutive cells. Automatic objects live in a frame created on function entry.
+
+```
+int x = 2.0;                       # declaration with initialiser (use float literals)
+int a[3] = {1.0, 2.0};             # braced initialiser, missing elements are zero
+int m[2][2] = {{1.0, 2.0}, {3.0, 4.0}};
+struct P { int x; int y; };        # struct and union tags; members use . and ->
+struct P p = {.y = 5.0};           # designated initialiser
+union U { int i; double d; };
+enum E { A, B = 5 };               # enumeration constants are ints
+typedef double Real;
+static int calls = 0.0;           # static storage, initialised once at startup
+```
+
+Assignment and lvalues:
+
+```
+x = x 1.0 + ;      # name = postfix expression ;
+a[1] = 4.0;        # index
+p.x = 3.0;         # member
+q->x = 4.0;        # member through pointer (-> is a token)
+```
+
+Pointers hold the cell address of their target:
+
+```
+\x                 # address of x (push)
+int *px = \x;      # pointer declaration
+px[0] = 7.0;       # p[0] is the dereference; * is the multiply opcode, so there is no prefix *
+\.0                # function reference: a pointer to function 0
+int (*fp)();       # function pointer; fp(); calls the function it holds
+```
+
+Switch and goto:
+
+```
+switch 2.0 { case 1: 10.0 | < case 2: 20.0 | < default: 30.0 | }
+goto skip;         # forward or backward jump to a label in the same function
+label skip;
+```
+
+`<` leaves a switch (or loop) and `>` continues a loop. Without `<`, control falls through to the next case group.
+
+`sizeof(type)` and `sizeof(name)` give byte sizes using the LP64 layout (natural alignment, struct padding). Those values are used only by `sizeof`; addresses still count cells.
+
+Qualifiers:
+
+- Assigning to a `const` object is a compile error.
+- Initialising or assigning a pointer that discards `const` is a compile error when the right-hand side is one address, load or function reference.
+- `volatile` is parsed and checked, but generates no special code.
+- `restrict` is accepted only on pointer declarators; it has no effect on generated code.
+
+Limits:
+
+- No type punning through unions. Reading a member other than the one last written gives the stored double, not reinterpreted bits.
+- Pointer arithmetic is not supported; use `p[i]` to index.
+- String literals cannot initialise arrays.
+- Structs are copied only by whole-struct assignment, and a struct cannot be pushed as a value.
+- File-scope and `static` initialisers must be constant: literals, arithmetic, casts, sizeof, function references and addresses of statics. They may not read memory or call functions.
+- Labels are scoped to their function.
+
+---
+
 ### Expression idioms
 
 Numlang has no infix assignment or operator-with-side-effect syntax, so these C expressions are spelled as stack sequences:
@@ -368,6 +433,10 @@ Recursion is supported.
 2. **Division vs functions**: `/` followed by an integer defines a function. Use float divisors or pre-compute values to avoid this.
 
 3. **String literals**: All characters in strings are output as raw byte values via `putchar()`. Non-ASCII characters may cause encoding issues on some systems.
+
+4. **Dereference and multiply**: `*` is the multiply opcode. Dereference a pointer with `p[0]`.
+
+5. **Minus and arrow**: `->` is lexed as one token, so `-` followed by `>` with no space is a member access, not subtraction followed by `>`.
 
 ---
 
@@ -547,6 +616,7 @@ numlang/
   lexer.py      — tokeniser (float literals, |nn variables)
   parser.py     — recursive-descent parser → AST
   ast.py        — AST node types
+  ctypes_model.py — C type model: cell and LP64 byte layouts
   sema.py       — semantic analysis
   codegen_c.py  — C code generator
   main.py       — CLI entry point

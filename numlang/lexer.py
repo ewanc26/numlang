@@ -16,6 +16,9 @@ class LexError(Exception):
     """Raised on invalid tokens, unterminated strings, or bad escape sequences."""
 
 
+_IDENT_START = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+_IDENT_CHARS = _IDENT_START + "0123456789"
+
 # Integer suffixes accepted by C: u/U, l/L/ll/LL, and the combinations of the two.
 _INT_SUFFIX_RE = re.compile(r"(?:[uU]|[uU](?:l|L|ll|LL)|(?:l|L|ll|LL)[uU]?)?")
 
@@ -175,8 +178,23 @@ class Lexer:
                 tokens.append(self._lex_number(start_line, start_col))
                 continue
 
+            # Identifiers and keywords (keywords are ID tokens; the parser decides)
+            if ch in _IDENT_START:
+                buf = []
+                while not self._eof() and self._peek() in _IDENT_CHARS:
+                    buf.append(self._advance())
+                tokens.append(Token("ID", "".join(buf), start_line, start_col))
+                continue
+
+            # Arrow operator -> (member access through a pointer)
+            if ch == "-" and self._peek(1) == ">":
+                self._advance()
+                self._advance()
+                tokens.append(Token("->", "->", start_line, start_col))
+                continue
+
             # Single-character operators and structural markers
-            if ch in "^&*+-/.|;%~!@$:<>()":
+            if ch in "^&*+-/.|;%~!@$:<>()=[]{},\\":
                 tokens.append(Token(ch, ch, start_line, start_col))
                 self._advance()
                 continue

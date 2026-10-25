@@ -446,3 +446,51 @@ class TestForeignAndArrays:
         c_src = compile_source('@0 "math.h" "cos" 1 ;\n1 $0 |')
         assert "#include <math.h>" in c_src
         assert "cos(_f0)" in c_src
+
+
+# ---------------------------------------------------------------------------
+# Memory model: qualifiers, declarations and unsupported forms
+# ---------------------------------------------------------------------------
+
+
+class TestMemoryModelErrors:
+    """Programs that C rejects (or that Numlang does not support) must fail to compile."""
+
+    @pytest.mark.parametrize(
+        "source",
+        [
+            "const int c = 1.0; c = 2.0;",  # assignment to const object
+            "const int c = 1.0; int *p = \\c;",  # pointer discards const
+            "int v = 1.0; const int *cp = \\v; int *p; p = cp;",  # pointer discards const via copy
+            "int v = 1.0; int *const fixed = \\v; fixed = \\v;",  # const pointer reassigned
+            "struct S { const int k; }; struct S s; struct S t; s = t;",  # struct with const member
+            "const int a[2] = {1.0, 2.0}; a[0] = 3.0;",  # element of const array
+            "int a = 1.0; int b = a;",  # file-scope initialiser reads memory
+            "switch 1.0 { case 1: 1.0 | case 1: 2.0 | }",  # duplicate case label
+            "switch 1.0 { default: 1.0 | default: 2.0 | }",  # two default labels
+            "goto nowhere;",  # undefined label
+            "label a; label a;",  # duplicate label
+            "int a[3]; a = 1.0;",  # array assigned as scalar
+            "int x = 1.0; x(); ",  # call through a non-function
+        ],
+    )
+    def test_rejected_by_semantics(self, source):
+        with pytest.raises((SemanticError, ParseError)):
+            compile_source(source)
+
+    @pytest.mark.parametrize(
+        "source",
+        [
+            "int restrict x = 1.0;",  # restrict on a non-pointer
+            "int a[];",  # array of unknown size used as an object
+            "struct Missing m;",  # use of incomplete type
+            "union U { int i; }; union U u; u.nope = 1.0;",  # no such member
+        ],
+    )
+    def test_rejected_by_parser_or_layout(self, source):
+        with pytest.raises((ParseError, ValueError)):
+            compile_source(source)
+
+    def test_const_object_can_be_read(self):
+        c_code = compile_source("const int c = 4.0; c |")
+        assert "mem[" in c_code

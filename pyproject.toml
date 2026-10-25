@@ -16,3 +16,5 @@ numlangc = "numlang.main:main"
 
 [tool.setuptools]
 packages = ["numlang"]
+[tool.isort]
+profile = "black"
