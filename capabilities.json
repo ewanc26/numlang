@@ -97,7 +97,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "numlang has no identifiers or named constants, so enumeration types cannot be declared; numbers are the only constants"
         },
         "selenium": {
           "status": "missing",
@@ -121,7 +121,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "numlang has no type declarations or identifiers to alias; every value is a double"
         },
         "selenium": {
           "status": "missing",
@@ -145,7 +145,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "numlang has no addresses or indirection; storage is only the fixed vars and arrays slots"
         },
         "selenium": {
           "status": "missing",
@@ -169,7 +169,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "numlang has no aggregate types or member access"
         },
         "selenium": {
           "status": "missing",
@@ -193,7 +193,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "numlang has no aggregate types or overlapping storage"
         },
         "selenium": {
           "status": "missing",
@@ -217,7 +217,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "numlang has no sizeof operator and no C type names to measure"
         },
         "selenium": {
           "status": "missing",
@@ -241,7 +241,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "numlang has no declarations with initializers beyond explicit stores into slots"
         },
         "selenium": {
           "status": "missing",
@@ -264,8 +264,8 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "partial",
+          "note": "only row-major index arithmetic over one-dimensional ARR_NEW/ARR_GET/ARR_SET is possible; there is no multidimensional array type"
         },
         "selenium": {
           "status": "missing",
@@ -289,7 +289,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "numlang has no const, volatile or static declarations"
         },
         "selenium": {
           "status": "missing",
@@ -443,7 +443,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "not yet implemented; planned as a punctuation-based switch form"
         },
         "selenium": {
           "status": "missing",
@@ -519,7 +519,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "not yet implemented; planned as label and goto punctuation tokens"
         },
         "selenium": {
           "status": "missing",
@@ -543,7 +543,7 @@
         },
         "numlang": {
           "status": "missing",
-          "note": "not started"
+          "note": "not yet implemented; function handles are not yet designed"
         },
         "selenium": {
           "status": "missing",
