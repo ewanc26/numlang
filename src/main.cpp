@@ -166,7 +166,9 @@ private:
                 dv=std::strtod(n.c_str(),&parsed);
                 if(!parsed||parsed==n.c_str()||*parsed) throw std::runtime_error("invalid number at line "+std::to_string(line));
                 if(!std::isfinite(dv)) throw std::runtime_error("number out of range at line "+std::to_string(line));
-                iv=static_cast<long long>(dv);
+                // Floating-point literals are not opcode/integer tokens. Avoid converting
+                // large finite doubles to long long, which can be undefined/out-of-range.
+                iv=0;
             } else {
                 char *parsed=nullptr;
                 errno=0;
