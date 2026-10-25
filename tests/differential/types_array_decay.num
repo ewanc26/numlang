@@ -1,0 +1,22 @@
+# Array names decay to the cell address of their first element, at file scope, in statics, and in assignments.
+int arr[3] = {1.0, 2.0, 3.0};
+int *fp = arr;
+fp[2] = 7.0;
+arr[2] |
+int *q;
+q = arr;
+q[0] |
+struct P { int a[2]; int b; };
+struct P s = {{5.0, 6.0}, 7.0};
+int *m = s.a;
+m[1] |
+q = s.a;
+q[0] |
+/0 static int sarr[2] = {8.0, 9.0}; static int *sp = sarr; sp[1] |
+int local[3] = {4.0, 5.0, 6.0};
+int *lp = local;
+lp[2] | ;
+.0
+int mine[2] = {10.0, 11.0};
+q = mine;
+q[1] |

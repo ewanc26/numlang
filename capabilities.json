@@ -150,7 +150,8 @@
         "numlang": {
           "status": "implemented",
           "tests": [
-            "tests/differential/types_pointers.num"
+            "tests/differential/types_pointers.num",
+            "tests/differential/types_array_decay.num"
           ]
         },
         "selenium": {
@@ -567,7 +568,8 @@
         "numlang": {
           "status": "implemented",
           "tests": [
-            "tests/differential/func_pointers.num"
+            "tests/differential/func_pointers.num",
+            "tests/differential/func_pointer_arrays.num"
           ]
         },
         "selenium": {
