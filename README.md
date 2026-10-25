@@ -10,10 +10,11 @@ The character set is `0-9 ^ & * + - / . | ; % # ~ \" !`.
 ## Installation
 
 ```sh
-pip install -e .
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
 ```
 
-This installs the `numlangc` command.
+The binary is `build/numlangc`.
 
 ---
 
