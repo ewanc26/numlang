@@ -304,8 +304,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "numlang has no const, volatile or static declarations"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_storage_qualifiers.num"
+          ]
         },
         "selenium": {
           "status": "missing",
