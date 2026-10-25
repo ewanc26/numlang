@@ -174,8 +174,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "numlang has no aggregate types or member access"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_structs.num"
+          ]
         },
         "selenium": {
           "status": "missing",
