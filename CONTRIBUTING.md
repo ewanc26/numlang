@@ -1,19 +1,23 @@
-# Contributing to numlang
+# Contributing to Numlang
 
+Numlang is migrating from a feature-complete Python reference compiler to a C++20 compiler that emits C. The C++ port is intentionally incomplete; keep its supported subset explicit and fail clearly for unsupported operations.
 
+## Development setup
 
-## Project context
+A C++20 compiler, CMake, a host C compiler, Python 3, and pytest are required. The Python package is retained as a compatibility reference while the C++ port expands.
 
-- Primary language: Python
-- Default branch: main
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j2
+ctest --test-dir build --output-on-failure
+```
 
-## Before submitting changes
+## Working rules
 
-- Read the README, manifests, and CI workflows before choosing commands.
-- Run the documented formatter, linter, build, and test checks relevant to your change.
-- Keep commits focused and explain compatibility or operational impact.
-- Open changes through a pull request with verification results.
-
-## Recent direction
-
-Recent commits: Sync AGENTS.md from zincfox; Sync AGENTS.md from zincfox; Sync CONTRIBUTING.md from zincfox; Sync CONTRIBUTING.md from zincfox; Update issue template config
+- Read README.md, AGENTS.md, CMakeLists.txt, CI, and the C++ compiler-status document before changing behavior.
+- Do not advertise a feature as implemented in C++ until the C++ compiler and a regression test cover it.
+- Unsupported numeric opcodes and symbols must produce diagnostics, never silently compile as literals or no-ops.
+- Keep the legacy Python tests passing when changing shared language semantics.
+- Update the capability matrix to describe the C++ port, not only the legacy reference compiler.
+- Add C++ end-to-end smoke coverage for new syntax and runtime behavior.
+- Use a feature branch and pull request; report exact checks and results.

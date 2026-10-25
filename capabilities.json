@@ -18,10 +18,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/literals_char.num"
-          ]
+          ],
+          "note": "C++ supports single-byte character literals and basic escapes; complete C escape/Unicode parity is deferred."
         },
         "selenium": {
           "status": "missing",
@@ -44,10 +45,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_sized_integers.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -70,10 +72,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_floating.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -96,10 +99,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_enums.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -122,10 +126,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_typedef.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -148,11 +153,12 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_pointers.num",
             "tests/differential/types_array_decay.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -175,10 +181,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_structs.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -201,10 +208,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_unions.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -227,10 +235,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_sizeof.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -253,10 +262,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_initializers.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -280,10 +290,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_multidim_arrays.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -306,10 +317,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/types_storage_qualifiers.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -332,10 +344,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/expr_conditional.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -358,10 +371,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/expr_compound_assign.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -384,10 +398,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/expr_increment_decrement.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -410,10 +425,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/expr_casts.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -436,10 +452,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/expr_comma.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -462,10 +479,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/control_switch.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -488,10 +506,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/control_do_while.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -514,10 +533,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/control_break_continue.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -540,10 +560,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/control_goto.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -566,11 +587,12 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/func_pointers.num",
             "tests/differential/func_pointer_arrays.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -593,10 +615,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/func_recursion.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "missing",
@@ -619,10 +642,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/literals_numeric.num"
-          ]
+          ],
+          "note": "C++ supports basic decimal, floating, hexadecimal, octal, and binary literals; full suffix and edge-case parity is deferred."
         },
         "selenium": {
           "status": "missing",
@@ -646,10 +670,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/literals_escapes.num"
-          ]
+          ],
+          "note": "C++ supports common escapes and limited hex/octal escapes; full C/Unicode escape parity is deferred."
         },
         "selenium": {
           "status": "missing",
@@ -673,10 +698,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/integer_boolean.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "implemented",
@@ -705,12 +731,13 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/arithmetic.num",
             "tests/differential/bitwise.num",
             "tests/differential/logical.num"
-          ]
+          ],
+          "note": "C++ supports arithmetic, comparisons, logical operations, and selected math/bitwise opcodes; full operator/runtime parity is deferred."
         },
         "selenium": {
           "status": "implemented",
@@ -742,10 +769,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/variables.num"
-          ]
+          ],
+          "note": "C++ supports numbered variable loads/stores only; declarations, named variables, arrays, and pointer-based storage are deferred."
         },
         "selenium": {
           "status": "implemented",
@@ -772,10 +800,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/if_else.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "implemented",
@@ -803,11 +832,12 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/while_loop.num",
             "tests/differential/repeat_loop.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "implemented",
@@ -836,10 +866,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/functions.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "implemented",
@@ -866,10 +897,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/arrays.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "implemented",
@@ -899,8 +931,9 @@
         "numlang": {
           "status": "implemented",
           "tests": [
-            "tests/differential/strings.num"
-          ]
+            "tests/smoke_cpp.py"
+          ],
+          "note": "Verified by the current C++ end-to-end smoke suite."
         },
         "selenium": {
           "status": "implemented",
@@ -929,8 +962,9 @@
         "numlang": {
           "status": "implemented",
           "tests": [
-            "tests/differential/console.num"
-          ]
+            "tests/smoke_cpp.py"
+          ],
+          "note": "Verified by the current C++ end-to-end smoke suite."
         },
         "selenium": {
           "status": "implemented",
@@ -957,10 +991,11 @@
           ]
         },
         "numlang": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/ffi_call.num"
-          ]
+          ],
+          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
         },
         "selenium": {
           "status": "implemented",

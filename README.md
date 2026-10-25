@@ -1,6 +1,6 @@
 # Numlang compiler
 
-Numlang is an esoteric stack-based language that compiles to C via a Python compiler.
+Numlang is an esoteric stack-based language with an in-progress C++20 compiler that emits C. The historical Python compiler is retained as a reference implementation while C++ feature parity is rebuilt.
 The character set is `0-9 ^ & * + - / . | ; % # ~ \" !`.
 
 > 🧶 Also available on [Tangled](https://tangled.org/ewancroft.uk/numlang)
@@ -10,10 +10,11 @@ The character set is `0-9 ^ & * + - / . | ; % # ~ \" !`.
 ## Installation
 
 ```sh
-pip install -e .
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
 ```
 
-This installs the `numlangc` command.
+The binary is `build/numlangc`. The current C++ implementation supports a tested core subset: numeric, string and character literals; stack operations; arithmetic; comparisons; selected math and bitwise opcodes; numbered variables; and basic console I/O. It rejects recognized but unsupported structural opcodes rather than treating them as ordinary numbers. The full language reference below describes the intended language and retained Python reference compiler, not complete C++ parity. See [the C++ compiler status](docs/cpp-compiler-status.md).
 
 ---
 
@@ -32,11 +33,7 @@ numlangc hello.num --run --cc clang
 # Increase the runtime stack depth (default 1000)
 numlangc hello.num --run --stack-size 4096
 
-# Debug: dump the token stream
-numlangc hello.num --emit-tokens
 
-# Debug: dump the parsed AST
-numlangc hello.num --emit-ast
 ```
 
 ---
@@ -44,6 +41,9 @@ numlangc hello.num --emit-ast
 ## Language reference
 
 ### Data model
+
+**C++ port status:** this reference describes the full intended language. Only the core subset described above is implemented by the current C++ executable; advanced control flow, declarations, aggregates, FFI, arrays, and other features remain deferred in the C++ port. The historical Python compiler remains available as a reference implementation.
+
 
 - All values are 64-bit IEEE 754 doubles.
 - The runtime has a stack (depth configurable, default 1000) and **100 named variables** `vars[0]`–`vars[99]`, all initialised to `0`.
