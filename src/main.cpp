@@ -230,7 +230,8 @@ int main(int argc,char **argv){
     std::ifstream in(input);if(!in){std::cerr<<"numlangc: cannot read source file: "<<input<<"\n";return 1;}
     std::stringstream source;source<<in.rdbuf();
     try{
-        Lexer lexer(source.str());const auto tokens=lexer.run();const std::string c=compile_c(tokens,stack_size);
+        const std::string source_text=source.str();
+        Lexer lexer(source_text);const auto tokens=lexer.run();const std::string c=compile_c(tokens,stack_size);
         if(!run){std::ofstream out(output);if(!out){std::cerr<<"numlangc: cannot create output file: "<<output<<"\n";return 1;}out<<c;if(!out){std::cerr<<"numlangc: failed writing output file\n";return 1;}return 0;}
         Temp temp{make_temp()};auto cf=(temp.path/"numlang.c").string();auto exe=(temp.path/"numlang").string();
         {std::ofstream out(cf);if(!out)throw std::runtime_error("cannot write temporary C source");out<<c;}
