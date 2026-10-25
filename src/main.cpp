@@ -114,21 +114,69 @@ private:
         std::string s;
         while(!eof() && (std::isalnum(static_cast<unsigned char>(peek()))||peek()=='.'||
               ((peek()=='+'||peek()=='-')&&!s.empty()&&(s.back()=='e'||s.back()=='E')))) s+=advance();
-        bool pref=s.size()>1&&s[0]=='0'&&(s[1]=='x'||s[1]=='X'||s[1]=='b'||s[1]=='B');
-        bool fp=s.find('.')!=std::string::npos||s.find('e')!=std::string::npos||s.find('E')!=std::string::npos;
-        std::string n=s;
-        long long iv=0; double dv=0;
-        if(pref && n.size()>1 && (n[1]=='b'||n[1]=='B')) {
-            size_t end=2; while(end<n.size()&&(n[end]=='0'||n[end]=='1')) ++end;
+
+        auto valid_suffix = [](const std::string &x) {
+            return x.empty() || x=="u" || x=="U" || x=="l" || x=="L" ||
+                x=="ll" || x=="LL" || x=="ul" || x=="uL" || x=="ull" || x=="uLL" ||
+                x=="UL" || x=="Ul" || x=="ULL" || x=="ULl" ||
+                x=="lu" || x=="lU" || x=="Lu" || x=="LU" ||
+                x=="llu" || x=="llU" || x=="LLu" || x=="LLU";
+        };
+        const bool hex = s.size()>2 && s[0]=='0' && (s[1]=='x'||s[1]=='X');
+        const bool binary = s.size()>2 && s[0]=='0' && (s[1]=='b'||s[1]=='B');
+        long long iv=0;
+        double dv=0;
+        bool fp=false;
+        std::string suffix;
+        if(binary) {
+            size_t end=2;
+            while(end<s.size()&&(s[end]=='0'||s[end]=='1')) ++end;
             if(end==2) throw std::runtime_error("invalid binary literal at line "+std::to_string(line));
-            for(size_t i=2;i<end;++i) iv=iv*2+n[i]-'0';
+            suffix=s.substr(end);
+            if(!valid_suffix(suffix)) throw std::runtime_error("invalid binary literal at line "+std::to_string(line));
+            for(size_t i=2;i<end;++i) {
+                if(iv > (LLONG_MAX - (s[i]-'0')) / 2)
+                    throw std::runtime_error("integer literal out of range at line "+std::to_string(line));
+                iv=iv*2+s[i]-'0';
+            }
+            dv=static_cast<double>(iv);
+        } else if(hex) {
+            char *parsed=nullptr;
+            iv=std::strtoll(s.c_str(),&parsed,0);
+            if(parsed==s.c_str()+2) throw std::runtime_error("invalid hexadecimal literal at line "+std::to_string(line));
+            suffix=s.substr(static_cast<size_t>(parsed-s.c_str()));
+            if(!valid_suffix(suffix)) throw std::runtime_error("invalid integer suffix at line "+std::to_string(line));
+            if(errno==ERANGE) throw std::runtime_error("integer literal out of range at line "+std::to_string(line));
             dv=static_cast<double>(iv);
         } else {
-            if(!pref) while(!n.empty()&&std::isalpha(static_cast<unsigned char>(n.back()))) n.pop_back();
-            if(fp){char *end=nullptr;dv=std::strtod(n.c_str(),&end);if(!end||*end)throw std::runtime_error("invalid number at line "+std::to_string(line));iv=static_cast<long long>(dv);}
-            else{char *end=nullptr;iv=std::strtoll(n.c_str(),&end,0);if(!end||*end)throw std::runtime_error("invalid integer at line "+std::to_string(line));dv=static_cast<double>(iv);}
+            fp=s.find('.')!=std::string::npos||s.find('e')!=std::string::npos||s.find('E')!=std::string::npos;
+            std::string n=s;
+            if(!fp) {
+                size_t suffix_start=n.size();
+                while(suffix_start>0&&std::isalpha(static_cast<unsigned char>(n[suffix_start-1]))) --suffix_start;
+                suffix=n.substr(suffix_start);
+                if(!valid_suffix(suffix)) throw std::runtime_error("invalid integer suffix at line "+std::to_string(line));
+                n.resize(suffix_start);
+            }
+            if(fp) {
+                char *parsed=nullptr;
+                dv=std::strtod(n.c_str(),&parsed);
+                if(!parsed||parsed==n.c_str()||*parsed) throw std::runtime_error("invalid number at line "+std::to_string(line));
+                if(!std::isfinite(dv)) throw std::runtime_error("number out of range at line "+std::to_string(line));
+                iv=static_cast<long long>(dv);
+            } else {
+                char *parsed=nullptr;
+                errno=0;
+                iv=std::strtoll(n.c_str(),&parsed,0);
+                if(!parsed||parsed==n.c_str()||*parsed) throw std::runtime_error("invalid integer at line "+std::to_string(line));
+                if(errno==ERANGE) throw std::runtime_error("integer literal out of range at line "+std::to_string(line));
+                dv=static_cast<double>(iv);
+            }
         }
-        Token t{Token::Kind::Number,s};t.number=dv;t.integer=iv;t.opcode=!pref&&!fp&&n==s&&!(s.size()>1&&s[0]=='0');t.line=line;t.column=col;return t;
+        Token t{Token::Kind::Number,s};
+        t.number=dv;t.integer=iv;
+        t.opcode=!hex&&!binary&&!fp&&suffix.empty()&&!(s.size()>1&&s[0]=='0');
+        t.line=line;t.column=col;return t;
     }
     const std::string &source; size_t pos=0; int ln=1,column=1;
 };
