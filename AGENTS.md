@@ -6,7 +6,7 @@ Guidance for AI coding agents working in **numlang**.
 
 
 
-- Language: Python
+- Language: C++
 - Default branch: main
 
 ## Working rules
