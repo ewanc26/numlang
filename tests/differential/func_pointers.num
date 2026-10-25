@@ -1,0 +1,10 @@
+# A function reference \.N is a pointer value; calling through a pointer variable runs the function.
+/0
+    2.0 *
+;
+int (*fp)();
+fp = \.0;
+5.0 fp(); |
+int (*other)();
+other = fp;
+7.0 other(); |

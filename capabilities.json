@@ -564,8 +564,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not yet implemented; function handles are not yet designed"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/func_pointers.num"
+          ]
         },
         "selenium": {
           "status": "missing",
