@@ -1,0 +1,12 @@
+# Typedef names alias double, int and a pointer to int.
+typedef double Real;
+typedef int Count;
+typedef Count *CountPtr;
+Real r = 2.5;
+Count n = 7.0;
+r |
+n |
+Count m = 3.0;
+CountPtr p = \m;
+p[0] = p[0] 2.0 * ;
+m |

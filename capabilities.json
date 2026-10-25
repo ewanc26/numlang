@@ -122,8 +122,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "numlang has no type declarations or identifiers to alias; every value is a double"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_typedef.num"
+          ]
         },
         "selenium": {
           "status": "missing",
