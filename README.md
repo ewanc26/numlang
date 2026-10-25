@@ -61,8 +61,27 @@ numlangc hello.num --emit-ast
 | `N` (integer literal) | Push the integer N, **unless** N is a special opcode (see tables below) |
 | `N.M` (float literal) | Push the floating-point value N.M — **never** treated as an opcode |
 | `\|n` or `\|nn` | Push the value of variable n (0–99) |
+| `'c'` (char constant) | Push the C int value of the character or escape, e.g. `'A'` is 65, `'\n'` is 10 |
+| `0x1F`, `0b101`, `017` | Push hexadecimal, binary and octal integers (a leading `0` means octal) |
+| `10u`, `0xFFULL` | Suffixed integers push their value (`u`, `l`, `ll` and combinations are accepted) |
 
-> **Tip:** If you need to push the raw number 10 (which is also the `LT` opcode), use the float form `10.0`.
+> **Tip:** If you need to push the raw number 10 (which is also the `LT` opcode), use the float form `10.0`, or the hex form `0xA`.
+
+### Explicit conversions
+
+`:N` converts the top of the stack to a C type and pushes the result. Integer results wrap modulo the width of the type, as C does for unsigned and out-of-range conversions, and truncate toward zero.
+
+| N | C type | N | C type |
+|---|--------|---|--------|
+| 0 | `signed char` | 7 | `unsigned long` |
+| 1 | `unsigned char` | 8 | `long long` |
+| 2 | `short` | 9 | `unsigned long long` |
+| 3 | `unsigned short` | 10 | `float` (rounds to single precision) |
+| 4 | `int` | 11 | `double` |
+| 5 | `unsigned int` | 12 | `_Bool` (0 or 1) |
+| 6 | `long` | | |
+
+Values are still held as doubles, so integer results are exact only up to 2^53. Arithmetic is not implicitly converted: write `:N` after an operation to get the narrow-type result C would give.
 
 ---
 

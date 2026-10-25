@@ -10,6 +10,9 @@ from typing import List, Set
 
 from .ast import Op, Program
 
+# Type codes accepted by the :N conversion operator (see the num_cast helper in codegen_c).
+MAX_CAST_CODE = 12
+
 
 class SemanticError(Exception):
     """Raised when a program violates Numlang's semantic rules."""
@@ -91,6 +94,12 @@ class SemanticAnalyzer:
                     )
                 else:
                     self._check_ops(body, defined, errors, context=f"{context}/repeat")
+
+            elif kind == "CAST":
+                if not (0 <= value <= MAX_CAST_CODE):
+                    errors.append(
+                        f"Semantic error in {context}: cast type code {value} out of range (0-{MAX_CAST_CODE})"
+                    )
 
             elif kind == "PUSH_VAR":
                 if not (0 <= value <= 99):

@@ -296,6 +296,12 @@ class Parser:
             num = self._expect_int("Foreign function number", tok)
             return ("FFI_CALL", num)
 
+        if tok.kind == ":":
+            # Explicit conversion: :N converts the top of stack to C type N
+            self._advance()
+            code = self._expect_int("Cast type code", tok)
+            return ("CAST", code)
+
         if tok.kind == "LIT":
             # Literal constants (hex, octal, binary, char, suffixed) always push.
             self._advance()

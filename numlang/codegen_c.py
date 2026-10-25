@@ -88,6 +88,27 @@ class CCodeGenerator:
             "",
         ]
 
+        # Explicit conversions (:N). Codes index the C types listed in CAST_TYPES.
+        lines += [
+            "/* Conversion to C type N: 0 signed char, 1 unsigned char, 2 short,",
+            "   3 unsigned short, 4 int, 5 unsigned int, 6 long, 7 unsigned long,",
+            "   8 long long, 9 unsigned long long, 10 float, 11 double, 12 _Bool. */",
+            "static double num_cast(double x, int code) {",
+            "    static const int width[10] = {8, 8, 16, 16, 32, 32, 64, 64, 64, 64};",
+            "    static const int is_signed[10] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0};",
+            "    if (code == 10) return (double)(float)x;",
+            "    if (code == 11) return x;",
+            "    if (code == 12) return x != 0.0 ? 1.0 : 0.0;",
+            '    if (!isfinite(x)) { fprintf(stderr, "Conversion of non-finite value\\n"); exit(1); }',
+            "    double m = ldexp(1.0, width[code]);",
+            "    double r = fmod(trunc(x), m);",
+            "    if (r < 0.0) r += m;",
+            "    if (is_signed[code] && r >= m / 2.0) r -= m;",
+            "    return r;",
+            "}",
+            "",
+        ]
+
         # push / pop / peek helpers
         lines += [
             "static void push(double x) {",
@@ -430,6 +451,11 @@ class CCodeGenerator:
                     f"{pad}{{ int _i = (int)pop(); int _id = (int)pop(); "
                     f"push(*arr_slot(_id, _i)); }}"
                 )
+
+            # ---- Explicit conversions -------------------------------
+
+            elif kind == "CAST":
+                lines.append(f"{pad}push(num_cast(pop(), {value}));")
 
             # ---- Foreign C calls ------------------------------------
 

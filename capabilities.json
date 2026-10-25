@@ -44,8 +44,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_sized_integers.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -68,8 +70,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_floating.num"
+          ]
         },
         "selenium": {
           "status": "missing",
@@ -380,8 +384,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_casts.num"
+          ]
         },
         "selenium": {
           "status": "missing",
