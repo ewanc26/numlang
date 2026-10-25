@@ -278,8 +278,10 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "note": "only row-major index arithmetic over one-dimensional ARR_NEW/ARR_GET/ARR_SET is possible; there is no multidimensional array type"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_multidim_arrays.num"
+          ]
         },
         "selenium": {
           "status": "missing",
