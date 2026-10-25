@@ -96,8 +96,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "numlang has no identifiers or named constants, so enumeration types cannot be declared; numbers are the only constants"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_enums.num"
+          ]
         },
         "selenium": {
           "status": "missing",
