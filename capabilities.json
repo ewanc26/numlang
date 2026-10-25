@@ -252,8 +252,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "numlang has no declarations with initializers beyond explicit stores into slots"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_initializers.num"
+          ]
         },
         "selenium": {
           "status": "missing",

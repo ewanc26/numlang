@@ -1,0 +1,14 @@
+# Braced initialisers: missing elements are zero, designators pick members, nested lists follow the array shape.
+int a[4] = {1.0, 2.0};
+a[1] |
+a[3] |
+struct Pt { int x; int y; };
+struct Pt p = {.y = 5.0};
+p.x |
+p.y |
+struct Pt q = {7.0, 8.0};
+q.y |
+int m[2][2] = {{1.0, 2.0}, {3.0, 4.0}};
+m[1][0] |
+static int s = 6.0;
+s |
