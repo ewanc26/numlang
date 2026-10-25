@@ -5,16 +5,20 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y clang cmake
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ gcc python3-pytest
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
       - name: Build
-        run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build -j
-      - name: Unit tests
-        run: ./build/unit_tests
+        run: cmake --build build --parallel 2
+      - name: Test C++ compiler and Python reference
+        run: ctest --test-dir build --output-on-failure
