@@ -35,7 +35,7 @@ std::string c_quote(const std::string &s) {
             case '\n': out += "\\n"; break;
             case '\r': out += "\\r"; break;
             case '\t': out += "\\t"; break;
-            case '\0': out += "\\0"; break;
+            case '\0': out += "\\000"; break;
             default:
                 if (c < 32 || c >= 127) {
                     const char d[] = "01234567";
@@ -228,7 +228,7 @@ bool opcode(std::ostringstream &o,long long n) {
 std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
     std::ostringstream body;
     for(const auto &t:tokens) {
-        if(t.kind==Token::Kind::String) body<<"fputs("<<c_quote(t.text)<<",stdout);\n";
+        if(t.kind==Token::Kind::String) body<<"fwrite("<<c_quote(t.text)<<",1,"<<t.text.size()<<",stdout);\n";
         else if(t.kind==Token::Kind::Character) body<<"push_value("<<t.integer<<");\n";
         else if(t.kind==Token::Kind::Variable) {
             if(t.integer<0||t.integer>=100)throw std::runtime_error("variable index must be 0-99 at line "+std::to_string(t.line));
