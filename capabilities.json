@@ -460,8 +460,10 @@
           ]
         },
         "numlang": {
-          "status": "missing",
-          "note": "not yet implemented; planned as a punctuation-based switch form"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_switch.num"
+          ]
         },
         "selenium": {
           "status": "missing",
