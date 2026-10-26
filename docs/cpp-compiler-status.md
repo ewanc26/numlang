@@ -5,11 +5,11 @@ This document describes the C++ `numlangc` implementation. The historical Python
 ## Supported end-to-end subset
 
 - Numeric literals: decimal integers/floats plus basic hex, octal, and binary forms.
-- String literals with common C escapes; single-byte character literals with basic escapes.
+- String literals with common C escapes, including embedded NUL bytes preserved by length-aware output; single-byte character literals with basic escapes.
 - Stack operations: `16` DUP, `17` SWAP, `18` DROP.
 - Arithmetic: `+`, `-`, `*`, `/`, `%` with runtime zero checks.
 - Comparisons: `10`–`15`; logical OR/AND `19` and `39`; logical NOT `!`.
-- Math and bitwise opcodes implemented by the C++ code generator: `21`–`27`, `29`, `31`–`49`.
+- Math and bitwise opcodes implemented by the C++ code generator: `21`–`27`, `29`, `31`–`49`; integer bitwise operations use checked 32-bit conversions, explicit signed-shift behavior, and diagnostics for out-of-range values and remainder overflow.
 - Numbered variables: `|n` loads and `&` stores a value to the index on top of the stack.
 - Console I/O: `|` prints a number, `^` prints a character, `?` reads a number, and strings write directly to stdout.
 - CLI: `-o/--output`, `--run`, `--cc`, `--stack-size`, and `--support`. `--run` uses a unique temporary directory and shell-quotes executable and file paths.
