@@ -14,7 +14,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ```
 
-The binary is `build/numlangc`. The current C++ implementation supports a tested core subset: numeric, string and character literals; stack operations; arithmetic; comparisons; selected math and bitwise opcodes; numbered variables; and basic console I/O. It rejects recognized but unsupported structural opcodes rather than treating them as ordinary numbers. The full language reference below describes the intended language and retained Python reference compiler, not complete C++ parity. See [the C++ compiler status](docs/cpp-compiler-status.md).
+The binary is `build/numlangc`. The current C++ implementation supports a tested core subset: numeric, string and character literals; stack operations; arithmetic; comparisons; selected math and bitwise opcodes; numbered variables; and basic console I/O. Integer bitwise opcodes validate 32-bit input ranges and use explicit signed-shift behavior rather than relying on undefined or implementation-defined signed casts/shifts. It rejects recognized but unsupported structural opcodes rather than treating them as ordinary numbers. The full language reference below describes the intended language and retained Python reference compiler, not complete C++ parity. See [the C++ compiler status](docs/cpp-compiler-status.md).
 
 ---
 
