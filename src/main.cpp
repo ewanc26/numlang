@@ -211,14 +211,14 @@ bool opcode(std::ostringstream &o,long long n) {
         case 31:o<<"push_value(log(pop_value()));\n";break;case 32:o<<"push_value(log10(pop_value()));\n";break;
         case 33:o<<"push_value(sin(pop_value()));\n";break;case 34:o<<"push_value(cos(pop_value()));\n";break;case 35:o<<"push_value(tan(pop_value()));\n";break;
         case 36:o<<"push_value(round(pop_value()));\n";break;case 37:o<<"push_value(trunc(pop_value()));\n";break;
-        case 38:o<<"{int b=(int)pop_value(),a=(int)pop_value();if(!b)fail_runtime(\"integer remainder by zero\");push_value(a%b);}\n";break;
+        case 38:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());if(!b)fail_runtime(\"integer remainder by zero\");if(a==INT32_MIN&&b==-1)fail_runtime(\"integer remainder overflow\");push_value(a%b);}\n";break;
         case 39:o<<"{double b=pop_value(),a=pop_value();push_value(a!=0&&b!=0);}\n";break;
-        case 40:o<<"{int b=(int)pop_value(),a=(int)pop_value();push_value(a&b);}\n";break;
-        case 41:o<<"{int b=(int)pop_value(),a=(int)pop_value();push_value(a|b);}\n";break;
-        case 42:o<<"{int b=(int)pop_value(),a=(int)pop_value();push_value(a^b);}\n";break;
-        case 43:o<<"push_value(~(int)pop_value());\n";break;
-        case 44:o<<"{int b=(int)pop_value(),a=(int)pop_value();if(b<0||b>=31)fail_runtime(\"invalid shift\");push_value(a<<b);}\n";break;
-        case 45:o<<"{int b=(int)pop_value(),a=(int)pop_value();if(b<0||b>=31)fail_runtime(\"invalid shift\");push_value(a>>b);}\n";break;
+        case 40:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());push_value(bits_to_i32((uint32_t)a&(uint32_t)b));}\n";break;
+        case 41:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());push_value(bits_to_i32((uint32_t)a|(uint32_t)b));}\n";break;
+        case 42:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());push_value(bits_to_i32((uint32_t)a^(uint32_t)b));}\n";break;
+        case 43:o<<"push_value(bits_to_i32(~(uint32_t)checked_i32(pop_value())));\n";break;
+        case 44:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());if(b<0||b>=32)fail_runtime(\"invalid shift\");push_value(bits_to_i32((uint32_t)a<<b));}\n";break;
+        case 45:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());if(b<0||b>=32)fail_runtime(\"invalid shift\");push_value(a>=0?(a>>b):(b==0?a:-1-((-1-a)>>b)));}\n";break;
         case 46:o<<"push_value(asin(pop_value()));\n";break;case 47:o<<"push_value(acos(pop_value()));\n";break;
         case 48:o<<"push_value(atan(pop_value()));\n";break;case 49:o<<"{double x=pop_value(),y=pop_value();push_value(atan2(y,x));}\n";break;
         default:return false;
@@ -254,9 +254,11 @@ std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
         }
     }
     std::ostringstream c;
-    c<<"#include <math.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <stddef.h>\n";
+    c<<"#include <math.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <stddef.h>\n#include <stdint.h>\n";
     c<<"#define STACK_CAPACITY "<<stack_size<<"\nstatic double stack_values[STACK_CAPACITY];\nstatic size_t stack_pointer=0;\nstatic double variables[100]={0};\n";
     c<<"static void fail_runtime(const char *m){fprintf(stderr,\"numlang runtime error: %s\\n\",m);exit(1);}\n";
+    c<<"static int32_t checked_i32(double v){if(!isfinite(v)||v<(double)INT32_MIN||v>(double)INT32_MAX)fail_runtime(\"integer conversion out of range\");return (int32_t)v;}\n";
+    c<<"static int32_t bits_to_i32(uint32_t v){return v<=(uint32_t)INT32_MAX?(int32_t)v:(int32_t)((int64_t)v-INT64_C(4294967296));}\n";
     c<<"static void push_value(double v){if(stack_pointer>=STACK_CAPACITY)fail_runtime(\"stack overflow\");stack_values[stack_pointer++]=v;}\n";
     c<<"static double pop_value(void){if(!stack_pointer)fail_runtime(\"stack underflow\");return stack_values[--stack_pointer];}\n";
     c<<"int main(void){\n"<<body.str()<<"return 0;\n}\n";return c.str();
