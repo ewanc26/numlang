@@ -256,7 +256,9 @@ std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
     std::ostringstream c;
     c<<"#include <math.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <stddef.h>\n#include <stdint.h>\n";
     c<<"#define STACK_CAPACITY "<<stack_size<<"\nstatic double stack_values[STACK_CAPACITY];\nstatic size_t stack_pointer=0;\nstatic double variables[100]={0};\n";
-    c<<"static void fail_runtime(const char *m){fprintf(stderr,\"numlang runtime error: %s\\n\",m);exit(1);}\n";\n    c<<"static int32_t checked_i32(double v){if(!isfinite(v)||v<(double)INT32_MIN||v>(double)INT32_MAX)fail_runtime(\"integer conversion out of range\");return (int32_t)v;}\n";\n    c<<"static int32_t bits_to_i32(uint32_t v){return v<=(uint32_t)INT32_MAX?(int32_t)v:(int32_t)((int64_t)v-INT64_C(4294967296));}\n";
+    c<<"static void fail_runtime(const char *m){fprintf(stderr,\"numlang runtime error: %s\\n\",m);exit(1);}\n";
+    c<<"static int32_t checked_i32(double v){if(!isfinite(v)||v<(double)INT32_MIN||v>(double)INT32_MAX)fail_runtime(\"integer conversion out of range\");return (int32_t)v;}\n";
+    c<<"static int32_t bits_to_i32(uint32_t v){return v<=(uint32_t)INT32_MAX?(int32_t)v:(int32_t)((int64_t)v-INT64_C(4294967296));}\n";
     c<<"static void push_value(double v){if(stack_pointer>=STACK_CAPACITY)fail_runtime(\"stack overflow\");stack_values[stack_pointer++]=v;}\n";
     c<<"static double pop_value(void){if(!stack_pointer)fail_runtime(\"stack underflow\");return stack_values[--stack_pointer];}\n";
     c<<"int main(void){\n"<<body.str()<<"return 0;\n}\n";return c.str();
