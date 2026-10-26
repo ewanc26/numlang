@@ -131,7 +131,7 @@ Values are still held as doubles, so integer results are exact only up to 2^53. 
 
 ---
 
-### Bitwise operators *(operands truncated to `int` before the operation)*
+### Bitwise operators *(operands truncated to signed 32-bit values when in range)*
 
 | Code | Name | Effect |
 |------|------|--------|
@@ -140,7 +140,9 @@ Values are still held as doubles, so integer results are exact only up to 2^53. 
 | `42` | BXOR | `(int)a ^ (int)b` |
 | `43` | BNOT | `~(int)a` (unary) |
 | `44` | BSHL | `(int)a << (int)b` |
-| `45` | BSHR | `(int)a >> (int)b` (arithmetic) |
+| `45` | BSHR | arithmetic signed 32-bit right shift |
+
+The C++ compiler rejects non-finite or out-of-range operands for these integer operations, rejects shift counts outside 0–31, defines left-shift wraparound as a 32-bit bit pattern, and diagnoses `INT32_MIN % -1` rather than invoking signed-overflow undefined behavior.
 
 ---
 
