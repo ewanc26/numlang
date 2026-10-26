@@ -55,7 +55,7 @@ def main():
         p = tmp / "remainder-overflow.num"; p.write_text("0 2147483648 - 0 1 - 38 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
         assert "integer remainder overflow" in r.stderr, repr(r.stderr)
-        p = tmp / "invalid-shift.num"; p.write_text("1 32 44 |", encoding="utf-8")
+        p = tmp / "invalid-shift.num"; p.write_text("1 32.0 44 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
         assert "invalid shift" in r.stderr, repr(r.stderr)
         p = tmp / "large-float.num"; p.write_text("1e100 |", encoding="utf-8")
