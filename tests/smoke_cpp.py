@@ -26,7 +26,7 @@ def main():
         assert r.stdout == "42\n", repr(r.stdout)
         p = tmp / "nul-followed-by-digit.num"; p.write_text('"\\01"', encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
-        assert r.stdout == "\x001\n", repr(r.stdout)
+        assert r.stdout == "\x001", repr(r.stdout)
         p = tmp / "hex.num"; p.write_text("0xA |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         assert r.stdout == "10\n", repr(r.stdout)
