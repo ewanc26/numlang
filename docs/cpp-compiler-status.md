@@ -18,7 +18,7 @@ This document describes the C++ `numlangc` implementation. The historical Python
 
 Control-flow opcodes (`20`, `28`, `30`, `50`), array operations (`51`–`53`), integer division (`55`), miscellaneous runtime opcodes (`60`–`64`), type declarations/conversions, named functions and variables, FFI, pointers, structs/unions, and the broader C-like type system are not implemented in C++ yet. Known reserved opcodes fail with a compile-time diagnostic instead of being emitted as numeric pushes.
 
-Escape decoding, integer suffixes, C type conversions, stack-depth introspection, and full error/semantic parity are also incomplete. Do not extend the capability matrix to `implemented` for these features until there are C++ end-to-end tests.
+Full C escape-decoding parity, integer suffix/type semantics, C type conversions, stack-depth introspection, and full error/semantic parity are also incomplete. Do not extend the capability matrix to `implemented` for these features until there are C++ end-to-end tests.
 
 ## Verification
 
