@@ -43,7 +43,7 @@ def main():
         p = tmp / "bitwise.num"; p.write_text("5 3 42 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         assert r.stdout == "6\n", repr(r.stdout)
-        p = tmp / "signed-right-shift.num"; p.write_text("8 - 1 45 |", encoding="utf-8")
+        p = tmp / "signed-right-shift.num"; p.write_text("0 8 - 1 45 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         assert r.stdout == "-4\n", repr(r.stdout)
         p = tmp / "left-shift-wrap.num"; p.write_text("2147483647 1 44 |", encoding="utf-8")
