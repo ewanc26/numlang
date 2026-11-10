@@ -126,10 +126,11 @@ static void log_frame(int frame, int nverts, const float *pxv, const float *pyv,
         log_z_writes, log_wireframe_pixels, log_fnv_fb(log_fnv_init()), wall_ms);
 }
 
-/* Wireframe overlay is part of doughnut.c's draw_triangle; the phase-2
- * protocol has no interactivity, so the host renders with it on (the host
- * owns rasterization policy; the canonical stream is unaffected). */
-static int wireframe_on = 1;
+/* Wireframe overlay is part of doughnut.c's draw_triangle, keyed off the
+ * canonical flag there; the protocol default is OFF (matching doughnut.c's
+ * initial wireframe_mode = 0, so logged wireframe_pixels stay 0).  Pass
+ * --wireframe 1 to render with the cyan grid lines on. */
+static int wireframe_on = 0;
 
 static void generate_torus(void) {
     int idx = 0;
