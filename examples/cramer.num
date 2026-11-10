@@ -1,0 +1,24 @@
+# cramer.num - solve the 2x2 linear system with Cramer's rule.
+#
+#   3x + 2y = 12
+#   5x -  y = 7
+#
+# Slots hold the six coefficients and the three determinants; the roots
+# are x = 2, y = 3.
+
+3.0 1 &       # |1 = a1 = 3
+2.0 2 &       # |2 = b1 = 2
+12.0 3 &      # |3 = c1 = 12
+5.0 4 &       # |4 = a2 = 5
+0 1 - 5 &     # |5 = b2 = -1
+7.0 6 &       # |6 = c2 = 7
+
+# |7 = det = a1*b2 - a2*b1
+|1 |5 * |4 |2 * - 7 &
+# |8 = x numerator = c1*b2 - c2*b1
+|3 |5 * |6 |2 * - 8 &
+# |9 = y numerator = a1*c2 - a2*c1
+|1 |6 * |4 |3 * - 9 &
+
+"x = " |8 |7 / |
+"y = " |9 |7 / |

@@ -174,6 +174,18 @@ def main():
         values = [float(line) for line in r.stdout.split()]
         assert len(values) == 3 and all(0.0 <= v < 1.0 for v in values), repr(r.stdout)
 
+        # Cramer's rule solves the 2x2 system with slot-held determinants.
+        r = run(
+            [
+                compiler,
+                str(root / "examples" / "cramer.num"),
+                "--run",
+                "--cc",
+                str(wrapper),
+            ]
+        )
+        assert r.stdout == "x = 2\ny = 3\n", repr(r.stdout)
+
         # The quadratic example walks the full formula with variables, the
         # discriminant, and sqrt (opcode 22).
         r = run(
