@@ -227,10 +227,11 @@ def main():
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         assert r.stdout == "42\n", repr(r.stdout)
 
-        # Donut engine pipeline: the generator emits a finite 2-frame token
-        # stream (F/P/S protocol) that is a byte-exact prefix of the canonical
-        # sigi engine stream (tests/fixtures/donut_canonical_8f.txt), and the
-        # SDL2 host renders it headlessly when SDL2 is available.
+        # Donut engine pipeline: the generator emits a finite 2-frame vertex
+        # stream (F / px py z intensity per vertex / S protocol) that is a
+        # byte-exact match of the canonical sigi engine capture
+        # (tests/fixtures/donut_canonical_v2_2f.txt), and the SDL2 host
+        # renders it headlessly when SDL2 is available.
         engine = tmp / "donut_engine.num"
         run(
             [
@@ -246,28 +247,41 @@ def main():
         engine_out = r.stdout
         toks = engine_out.split()
         frames = 0
-        quads = 0
+        values = 0
         i = 0
         while i < len(toks):
             assert toks[i] == "F", repr(toks[i : i + 3])
             i += 1
             frames += 1
             while i < len(toks) and toks[i] != "S":
-                assert toks[i] == "P", repr(toks[i : i + 3])
-                for j in range(11):
-                    float(toks[i + 1 + j])  # 4 xy pairs + rgb
-                quads += 1
-                i += 12
+                float(toks[i])  # px, py, z, intensity - one per vertex
+                values += 1
+                i += 1
             i += 1  # consume S
         assert frames == 2, frames
-        assert quads == 2 * 656, quads
+        assert values == 2 * 4 * 1500, values
         # Cross-language parity: the vendored canonical fixture and the
         # engine's own output must agree byte-for-byte for these frames.
-        fixture = (root / "tests" / "fixtures" / "donut_canonical_8f.txt").read_text(
+        fixture = (root / "tests" / "fixtures" / "donut_canonical_v2_2f.txt").read_text(
             encoding="utf-8"
         )
-        expected = "".join(line + "\n" for line in fixture.splitlines()[: 2 * 7874])
-        assert r.stdout == expected, "donut stream diverges from canonical fixture"
+        got_lines = engine_out.splitlines()
+        want_lines = fixture.splitlines()
+        assert len(want_lines) == 2 * 6002, len(want_lines)
+        first_diff = None
+        for k, (g, w) in enumerate(zip(got_lines, want_lines)):
+            if g != w:
+                first_diff = (k + 1, g, w)  # 1-based line number
+                break
+        assert first_diff is None and got_lines == want_lines, (
+            "donut stream diverges from canonical fixture; "
+            "first difference at line {} of {} (got {!r}, want {!r})".format(
+                first_diff[0] if first_diff else (len(got_lines) + 1),
+                len(want_lines),
+                first_diff[1] if first_diff else "<eof>",
+                first_diff[2] if first_diff else "<eof>",
+            )
+        )
 
         # User .c shims: a header ending in .c is included from the source
         # .num file's directory, even when compiled from a temp directory.
@@ -317,7 +331,7 @@ def main():
                 env=env,
             )
             assert hr.returncode == 0, repr(hr.stderr)
-            assert "2 frames, 1312 quads" in hr.stderr, repr(hr.stderr)
+            assert "2 frames, 3000 vertices" in hr.stderr, repr(hr.stderr)
 
         output = tmp / "generated C output.c"
         run([compiler, str(root / "examples/hello_world.num"), "-o", str(output)])
