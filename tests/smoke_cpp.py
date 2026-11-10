@@ -173,6 +173,20 @@ def main():
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         values = [float(line) for line in r.stdout.split()]
         assert len(values) == 3 and all(0.0 <= v < 1.0 for v in values), repr(r.stdout)
+
+        # The quadratic example walks the full formula with variables, the
+        # discriminant, and sqrt (opcode 22).
+        r = run(
+            [
+                compiler,
+                str(root / "examples" / "quadratic.num"),
+                "--run",
+                "--cc",
+                str(wrapper),
+            ]
+        )
+        assert r.stdout == "root 1: 3\nroot 2: 2\n", repr(r.stdout)
+
         p = tmp / "variables.num"
         p.write_text("42.0 1 & |1 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
