@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Smoke tests for the bootstrapped C++ Numlang compiler."""
+import os
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -222,6 +224,72 @@ def main():
         p.write_text("42.0 1 & |1 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         assert r.stdout == "42\n", repr(r.stdout)
+
+        # Donut engine pipeline: the generator emits a finite 2-frame token
+        # stream (F/P/S protocol) that the SDL2 host renders headlessly when
+        # SDL2 is available.
+        engine = tmp / "donut_engine.num"
+        run(
+            [
+                "python3",
+                str(root / "scripts" / "gen_donut_engine.py"),
+                "--frames",
+                "2",
+                "--output",
+                str(engine),
+            ]
+        )
+        r = run([compiler, str(engine), "--run", "--cc", str(wrapper)])
+        toks = r.stdout.split()
+        frames = 0
+        quads = 0
+        i = 0
+        while i < len(toks):
+            assert toks[i] == "F", repr(toks[i : i + 3])
+            i += 1
+            frames += 1
+            while i < len(toks) and toks[i] != "S":
+                assert toks[i] == "P", repr(toks[i : i + 3])
+                for j in range(11):
+                    float(toks[i + 1 + j])  # 4 xy pairs + rgb
+                quads += 1
+                i += 12
+            i += 1  # consume S
+        assert frames == 2, frames
+        assert quads == 2 * 160, quads
+
+        sdl2_config = shutil.which("sdl2-config")
+        if sdl2_config:
+            host_bin = tmp / "donut_host"
+            cfg = subprocess.run(
+                [sdl2_config, "--cflags", "--libs"],
+                capture_output=True,
+                text=True,
+                timeout=30,
+            ).stdout.split()
+            run(
+                [
+                    "cc",
+                    "-std=c99",
+                    "-O2",
+                    str(root / "host" / "donut_host.c"),
+                    "-o",
+                    str(host_bin),
+                ]
+                + cfg
+            )
+            env = dict(os.environ, SDL_VIDEODRIVER="dummy")
+            hr = subprocess.run(
+                [str(host_bin), "--frames", "2"],
+                input=r.stdout,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                env=env,
+            )
+            assert hr.returncode == 0, repr(hr.stderr)
+            assert "2 frames, 320 quads" in hr.stderr, repr(hr.stderr)
+
         output = tmp / "generated C output.c"
         run([compiler, str(root / "examples/hello_world.num"), "-o", str(output)])
         assert "int main(void)" in output.read_text(encoding="utf-8")
