@@ -174,6 +174,25 @@ def main():
         values = [float(line) for line in r.stdout.split()]
         assert len(values) == 3 and all(0.0 <= v < 1.0 for v in values), repr(r.stdout)
 
+        # Foreign C functions: declare with @N, call with $N.
+        p = tmp / "ffi.num"
+        p.write_text(
+            '@0 "math.h" "hypot" 2 ;\n@1 "math.h" "fmax" 2 ;\n3 4 $0 |\n5 2 $1 |\n',
+            encoding="utf-8",
+        )
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "5\n5\n", repr(r.stdout)
+
+        p = tmp / "ffi-undeclared.num"
+        p.write_text("3 4 $0 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
+        assert "undeclared foreign function 0" in r.stderr, repr(r.stderr)
+
+        p = tmp / "ffi-bad-arity.num"
+        p.write_text('@0 "math.h" "hypot" 9 ;\n3 4 $0 |', encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
+        assert "arity must be 0-3" in r.stderr, repr(r.stderr)
+
         # Cramer's rule solves the 2x2 system with slot-held determinants.
         r = run(
             [

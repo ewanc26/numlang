@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <random>
 #include <sstream>
 #include <stdexcept>
@@ -231,8 +232,42 @@ bool opcode(std::ostringstream &o,long long n) {
     return true;
 }
 std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
-    std::ostringstream body;
-    for(const auto &t:tokens) {
+    std::ostringstream body; if (tokens.empty()) {}
+    // Foreign C functions: @N "header" "symbol" arity ;  declares;  $N  calls.
+    // Headers ending in .c are #include "..."-d directly (user shims with
+    // double parameters); everything else becomes #include <header>.
+    struct ForeignDecl { std::string header, symbol; int arity; };
+    std::map<int, ForeignDecl> foreign;
+    size_t i = 0;
+    while (i < tokens.size()) {
+        const Token &t = tokens[i];
+        if (t.kind == Token::Kind::Symbol && t.text == "@") {
+            if (i + 5 >= tokens.size())
+                throw std::runtime_error("foreign declaration needs number, header, symbol, arity, and ; at line " + std::to_string(t.line));
+            const Token &num = tokens[i + 1];
+            const Token &hdr = tokens[i + 2];
+            const Token &sym = tokens[i + 3];
+            const Token &ar = tokens[i + 4];
+            const Token &semi = tokens[i + 5];
+            if (num.kind != Token::Kind::Number || !num.opcode)
+                throw std::runtime_error("foreign declaration number after @ at line " + std::to_string(t.line));
+            if (hdr.kind != Token::Kind::String || sym.kind != Token::Kind::String ||
+                ar.kind != Token::Kind::Number || semi.kind != Token::Kind::Symbol || semi.text != ";")
+                throw std::runtime_error("foreign declaration must be @N \"header\" \"symbol\" arity ; at line " + std::to_string(t.line));
+            int number = static_cast<int>(ar.integer);
+            if (number < 0 || number > 3)
+                throw std::runtime_error("foreign declaration arity must be 0-3 at line " + std::to_string(t.line));
+            foreign[static_cast<int>(num.integer)] = ForeignDecl{hdr.text, sym.text, number};
+            i += 6;
+            continue;
+        }
+        i++;
+    }
+
+#define NL_THEN(c) 
+
+    for (size_t ui = 0; ui < tokens.size(); ++ui) {
+        const Token &t = tokens[ui];
         if(t.kind==Token::Kind::String) body<<"fwrite("<<c_quote(t.text)<<",1,"<<t.text.size()<<",stdout);\n";
         else if(t.kind==Token::Kind::Character) body<<"push_value("<<t.integer<<");\n";
         else if(t.kind==Token::Kind::Variable) {
@@ -247,7 +282,24 @@ std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
             body<<"push_value("<<std::setprecision(17)<<t.number<<");\n";
         } else {
             const auto &s=t.text;
-            if(s=="+")binary(body,"+");else if(s=="-")binary(body,"-");else if(s=="*")binary(body,"*");
+            if(s=="@"){
+                // Foreign declaration: skip its five tokens here.
+                ui += 5;
+            } else if(s=="$"){
+                if (ui + 1 >= tokens.size() || tokens[ui + 1].kind != Token::Kind::Number || !tokens[ui + 1].opcode)
+                    throw std::runtime_error("foreign call needs a declaration number at line " + std::to_string(t.line));
+                int fn = static_cast<int>(tokens[ui + 1].integer);
+                ui++;
+                auto it = foreign.find(fn);
+                if (it == foreign.end())
+                    throw std::runtime_error("call to undeclared foreign function " + std::to_string(fn) + " at line " + std::to_string(t.line));
+                const ForeignDecl &d = it->second;
+                body << "{ ";
+                for (int k = d.arity - 1; k >= 0; --k) body << "double _f" << k << "=pop_value(); ";
+                body << "push_value(" << d.symbol << "(";
+                for (int k = 0; k < d.arity; ++k) { if (k) body << ","; body << "_f" << k; }
+                body << ")); }\n";
+            } else if(s=="+")binary(body,"+");else if(s=="-")binary(body,"-");else if(s=="*")binary(body,"*");
             else if(s=="/")body<<"{double b=pop_value(),a=pop_value();if(b==0)fail_runtime(\"division by zero\");push_value(a/b);}\n";
             else if(s=="%")body<<"{double b=pop_value(),a=pop_value();if(b==0)fail_runtime(\"remainder by zero\");push_value(fmod(a,b));}\n";
             else if(s=="!")body<<"push_value(pop_value()==0?1:0);\n";
@@ -260,6 +312,19 @@ std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
     }
     std::ostringstream c;
     c<<"#include <math.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <stddef.h>\n#include <stdint.h>\n#include <time.h>\n";
+    for (const auto &kv : foreign) {
+        const ForeignDecl &d = kv.second;
+        size_t dotc = d.header.size() >= 2 && d.header.compare(d.header.size() - 2, 2, ".c") == 0;
+        bool ends_c_ = d.header.size() > 2 && d.header.substr(d.header.size() - 2) == ".c";
+        if (ends_c_) {
+            c << "#include \"" << d.header << "\"\n";
+            c << "extern double " << d.symbol << "(double";
+            for (int k = 1; k < d.arity; ++k) c << ",double";
+            c << ");\n";
+        } else {
+            c << "#include <" << d.header << ">\n";
+        }
+    }
     c<<"#define STACK_CAPACITY "<<stack_size<<"\nstatic double stack_values[STACK_CAPACITY];\nstatic size_t stack_pointer=0;\nstatic double variables[100]={0};\n";
     c<<"static void fail_runtime(const char *m){fprintf(stderr,\"numlang runtime error: %s\\n\",m);exit(1);}\n";
     c<<"static int32_t checked_i32(double v){if(!isfinite(v)||v<(double)INT32_MIN||v>(double)INT32_MAX)fail_runtime(\"integer conversion out of range\");return (int32_t)v;}\n";
