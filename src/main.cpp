@@ -188,7 +188,7 @@ private:
 void binary(std::ostringstream &o,const char *op){o<<"{ double b=pop_value(), a=pop_value(); push_value(a "<<op<<" b); }\n";}
 bool reserved_opcode(long long n) {
     switch(n) {
-        case 20: case 28: case 30: case 50: case 51: case 52: case 53: case 55:
+        case 20: case 28: case 30: case 50: case 51: case 52: case 53:
         case 60: case 61: case 62: case 63: case 64: return true;
         default: return (n >= 10 && n <= 19) || (n >= 21 && n <= 27) ||
                        n == 29 || (n >= 31 && n <= 49);
@@ -221,6 +221,7 @@ bool opcode(std::ostringstream &o,long long n) {
         case 45:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());if(b<0||b>=32)fail_runtime(\"invalid shift\");push_value(a>=0?(a>>b):(b==0?a:-1-((-1-a)>>b)));}\n";break;
         case 46:o<<"push_value(asin(pop_value()));\n";break;case 47:o<<"push_value(acos(pop_value()));\n";break;
         case 48:o<<"push_value(atan(pop_value()));\n";break;case 49:o<<"{double x=pop_value(),y=pop_value();push_value(atan2(y,x));}\n";break;
+        case 55:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());if(!b)fail_runtime(\"integer division by zero\");if(a==INT32_MIN&&b==-1)fail_runtime(\"integer division overflow\");push_value(a/b);}\n";break;
         default:return false;
     }
     return true;

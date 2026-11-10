@@ -10,13 +10,14 @@ This document describes the C++ `numlangc` implementation. The historical Python
 - Arithmetic: `+`, `-`, `*`, `/`, `%` with runtime zero checks.
 - Comparisons: `10`–`15`; logical OR/AND `19` and `39`; logical NOT `!`.
 - Math and bitwise opcodes implemented by the C++ code generator: `21`–`27`, `29`, `31`–`49`; integer bitwise operations use checked 32-bit conversions, explicit signed-shift behavior, and diagnostics for out-of-range values and remainder overflow.
+- Integer division `55` (IDIV): checked 32-bit operands, C truncation toward zero, with diagnostics for division by zero and `INT32_MIN / -1` overflow.
 - Numbered variables: `|n` loads and `&` stores a value to the index on top of the stack.
 - Console I/O: `|` prints a number, `^` prints a character, `?` reads a number, and strings write directly to stdout.
 - CLI: `-o/--output`, `--run`, `--cc`, `--stack-size`, and `--support`. `--run` uses a unique temporary directory and shell-quotes executable and file paths.
 
 ## Explicitly deferred
 
-Control-flow opcodes (`20`, `28`, `30`, `50`), array operations (`51`–`53`), integer division (`55`), miscellaneous runtime opcodes (`60`–`64`), type declarations/conversions, named functions and variables, FFI, pointers, structs/unions, and the broader C-like type system are not implemented in C++ yet. Known reserved opcodes fail with a compile-time diagnostic instead of being emitted as numeric pushes.
+Control-flow opcodes (`20`, `28`, `30`, `50`), array operations (`51`–`53`), miscellaneous runtime opcodes (`60`–`64`), type declarations/conversions, named functions and variables, FFI, pointers, structs/unions, and the broader C-like type system are not implemented in C++ yet. Known reserved opcodes fail with a compile-time diagnostic instead of being emitted as numeric pushes.
 
 Full C escape-decoding parity, integer suffix/type semantics, C type conversions, stack-depth introspection, and full error/semantic parity are also incomplete. Do not extend the capability matrix to `implemented` for these features until there are C++ end-to-end tests.
 
