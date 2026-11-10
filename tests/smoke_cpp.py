@@ -4,6 +4,7 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 
@@ -137,6 +138,41 @@ def main():
         p.write_text("2147483648 1 55 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
         assert "integer conversion out of range" in r.stderr, repr(r.stderr)
+        # Runtime opcodes 60-64: RAND, TIME, EXIT, DEPTH, PICK.
+        p = tmp / "stack-depth.num"
+        p.write_text("1.0 2.0 3.0 63 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "3\n", repr(r.stdout)
+        p = tmp / "pick.num"
+        p.write_text("7.0 8.0 9.0 1 64 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "8\n", repr(r.stdout)
+        p = tmp / "pick-top.num"
+        p.write_text("7.0 8.0 9.0 0 64 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "9\n", repr(r.stdout)
+        p = tmp / "pick-out-of-range.num"
+        p.write_text("1.0 9 64 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
+        assert "PICK index out of range" in r.stderr, repr(r.stderr)
+        p = tmp / "pick-negative.num"
+        p.write_text("1.0 0 1 - 64 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=1)
+        assert "PICK index out of range" in r.stderr, repr(r.stderr)
+        p = tmp / "exit.num"
+        p.write_text("42.0 62", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)], expected=42)
+        p = tmp / "time.num"
+        p.write_text("61 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        now = time.time()
+        printed = float(r.stdout)
+        assert abs(printed - now) < 3600, repr(r.stdout)
+        p = tmp / "rand.num"
+        p.write_text("60 | 60 | 60 |", encoding="utf-8")
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        values = [float(line) for line in r.stdout.split()]
+        assert len(values) == 3 and all(0.0 <= v < 1.0 for v in values), repr(r.stdout)
         p = tmp / "variables.num"
         p.write_text("42.0 1 & |1 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])

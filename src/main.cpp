@@ -188,8 +188,7 @@ private:
 void binary(std::ostringstream &o,const char *op){o<<"{ double b=pop_value(), a=pop_value(); push_value(a "<<op<<" b); }\n";}
 bool reserved_opcode(long long n) {
     switch(n) {
-        case 20: case 28: case 30: case 50: case 51: case 52: case 53:
-        case 60: case 61: case 62: case 63: case 64: return true;
+        case 20: case 28: case 30: case 50: case 51: case 52: case 53: return true;
         default: return (n >= 10 && n <= 19) || (n >= 21 && n <= 27) ||
                        n == 29 || (n >= 31 && n <= 49);
     }
@@ -222,6 +221,11 @@ bool opcode(std::ostringstream &o,long long n) {
         case 46:o<<"push_value(asin(pop_value()));\n";break;case 47:o<<"push_value(acos(pop_value()));\n";break;
         case 48:o<<"push_value(atan(pop_value()));\n";break;case 49:o<<"{double x=pop_value(),y=pop_value();push_value(atan2(y,x));}\n";break;
         case 55:o<<"{int32_t b=checked_i32(pop_value()),a=checked_i32(pop_value());if(!b)fail_runtime(\"integer division by zero\");if(a==INT32_MIN&&b==-1)fail_runtime(\"integer division overflow\");push_value(a/b);}\n";break;
+        case 60:o<<"push_value((double)rand()/((double)RAND_MAX+1.0));\n";break;
+        case 61:o<<"push_value((double)time(NULL));\n";break;
+        case 62:o<<"exit((int)pop_value());\n";break;
+        case 63:o<<"push_value((double)stack_pointer);\n";break;
+        case 64:o<<"{int n=(int)pop_value();if(n<0||(size_t)n>=stack_pointer)fail_runtime(\"PICK index out of range\");push_value(stack_values[stack_pointer-1-n]);}\n";break;
         default:return false;
     }
     return true;
@@ -255,7 +259,7 @@ std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
         }
     }
     std::ostringstream c;
-    c<<"#include <math.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <stddef.h>\n#include <stdint.h>\n";
+    c<<"#include <math.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <stddef.h>\n#include <stdint.h>\n#include <time.h>\n";
     c<<"#define STACK_CAPACITY "<<stack_size<<"\nstatic double stack_values[STACK_CAPACITY];\nstatic size_t stack_pointer=0;\nstatic double variables[100]={0};\n";
     c<<"static void fail_runtime(const char *m){fprintf(stderr,\"numlang runtime error: %s\\n\",m);exit(1);}\n";
     c<<"static int32_t checked_i32(double v){if(!isfinite(v)||v<(double)INT32_MIN||v>(double)INT32_MAX)fail_runtime(\"integer conversion out of range\");return (int32_t)v;}\n";
