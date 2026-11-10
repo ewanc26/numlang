@@ -169,7 +169,9 @@ def main():
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
         now = time.time()
         printed = float(r.stdout)
-        assert abs(printed - now) < 3600, repr(r.stdout)
+        # "|" prints "%g" (six significant digits), so a Unix timestamp of
+        # ~1.79e9 only survives to within its sixth digit (~1e4).
+        assert abs(printed - now) < 10000, repr(r.stdout)
         p = tmp / "rand.num"
         p.write_text("60 | 60 | 60 |", encoding="utf-8")
         r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
@@ -226,8 +228,9 @@ def main():
         assert r.stdout == "42\n", repr(r.stdout)
 
         # Donut engine pipeline: the generator emits a finite 2-frame token
-        # stream (F/P/S protocol) that the SDL2 host renders headlessly when
-        # SDL2 is available.
+        # stream (F/P/S protocol) that is a byte-exact prefix of the canonical
+        # sigi engine stream (tests/fixtures/donut_canonical_8f.txt), and the
+        # SDL2 host renders it headlessly when SDL2 is available.
         engine = tmp / "donut_engine.num"
         run(
             [
@@ -240,7 +243,8 @@ def main():
             ]
         )
         r = run([compiler, str(engine), "--run", "--cc", str(wrapper)])
-        toks = r.stdout.split()
+        engine_out = r.stdout
+        toks = engine_out.split()
         frames = 0
         quads = 0
         i = 0
@@ -256,8 +260,33 @@ def main():
                 i += 12
             i += 1  # consume S
         assert frames == 2, frames
-        assert quads == 2 * 160, quads
+        assert quads == 2 * 656, quads
+        # Cross-language parity: the vendored canonical fixture and the
+        # engine's own output must agree byte-for-byte for these frames.
+        fixture = (root / "tests" / "fixtures" / "donut_canonical_8f.txt").read_text(
+            encoding="utf-8"
+        )
+        expected = "".join(line + "\n" for line in fixture.splitlines()[: 2 * 7874])
+        assert r.stdout == expected, "donut stream diverges from canonical fixture"
 
+        # User .c shims: a header ending in .c is included from the source
+        # .num file's directory, even when compiled from a temp directory.
+        p = tmp / "shim.num"
+        p.write_text(
+            '@0 "donut_smoke.c" "donut_smoke" 1 ;\n2.5 $0 |\n',
+            encoding="utf-8",
+        )
+        (tmp / "donut_smoke.c").write_text(
+            "#include <stdio.h>\n"
+            "double donut_smoke(double v) { "
+            'printf("shim:%g\\n", v); return 0.0; }\n',
+            encoding="utf-8",
+        )
+        r = run([compiler, str(p), "--run", "--cc", str(wrapper)])
+        assert r.stdout == "shim:2.5\n0\n", repr(r.stdout)
+
+        # Headless render: the reconciled stream must play through the SDL2
+        # host unchanged when SDL2 is available.
         sdl2_config = shutil.which("sdl2-config")
         if sdl2_config:
             host_bin = tmp / "donut_host"
@@ -281,14 +310,14 @@ def main():
             env = dict(os.environ, SDL_VIDEODRIVER="dummy")
             hr = subprocess.run(
                 [str(host_bin), "--frames", "2"],
-                input=r.stdout,
+                input=engine_out,
                 capture_output=True,
                 text=True,
                 timeout=30,
                 env=env,
             )
             assert hr.returncode == 0, repr(hr.stderr)
-            assert "2 frames, 320 quads" in hr.stderr, repr(hr.stderr)
+            assert "2 frames, 1312 quads" in hr.stderr, repr(hr.stderr)
 
         output = tmp / "generated C output.c"
         run([compiler, str(root / "examples/hello_world.num"), "-o", str(output)])

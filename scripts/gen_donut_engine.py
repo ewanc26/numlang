@@ -2,24 +2,37 @@
 """Generate examples/donut_engine.num: a finite-frames polygonal spinning torus
 streaming the F/P/S token protocol consumed by host/donut_host.c (SDL2).
 
+The engine's stream is byte-identical to the canonical sigi engine's
+(scripts/gen_donut_engine.py in the sigi repo) for the same frame indices:
+the formulas, arithmetic order, constants, loop bounds and print format below
+mirror sigi exactly, so bit-parity holds through the %g output.
+
+Mirroring notes (deviations break byte-parity with the canonical):
+- sigi's loops increment the *angle* (i += TH_STEP) but test it against the
+  grid *bound* constants (i < RING, j < TUBE_N), so one frame has
+  41 x 16 = 656 quads, and angles accumulate by repeated addition (float
+  drift included), not by k*STEP.
+- sigic's lexer reduces literals to six significant digits when it emits C,
+  so the engine's real constants are "%g" of the generator's values:
+  TH_STEP=0.392699, PH_STEP=0.628319, CB=0.751806, SB=0.659385. The mirror
+  uses those exact doubles.
+- The frame spin A also accumulates by += SPIN_STEP *before* the frame is
+  emitted, so frame n uses A = 0.05*(n+1) with accumulated drift.
+- Every quad shades from the normal at its first corner, and all four
+  corners use sp = sin(j) (sigi slot 11) for the y component.
+- numlangc parses literals exactly (strtod), so the emitted doubles round-trip
+  bit-exactly, and its "|" number print uses the same printf("%g\\n") format
+  string as sigic's.
+- numlang has no negative literals, so negative values are printed as
+  <magnitude> followed by the NEG opcode (25).
+
 The C++ numlang compiler implements no control-flow opcodes yet (20/28/30/50
-are deferred), so this Engine is the finite-frames variant: the generator
-unrolls FRAMES frames of RING x TUBE_N shaded quads, and the generated program
-emits the whole finite stream via the language's print-string and print-number
-facilities. The host replays the finite stream forever, giving the animation.
+are deferred), so this engine is the finite-frames variant: the generator
+unrolls FRAMES frames of the animation and the host replays the finite
+stream forever, giving the animation.
 
-Geometry mirrors scripts/gen_donut_engine.py in the sigi reference: torus
-(R, TUBE), one seamless ring-sector of spin across the whole stream, camera
-tilted by TILT, orthographic projection at SCALE, and flat per-quad shading
-from a unit light vector.
-
-Safety notes for numlang syntax (see README):
-- Integer literals that collide with opcode numbers (10-64) are parsed as
-  opcodes, so every printed value is emitted as a float literal ("60.0 |"
-  prints "60").
-- The host parses whitespace-separated tokens, so the newline that "|"
-  appends to every number slot-joins the P record without extra work.
-- "#" comments and "\\n" escapes in string literals follow the repo examples.
+tests/fixtures/donut_canonical_8f.txt vendors the canonical stream's first
+8 frames; regenerate it from a fresh canonical capture after any change.
 """
 
 import argparse
@@ -31,96 +44,86 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 R, TUBE = 3.0, 1.25
 RING, TUBE_N = 16, 10
 SCALE, OX, OY = 28.0, 120.0, 120.0
-TILT = 0.72
+SPIN_STEP, TILT = 0.05, 0.72
 LIGHT = (0.32, 0.58, 0.75)
-# The finite stream is replayed forever by the host, so the default frame
-# count is chosen for a practical ~3 s compile (compile time grows
-# superlinearly with the unrolled size) and the spin step makes the whole
-# stream cover exactly one ring sector (2*pi/RING), so the replayed loop is
-# seamless. The sigi reference uses +0.05/frame with an infinite loop instead.
-FRAMES_DEFAULT = 12
-TH_STEP = 2.0 * math.pi / RING
-PH_STEP = 2.0 * math.pi / TUBE_N
-CB, SB = math.cos(TILT), math.sin(TILT)
-ACCEPTED_GRID_QUADS = RING * TUBE_N
+FRAMES_DEFAULT = 4
+# sigic truncates literals to six significant digits when emitting C, so
+# the canonical engine runs with these (%g-rounded) doubles, not the 12-digit
+# values the sigi generator writes.
+TH_STEP = float("%g" % (2 * math.pi / RING))
+PH_STEP = float("%g" % (2 * math.pi / TUBE_N))
+CB = float("%g" % math.cos(TILT))
+SB = float("%g" % math.sin(TILT))
+QUADS_PER_FRAME = int(RING / TH_STEP + 1) * int(TUBE_N / PH_STEP + 1)
+LINES_PER_FRAME = 2 + QUADS_PER_FRAME * 12
 
 
 def fmt(v: float) -> str:
-    """Format a value for the '| print opcode as a safe float literal."""
-    v = round(v, 4)
-    if v == int(v):
-        return "%.1f" % v
+    """Literal for value v; numlang has no negative literals, so append the
+    NEG opcode (25) for values < 0."""
+    if v < 0.0:
+        return "%s 25" % repr(-v)
     return repr(v)
 
 
-def corner(theta: float, phi: float, ca: float, sa: float):
-    """Return (sx, sy) for one torus vertex after spin and tilt."""
-    ring = R + TUBE * math.cos(phi)
-    px = ring * math.cos(theta)
-    py = TUBE * math.sin(phi)
-    pz = ring * math.sin(theta)
-    cx = px * ca - pz * sa
-    cz = px * sa + pz * ca
-    cy = py * CB - cz * SB
-    return OX + cx * SCALE, OY - cy * SCALE
-
-
-def lighting(theta: float, phi: float, ca: float, sa: float):
-    """Flat-shade a quad from the normal at its (theta, phi) corner."""
-    nx0 = math.cos(phi) * math.cos(theta)
-    ny0 = math.sin(phi)
-    nz0 = math.cos(phi) * math.sin(theta)
-    nx = nx0 * ca - nz0 * sa
-    nz = nx0 * sa + nz0 * ca
-    ny = ny0 * CB - nz * SB
-    nz = ny0 * SB + nz * CB
-    lum = 0.5 + 0.5 * (LIGHT[0] * nx + LIGHT[1] * ny + LIGHT[2] * nz)
-    lum = min(1.0, max(0.0, lum))
-    return (
-        int(round(lum * 150.0 + 80.0)),
-        int(round(lum * 90.0 + 50.0)),
-        int(round(lum * 60.0 + 30.0)),
-    )
-
-
 def generate(frames: int) -> str:
-    spin_step = TH_STEP / frames
     lines = [
         "# donut_engine.num - finite-frames polygonal spinning torus",
         "#",
-        "# Emits the F/P/S token protocol consumed by host/donut_host.c (SDL2).",
+        "# Byte-identical prefix of the canonical sigi engine's stream",
+        "# (same frames, spin step, formulas and %g number format).",
         "# Generated by scripts/gen_donut_engine.py --frames %d; do not edit." % frames,
+        "# Grid quads per frame: %d (sigi's angle-vs-bound loop)." % QUADS_PER_FRAME,
         "#",
         "# numlangc has no loop opcodes yet, so every frame is unrolled; the host",
         "# replays the finite stream forever, which is the animation.",
-        "# Grid: %d rings x %d tube steps = %d quads per frame."
-        % (RING, TUBE_N, ACCEPTED_GRID_QUADS),
-        "# Each frame spins +%.7f rad; the whole stream spans one ring sector,"
-        % spin_step,
-        "# so the host's endless replay loops seamlessly.",
         "#",
         "# Run:",
         "#   ./build/numlangc examples/donut_engine.num --run --cc cc \\",
         "#       | ./host/donut_host",
     ]
     push = lines.append
-    for k in range(frames):
-        a = k * spin_step
+    a = 0.0
+    for _ in range(frames):
+        a += SPIN_STEP
         ca, sa = math.cos(a), math.sin(a)
         push('"F\\n"')
-        for i in range(RING):
-            t = i * TH_STEP
-            t1 = t + TH_STEP
-            for j in range(TUBE_N):
-                p = j * PH_STEP
-                p1 = p + PH_STEP
+        i = 0.0
+        while i < RING:
+            ct, st = math.cos(i), math.sin(i)
+            ct1, st1 = math.cos(i + TH_STEP), math.sin(i + TH_STEP)
+            j = 0.0
+            while j < TUBE_N:
+                cp, sp = math.cos(j), math.sin(j)
+                cp1 = math.cos(j + PH_STEP)
+                ny = sp * ca - cp * st * sa
+                nz = sp * sa + cp * st * ca
+                nx = cp * ct * CB + nz * SB
+                lum = ((nx * LIGHT[0] + ny * LIGHT[1]) + nz * LIGHT[2] + 1.0) * 0.5
+                cr = lum * 150.0 + 80.0
+                cg = lum * 90.0 + 50.0
+                cb = lum * 60.0 + 30.0
                 push('"P\\n"')
-                for ct, cp in ((t, p), (t, p1), (t1, p1), (t1, p)):
-                    sx, sy = corner(ct, cp, ca, sa)
-                    for v in (sx, sy):
+                for c_, s_, c_t, s_t in (
+                    (cp, sp, ct, st),
+                    (cp1, sp, ct, st),
+                    (cp1, sp, ct1, st1),
+                    (cp, sp, ct1, st1),
+                ):
+                    rad = c_ * TUBE + R
+                    x = rad * c_t
+                    y = s_ * TUBE
+                    z = rad * s_t
+                    cy = y * ca - z * sa
+                    cz = y * sa + z * ca
+                    px = (x * CB + cz * SB) * SCALE + OX
+                    py = OY - cy * SCALE
+                    for v in (px, py):
                         push("%s |" % fmt(v))
-                for v in lighting(t, p, ca, sa):
+                for v in (cr, cg, cb):
                     push("%s |" % fmt(v))
+                j += PH_STEP
+            i += TH_STEP
         push('"S\\n"')
     return "\n".join(lines) + "\n"
 
@@ -139,11 +142,16 @@ def main() -> int:
     args = parser.parse_args()
     if args.frames < 1:
         parser.error("--frames must be >= 1")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     text = generate(args.frames)
     args.output.write_text(text, encoding="utf-8")
     print(
-        "wrote {}: {} lines, {} frames, {} quads/frame".format(
-            args.output, len(text.splitlines()), args.frames, ACCEPTED_GRID_QUADS
+        "wrote {}: {} lines, {} frames, {} quads/frame ({} lines/frame)".format(
+            args.output,
+            len(text.splitlines()),
+            args.frames,
+            QUADS_PER_FRAME,
+            LINES_PER_FRAME,
         )
     )
     return 0
