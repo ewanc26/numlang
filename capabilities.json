@@ -322,11 +322,10 @@
           "note": "not started"
         },
         "selenium": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/ternary.sel"
-          ],
-          "note": "ternary expressions parse and emit, but a top-level ?: initializer produces an invalid non-constant global in generated C."
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -790,12 +789,11 @@
           ]
         },
         "selenium": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/while_loop.sel",
             "tests/differential/for_loop.sel"
-          ],
-          "note": "while loops pass; the C++ port rejects for-loop syntax at parse time."
+          ]
         },
         "sigi": {
           "status": "implemented",
