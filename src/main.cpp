@@ -231,7 +231,7 @@ bool opcode(std::ostringstream &o,long long n) {
     }
     return true;
 }
-std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
+std::string compile_c(const std::vector<Token> &tokens,int stack_size,const std::string &include_base) {
     std::ostringstream body; if (tokens.empty()) {}
     // Foreign C functions: @N "header" "symbol" arity ;  declares;  $N  calls.
     // Headers ending in .c are #include "..."-d directly (user shims with
@@ -304,7 +304,7 @@ std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
             else if(s=="%")body<<"{double b=pop_value(),a=pop_value();if(b==0)fail_runtime(\"remainder by zero\");push_value(fmod(a,b));}\n";
             else if(s=="!")body<<"push_value(pop_value()==0?1:0);\n";
             else if(s=="&")body<<"{int i=(int)pop_value();double v=pop_value();if(i<0||i>=100)fail_runtime(\"variable index out of range\");variables[i]=v;}\n";
-            else if(s=="|")body<<"printf(\"%.15g\\n\",pop_value());\n";
+            else if(s=="|")body<<"printf(\"%g\\n\",pop_value());\n";
             else if(s=="^")body<<"putchar((unsigned char)pop_value());\n";
             else if(s=="?")body<<"{double v=0;if(scanf(\"%lf\",&v)!=1)fail_runtime(\"numeric input failed\");push_value(v);}\n";
             else throw std::runtime_error("unsupported token '"+s+"' at line "+std::to_string(t.line)+", column "+std::to_string(t.column));
@@ -317,7 +317,13 @@ std::string compile_c(const std::vector<Token> &tokens,int stack_size) {
         size_t dotc = d.header.size() >= 2 && d.header.compare(d.header.size() - 2, 2, ".c") == 0;
         bool ends_c_ = d.header.size() > 2 && d.header.substr(d.header.size() - 2) == ".c";
         if (ends_c_) {
-            c << "#include \"" << d.header << "\"\n";
+            // User shippers ending in .c live next to the source .num file;
+            // the emitted C may be written or compiled elsewhere, so the
+            // include must be an absolute path resolved against the source.
+            std::filesystem::path p(d.header);
+            if (p.is_relative() && !include_base.empty())
+                p = std::filesystem::path(include_base) / p;
+            c << "#include \"" << p.string() << "\"\n";
             c << "extern double " << d.symbol << "(double";
             for (int k = 1; k < d.arity; ++k) c << ",double";
             c << ");\n";
@@ -356,7 +362,7 @@ int main(int argc,char **argv){
     std::stringstream source;source<<in.rdbuf();
     try{
         const std::string source_text=source.str();
-        Lexer lexer(source_text);const auto tokens=lexer.run();const std::string c=compile_c(tokens,stack_size);
+        Lexer lexer(source_text);const auto tokens=lexer.run();const std::string include_base=std::filesystem::absolute(std::filesystem::path(input)).parent_path().string();const std::string c=compile_c(tokens,stack_size,include_base);
         if(!run){std::ofstream out(output);if(!out){std::cerr<<"numlangc: cannot create output file: "<<output<<"\n";return 1;}out<<c;if(!out){std::cerr<<"numlangc: failed writing output file\n";return 1;}return 0;}
         Temp temp{make_temp()};auto cf=(temp.path/"numlang.c").string();auto exe=(temp.path/"numlang").string();
         {std::ofstream out(cf);if(!out)throw std::runtime_error("cannot write temporary C source");out<<c;}

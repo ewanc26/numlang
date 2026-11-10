@@ -14,7 +14,7 @@ This document describes the C++ `numlangc` implementation. The historical Python
 - Runtime opcodes: `60` RAND pushes a double in `[0, 1)`, `61` TIME pushes the Unix timestamp as a double, `62` EXIT pops an exit code and terminates, `63` DEPTH pushes the stack depth, and `64` PICK pops an index and copies that stack element to the top with a range diagnostic.
 - Numbered variables: `|n` loads and `&` stores a value to the index on top of the stack.
 - Foreign C functions: `@N "header" "symbol" arity ;` declares and `$N` calls (arity 0-3), matching the reference design. System headers are included in the generated C; a `.c` header is `#include`d directly with a `double`-parameter declaration rather than compiled and linked separately as the Python reference does.
-- Console I/O: `|` prints a number, `^` prints a character, `?` reads a number, and strings write directly to stdout.
+- Console I/O: `|` prints a number newline-terminated in shortest `%g` style, `^` prints a character, `?` reads a number, and strings write directly to stdout.
 - CLI: `-o/--output`, `--run`, `--cc`, `--stack-size`, and `--support`. `--run` uses a unique temporary directory and shell-quotes executable and file paths.
 
 ## Explicitly deferred
