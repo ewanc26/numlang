@@ -18,15 +18,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/literals_char.num"
-          ],
-          "note": "C++ supports single-byte character literals and basic escapes; complete C escape/Unicode parity is deferred."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/char_literals.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -45,15 +44,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_sized_integers.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/sized_integers.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -72,15 +70,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_floating.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/floating.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -99,15 +96,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_enums.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "enum declarations are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -126,15 +120,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_typedef.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "alias declarations are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -153,16 +144,16 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_pointers.num",
-            "tests/differential/types_array_decay.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "partial",
+          "tests": [
+            "tests/differential/pointers.sel",
+            "tests/differential/global_addresses.sel"
+          ],
+          "note": "basic pointer use passes; global address-of expressions and nullptr declarations are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -181,15 +172,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_structs.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "struct declarations with brace bodies are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -208,15 +196,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_unions.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "union declarations are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -235,15 +220,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_sizeof.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "measure expressions are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -258,19 +240,17 @@
         "plainspeak": {
           "status": "implemented",
           "tests": [
-            "tests/differential/decl_initializers.eng"
+            "tests/differential/decl_initializers.eng",
+            "tests/differential/decl_file_scope_aggregates.eng"
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_initializers.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "aggregate initializer expressions are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -290,15 +270,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_multidim_arrays.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "array syntax is rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -317,15 +294,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/types_storage_qualifiers.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "qualified declarations are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -344,15 +318,15 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/expr_conditional.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "partial",
+          "tests": [
+            "tests/differential/ternary.sel"
+          ],
+          "note": "ternary expressions parse and emit, but a top-level ?: initializer produces an invalid non-constant global in generated C."
         },
         "sigi": {
           "status": "missing",
@@ -371,15 +345,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/expr_compound_assign.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/compound_assign.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -398,15 +371,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/expr_increment_decrement.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/incdec.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -425,15 +397,15 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/expr_casts.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "partial",
+          "tests": [
+            "tests/differential/casts.sel"
+          ],
+          "note": "cast expressions parse and emit typed prints, but outputs still differ from the C reference."
         },
         "sigi": {
           "status": "missing",
@@ -452,15 +424,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/expr_comma.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "comma expressions are rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -479,15 +448,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/control_switch.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "switch with braced case bodies is rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -506,15 +472,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/control_do_while.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/do_while.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -533,15 +498,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/control_break_continue.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/break_continue.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -560,15 +524,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/control_goto.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/goto.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -587,16 +550,12 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/func_pointers.num",
-            "tests/differential/func_pointer_arrays.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          "status": "missing",
+          "note": "not started"
         },
         "selenium": {
           "status": "missing",
-          "note": "not started"
+          "note": "function pointer syntax is rejected at parse time."
         },
         "sigi": {
           "status": "missing",
@@ -615,15 +574,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/func_recursion.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/func_recursion.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -642,15 +600,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/literals_numeric.num"
-          ],
-          "note": "C++ supports basic decimal, floating, hexadecimal, octal, and binary literals; full suffix and edge-case parity is deferred."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_numeric.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -670,15 +627,14 @@
           ]
         },
         "numlang": {
-          "status": "partial",
-          "tests": [
-            "tests/differential/literals_escapes.num"
-          ],
-          "note": "C++ supports common escapes and limited hex/octal escapes; full C/Unicode escape parity is deferred."
-        },
-        "selenium": {
           "status": "missing",
           "note": "not started"
+        },
+        "selenium": {
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_escapes.sel"
+          ]
         },
         "sigi": {
           "status": "missing",
@@ -698,19 +654,23 @@
           ]
         },
         "numlang": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/integer_boolean.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          ]
         },
         "selenium": {
-          "status": "partial",
-          "note": "The C++ port uses numeric doubles for logical results; full C integer/boolean semantics are not implemented."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/logical.sel"
+          ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "The C++ port uses numeric doubles for logical results; full C integer/boolean semantics are not implemented."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/integer_division.si",
+            "tests/differential/logical.si"
+          ]
         }
       }
     },
@@ -725,21 +685,29 @@
           ]
         },
         "numlang": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/arithmetic.num",
             "tests/differential/bitwise.num",
             "tests/differential/logical.num"
-          ],
-          "note": "C++ supports arithmetic, comparisons, logical operations, and selected math/bitwise opcodes; full operator/runtime parity is deferred."
+          ]
         },
         "selenium": {
-          "status": "partial",
-          "note": "The C++ port supports arithmetic, comparisons, logical NOT/AND/OR, and selected math/bitwise opcodes; full operator parity is not implemented."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/arithmetic.sel",
+            "tests/differential/bitwise.sel",
+            "tests/differential/logical.sel"
+          ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "The C++ port supports arithmetic, comparisons, logical NOT/AND/OR, and selected math/bitwise opcodes; full operator parity is not implemented."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/arithmetic.si",
+            "tests/differential/bitwise.si",
+            "tests/differential/logical.si",
+            "tests/differential/comparison.si"
+          ]
         }
       }
     },
@@ -754,19 +722,22 @@
           ]
         },
         "numlang": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/variables.num"
-          ],
-          "note": "C++ supports numbered variable loads/stores only; declarations, named variables, arrays, and pointer-based storage are deferred."
+          ]
         },
         "selenium": {
-          "status": "partial",
-          "note": "The C++ port supports numbered stack-language variables only; declarations, named variables, arrays, and pointer-based storage are deferred."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/variables.sel"
+          ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "The C++ port supports numbered stack-language variables only; declarations, named variables, arrays, and pointer-based storage are deferred."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/variables.si"
+          ]
         }
       }
     },
@@ -781,19 +752,22 @@
           ]
         },
         "numlang": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/if_else.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          ]
         },
         "selenium": {
-          "status": "partial",
-          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/if_else.sel"
+          ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/if_else.si"
+          ]
         }
       }
     },
@@ -809,20 +783,26 @@
           ]
         },
         "numlang": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/while_loop.num",
             "tests/differential/repeat_loop.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          ]
         },
         "selenium": {
           "status": "partial",
-          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
+          "tests": [
+            "tests/differential/while_loop.sel",
+            "tests/differential/for_loop.sel"
+          ],
+          "note": "while loops pass; the C++ port rejects for-loop syntax at parse time."
         },
         "sigi": {
-          "status": "partial",
-          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/while_loop.si",
+            "tests/differential/for_loop.si"
+          ]
         }
       }
     },
@@ -837,19 +817,22 @@
           ]
         },
         "numlang": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/functions.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          ]
         },
         "selenium": {
-          "status": "partial",
-          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/functions.sel"
+          ]
         },
         "sigi": {
-          "status": "partial",
-          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/functions.si"
+          ]
         }
       }
     },
@@ -864,19 +847,21 @@
           ]
         },
         "numlang": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/arrays.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          ]
         },
         "selenium": {
-          "status": "partial",
-          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
+          "status": "missing",
+          "note": "array subscript syntax is rejected at parse time."
         },
         "sigi": {
-          "status": "partial",
-          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/arrays.si",
+            "tests/differential/array_bounds.si"
+          ]
         }
       }
     },
@@ -893,23 +878,20 @@
         "numlang": {
           "status": "implemented",
           "tests": [
-            "tests/smoke_cpp.py"
-          ],
-          "note": "Verified by the current C++ end-to-end smoke suite."
+            "tests/differential/strings.num"
+          ]
         },
         "selenium": {
           "status": "implemented",
           "tests": [
-            "tests/smoke.py"
-          ],
-          "note": "Verified by the C++ CLI smoke suite; this does not imply full language parity."
+            "tests/differential/strings.sel"
+          ]
         },
         "sigi": {
           "status": "implemented",
           "tests": [
-            "tests/smoke.py"
-          ],
-          "note": "Verified by the C++ CLI smoke suite; this does not imply full language parity."
+            "tests/differential/strings.si"
+          ]
         }
       }
     },
@@ -926,23 +908,20 @@
         "numlang": {
           "status": "implemented",
           "tests": [
-            "tests/smoke_cpp.py"
-          ],
-          "note": "Verified by the current C++ end-to-end smoke suite."
+            "tests/differential/console.num"
+          ]
         },
         "selenium": {
           "status": "implemented",
           "tests": [
-            "tests/smoke.py"
-          ],
-          "note": "Verified by the C++ CLI smoke suite; this does not imply full language parity."
+            "tests/differential/console.sel"
+          ]
         },
         "sigi": {
           "status": "implemented",
           "tests": [
-            "tests/smoke.py"
-          ],
-          "note": "Verified by the C++ CLI smoke suite; this does not imply full language parity."
+            "tests/differential/console_output.si"
+          ]
         }
       }
     },
@@ -957,19 +936,23 @@
           ]
         },
         "numlang": {
-          "status": "partial",
+          "status": "implemented",
           "tests": [
             "tests/differential/ffi_call.num"
-          ],
-          "note": "Implemented by the retained Python reference compiler; not yet implemented end-to-end by the C++ port."
+          ]
         },
         "selenium": {
           "status": "partial",
-          "note": "C++ parser/code generator support is not yet backed by the C++ differential suite in CI; treat this capability as partial until verified."
+          "tests": [
+            "tests/differential/ffi_call.sel"
+          ],
+          "note": "summon extern declarations parse, but the declared symbol is not linked in generated builds."
         },
         "sigi": {
-          "status": "partial",
-          "note": "The full language reference exceeds the current C++ compiler implementation; the feature is deferred and not verified end-to-end."
+          "status": "implemented",
+          "tests": [
+            "tests/differential/ffi_call.si"
+          ]
         }
       }
     },
