@@ -28,8 +28,10 @@
           ]
         },
         "sigi": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/types_char_literals.si"
+          ]
         }
       }
     },
@@ -328,8 +330,10 @@
           ]
         },
         "sigi": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_ternary.si"
+          ]
         }
       }
     },
@@ -431,8 +435,10 @@
           "note": "comma expressions are rejected at parse time."
         },
         "sigi": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/expr_comma.si"
+          ]
         }
       }
     },
@@ -481,8 +487,11 @@
           ]
         },
         "sigi": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/control_do_while.si",
+            "tests/smoke.py"
+          ]
         }
       }
     },
@@ -507,8 +516,11 @@
           ]
         },
         "sigi": {
-          "status": "missing",
-          "note": "not started"
+          "status": "partial",
+          "tests": [
+            "tests/smoke.py"
+          ],
+          "note": "break (<>) and continue (w) are lowered and smoke-verified inside while and do-while; the differential case additionally needs named variables and the q spelling of break."
         }
       }
     },
@@ -609,8 +621,10 @@
           ]
         },
         "sigi": {
-          "status": "missing",
-          "note": "not started"
+          "status": "implemented",
+          "tests": [
+            "tests/differential/literals_numeric.si"
+          ]
         }
       }
     },
@@ -665,11 +679,8 @@
           ]
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/integer_division.si",
-            "tests/differential/logical.si"
-          ]
+          "status": "missing",
+          "note": "logical.si and integer_division.si fail: logical operators and integer division are not yet lowered."
         }
       }
     },
@@ -700,13 +711,12 @@
           ]
         },
         "sigi": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
             "tests/differential/arithmetic.si",
-            "tests/differential/bitwise.si",
-            "tests/differential/logical.si",
             "tests/differential/comparison.si"
-          ]
+          ],
+          "note": "arithmetic and comparison are lowered and differential-verified; the bitwise, logical, and integer-division cases are not yet implemented."
         }
       }
     },
@@ -733,10 +743,11 @@
           ]
         },
         "sigi": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
-            "tests/differential/variables.si"
-          ]
+            "tests/smoke.py"
+          ],
+          "note": "numbered variable load/store is smoke-verified; named variables (variables.si, vars_declare_before_use.si) are not yet implemented."
         }
       }
     },
@@ -796,11 +807,11 @@
           ]
         },
         "sigi": {
-          "status": "implemented",
+          "status": "partial",
           "tests": [
-            "tests/differential/while_loop.si",
-            "tests/differential/for_loop.si"
-          ]
+            "tests/differential/while_loop.si"
+          ],
+          "note": "while loops are lowered and differential-verified; for-loop syntax (for_loop.si) is not yet implemented."
         }
       }
     },
@@ -827,10 +838,8 @@
           ]
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/functions.si"
-          ]
+          "status": "missing",
+          "note": "functions.si fails: function definitions and calls are not yet implemented."
         }
       }
     },
@@ -855,11 +864,8 @@
           "note": "array subscript syntax is rejected at parse time."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/arrays.si",
-            "tests/differential/array_bounds.si"
-          ]
+          "status": "missing",
+          "note": "arrays.si fails: array allocation and indexing are not yet implemented."
         }
       }
     },
@@ -947,10 +953,8 @@
           "note": "summon extern declarations parse, but the declared symbol is not linked in generated builds."
         },
         "sigi": {
-          "status": "implemented",
-          "tests": [
-            "tests/differential/ffi_call.si"
-          ]
+          "status": "missing",
+          "note": "ffi_call.si fails: summon-style linking of foreign functions is not yet implemented."
         }
       }
     },
