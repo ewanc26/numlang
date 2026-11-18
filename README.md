@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/ewanc26/numlang/actions/workflows/ci.yml"><img src="https://github.com/ewanc26/numlang/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/ewanc26/numlang?label=licence" alt="Licence"></a>
+  <a href="https://github.com/sponsors/ewanc26"><img src="https://img.shields.io/github/sponsors/ewanc26?logo=githubsponsors&logoColor=white&label=sponsors" alt="Sponsor"></a>
+</p>
+
 # Numlang compiler
 
 Numlang is an esoteric stack-based language with an in-progress C++20 compiler that emits C. The historical Python compiler is retained as a reference implementation while C++ feature parity is rebuilt.
@@ -664,3 +670,11 @@ If you find this project useful, consider supporting its development:
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ewanc26/numlang&type=date&legend=bottom-right" />
  </picture>
 </a>
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and the checks required before opening a pull request.
+
+## Licence
+
+See [LICENSE](LICENSE) for the licence terms.
