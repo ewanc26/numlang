@@ -1,23 +1,28 @@
 # Contributing to Numlang
 
-Numlang is migrating from a feature-complete Python reference compiler to a C++20 compiler that emits C. The C++ port is intentionally incomplete; keep its supported subset explicit and fail clearly for unsupported operations.
+An esoteric stack-based language whose entire character set is `0-9 ^ & * + - / . | ; % # ~ " !`, with an in-progress C++20 compiler that emits C. The historical Python compiler is retained as the reference implementation while C++ feature parity is rebuilt. Thanks for wanting to help!
 
-## Development setup
-
-A C++20 compiler, CMake, a host C compiler, Python 3, and pytest are required. The Python package is retained as a compatibility reference while the C++ port expands.
+## Getting started
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j2
-ctest --test-dir build --output-on-failure
+cmake --build build -j
+# binary: build/numlangc
 ```
 
-## Working rules
+## Notes for this project
 
-- Read README.md, AGENTS.md, CMakeLists.txt, CI, and the C++ compiler-status document before changing behavior.
-- Do not advertise a feature as implemented in C++ until the C++ compiler and a regression test cover it.
-- Unsupported numeric opcodes and symbols must produce diagnostics, never silently compile as literals or no-ops.
-- Keep the legacy Python tests passing when changing shared language semantics.
-- Update the capability matrix to describe the C++ port, not only the legacy reference compiler.
-- Add C++ end-to-end smoke coverage for new syntax and runtime behavior.
-- Use a feature branch and pull request; report exact checks and results.
+- **The Python compiler is the reference.** When the C++ path and the Python path disagree, the Python one is right by definition, until the language spec says otherwise — PRs should note any deliberate divergence.
+- Check [`docs/cpp-compiler-status.md`](docs/cpp-compiler-status.md) before implementing anything: the status doc is the source of truth for what the C++ path covers (`numlangc` rejects recognized-but-unsupported structural opcodes rather than treating them as numbers; keep that property).
+- Unusual correctness rules from the README are deliberate: string output preserving embedded NULs, explicit signed-shift behaviour, validated 32-bit ranges for bitwise opcodes. These came from bugs; don't undo them.
+- Character set is closed: no new characters, ever — that's the whole language.
+
+## Before opening a PR
+
+- Build passes; the same program compiles and runs identically through `numlangc hello.num --run` and the Python reference path.
+- Conventional commits; focused PRs; update the status doc in-PR.
+- AI-assisted PRs welcome; stand behind every line and run both compilers yourself.
+
+## Licence
+
+See [LICENSE](LICENSE). Contributions accepted under the same terms.
